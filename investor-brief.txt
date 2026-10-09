@@ -6,20 +6,20 @@ Helping humanity envision a brighter future, one person at a time.
 THE SCIENCE BEHIND SEEING YOUR FUTURE
 Research-informed visualization, designed to connect possibility with action.
 
-Rösch et al. (2022): 48 articles, 174 effect sizes; episodic future thinking shifted intertemporal decisions toward delayed rewards (g=.44), with stronger effects for positive, vivid events relevant to the choice. https://doi.org/10.1037/xge0001148
+Rösch et al. (2022): 48 articles, 174 effect sizes; episodic future thinking shifted intertemporal decisions toward delayed rewards (g=.44), with stronger effects for positive, vivid events relevant to personal goals.
 
 Ye et al. (2022): 47 studies, 63 contrasts; reduced delay discounting (g=.52); positive future imagery subgroup g=.64. https://doi.org/10.1177/17470218211066282
 
-Wang et al. (2021): 21 studies, 24 independent effect sizes, 15,907 participants; combining mental contrasting with implementation intentions improved goal attainment (g=.336). Publication bias may inflate the estimate. https://doi.org/10.3389/fpsyg.2021.565202
+Wang et al. (2021): 21 studies, 24 independent effect sizes, 15,907 participants; combining mental contrasting with implementation intentions improved goal attainment (g=.336). Publication bias may influence confidence in this estimate. The systematic review is relevant to implementation planning, but it is not a direct test of cinematic visualization.
 
-These are standardized effects, not percentage improvements. The two future-thinking reviews cover related evidence and should not be added together as independent totals. These studies evaluate future-thinking and planning exercises, not I AM REEL videos. Product-specific and lasting benefits remain to be evaluated.
+These are standardized effects, not percentage improvements. The two future-thinking reviews cover related evidence and should not be added together as independent totals. These studies evaluate future-thinking and planning exercises; they do not establish that AI-generated cinematic experiences will produce equivalent outcomes.
 
 PROPOSED PRODUCT DIRECTION
 See it > Feel it > Plan it > Act on it > Return to it.
-Optional Vision Guide prompts: What might stand between you and this future? If that obstacle appears, what action will you take? What is one step you can take this week? Include selected process scenes alongside the desired outcome.
+Optional Vision Guide prompts: What might stand between you and this future? If that obstacle appears, what action will you take? What is one step you can take this week? Include selected process details, not a full treatment plan.
 
 THE OPPORTUNITY
-I AM REEL is developing an AI visualization engine that transforms a person's goal and reference photos into personalized cinematic future experiences. A manually produced proof of concept demonstrates the intended output. The next step is automating the production workflow into secure, repeatable software.
+I AM REEL is developing an AI visualization engine that transforms a person's goal and reference photos into personalized cinematic future experiences. A manually produced proof of concept demonstrates the emotional appeal and market potential. The next phase is automating the experience, quality control, and repeatable delivery.
 
 ONE ENGINE, THREE APPLICATIONS
 Personal: My Future — individual goals, relationships, career, travel, home and life transitions.
@@ -30,19 +30,19 @@ COMPANION PRODUCTS
 Approved vision imagery can become affirmation cards, wallpapers, framed art, pillows, blankets, journals, candles, yoga mats and other print-on-demand products.
 
 CURRENT STATUS
-Pre-revenue. Personalized cinematic vision demonstrated manually. Conversational Vision Guide prototype developed. Backend/security architecture documentation prepared. One spiritual counselor and several spiritual-academy students have expressed interest. These are expressions of interest, not paid customers or formal pilots. Global synthesis, the integrated automated platform and automated product fulfillment are proposed capabilities.
+Pre-revenue. Personalized cinematic vision demonstrated manually. Conversational Vision Guide prototype developed. Backend/security architecture documentation prepared. One spiritual counselor and one educator have expressed interest in testing the prototype with clients or participants.
 
 TECHNOLOGY TO BUILD
-Structured vision data, consent-led reference management, scene planning, model routing, generation tracking and retries, asset management, human quality review, cinematic assembly, secure delivery and product-ready artwork. The underlying generative models are third-party technology; potential proprietary value lies in orchestration and workflows.
+Structured vision data, consent-led reference management, scene planning, model routing, generation tracking and retries, asset management, human quality review, cinematic assembly, secure delivery, and ongoing improvement loops.
 
 BUSINESS MODEL
-Personalized reels and still images; digital and print-on-demand Vision Collections; proposed professional organization packages. Pricing, margins, acquisition costs and organization terms require validation.
+Personalized reels and still images; digital and print-on-demand Vision Collections; proposed professional organization packages. Pricing, margins, acquisition costs and organization terms require validation with pilot users and buyers.
 
 FUNDING PRIORITIES
-Implement the first automated workflow; privacy, consent and quality controls; customer/professional pilots; generation-cost and willingness-to-pay validation; then product derivatives and Global concepts. Raise size and development timeline await technical scoping and cost estimates.
+Implement the first automated workflow; privacy, consent and quality controls; customer/professional pilots; generation-cost and willingness-to-pay validation; then product derivatives and Global Vision Project expansion.
 
 FOUNDER
-Sheri Berry is a self-taught web designer, user experience architect and UX researcher whose web career began at Texas Instruments in 1994. She directs the creative vision, storytelling, customer experience and quality review, and has spent the past two years exploring AI-assisted visual storytelling.
+Sheri Berry is a self-taught web designer, user experience architect and UX researcher whose web career began at Texas Instruments in 1994. She directs the creative vision, storytelling, customer experience design, and product strategy for I AM REEL.
 
 EXISTING COMMERCE CHANNEL
 https://enlighteningvibrations.com
