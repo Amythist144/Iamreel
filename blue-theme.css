@@ -185,3 +185,10 @@ body.collection-page .page-hero--vc .vc-vision-copy h1{font-family:Georgia,serif
 body.collection-page .page-hero--vc .vc-vision-copy h1 em{color:#60c9e0;font-weight:400}
 body.collection-page .page-hero--vc .vc-vision-copy p{max-width:490px;margin:0 0 28px}
 @media(max-width:600px){body.collection-page .page-hero--vc{min-height:550px}body.collection-page .page-hero--vc .vc-vision-copy h1{font-size:clamp(44px,10vw,58px)}}
+/* Shared Global Vision font treatment, with distinct section alignment. */
+body.collection-page main #vc-hero,body.collection-page main #vc-immerse-title{font-family:Georgia,'Times New Roman',serif;font-weight:500;color:#fff!important;letter-spacing:-.04em;line-height:1.02}
+body.collection-page main #vc-hero{font-size:clamp(44px,5.8vw,84px);text-align:left}
+body.collection-page main #vc-immerse-title{font-size:clamp(38px,4.8vw,68px);text-align:center;max-width:1000px;margin:0 auto 28px}
+body.collection-page main #vc-hero em,body.collection-page main #vc-immerse-title em{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;color:#60c9e0!important}
+body.collection-page .vc-immerse-inner>.eyebrow,body.collection-page .vc-immerse-sub{text-align:center;margin-left:auto;margin-right:auto}
+
