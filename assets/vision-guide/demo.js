@@ -5,7 +5,10 @@
   const base = new URL('.', script.src);
   const sheet = document.createElement('link');
   sheet.rel = 'stylesheet'; sheet.href = new URL('demo.css', base); document.head.append(sheet);
-  const root = document.createElement('div'); root.id = 'vg-demo'; document.body.append(root);
+  const inlineHost = document.querySelector('[data-vision-guide-inline]');
+  const root = document.createElement('div'); root.id = 'vg-demo';
+  if (inlineHost) root.classList.add('vg-inline');
+  (inlineHost || document.body).append(root);
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const questions = [
     ['goal', 'Let’s focus on one goal. What would you love to see yourself experiencing?', 'A loving relationship, meaningful work, a peaceful home…'],
@@ -57,10 +60,10 @@
       case 'global-done': html=`<span class="vg-eyebrow">DEMO COMPLETE</span><h3>Thank you for imagining a brighter future.</h3><p>Your Global Blueprint has been approved in this demo only. Nothing was submitted or stored on a server.</p>${button('Return to sample delivery','delivery')}${button('Start a new demonstration','reset','secondary')}`;break;
     }
     main.innerHTML=html; main.scrollTop=0;
-    main.focus({preventScroll:true});
+    if (!inlineHost || state.step !== 'welcome') main.focus({preventScroll:true});
   }
   function reset(){clearInterval(timer);state={step:'welcome',answers:{},question:0,product:null,wallpaper:'Phone',photos:false,approved:false,stage:0,globalText:'',globalConsent:{text:false,image:false,name:false,likeness:false}};history=[];render();}
-  function open(){returnFocus=document.activeElement;if(!dialog.open)dialog.showModal();render();}
+  function open(){returnFocus=document.activeElement;if(inlineHost){dialog.setAttribute('open','');inlineHost.scrollIntoView({behavior:'smooth',block:'start'});}else if(!dialog.open)dialog.showModal();render();}
   function close(){dialog.close();returnFocus?.focus();}
   function action(a){
     if(a==='start')move('account');
@@ -111,5 +114,6 @@
   },true);
   window.addEventListener('iamreel:open-vision-guide',open);
   window.iamreelDemoGuide={open,reset};
-  if(new URLSearchParams(location.search).get('vision-demo')==='1')open();
+  if(inlineHost){dialog.setAttribute('open','');render();}
+  else if(new URLSearchParams(location.search).get('vision-demo')==='1')open();
 })();
