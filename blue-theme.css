@@ -192,3 +192,4 @@ body.collection-page main #vc-immerse-title{font-size:clamp(38px,4.8vw,68px);tex
 body.collection-page main #vc-hero em,body.collection-page main #vc-immerse-title em{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;color:#60c9e0!important}
 body.collection-page .vc-immerse-inner>.eyebrow,body.collection-page .vc-immerse-sub{text-align:center;margin-left:auto;margin-right:auto}
 
+body.collection-page .vc-mini-card img.meditation-thumbnail{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;max-height:none;display:block}
