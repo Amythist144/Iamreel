@@ -9,6 +9,7 @@ let iamSupabase = null;
 let currentVision = null;
 let paypalClientId = null;
 let productChoiceReady = false;
+let blueprintReady = false;
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -120,6 +121,8 @@ async function signIn() {
   }
 
   setStatus("Welcome back.");
+  setupWallpaperChoices();
+  setupProductHandoff();
   await refreshAccount();
 
   iamSupabase.auth.onAuthStateChange((_event, session) => {
@@ -264,7 +267,12 @@ async function sendVisionMessage() {
     renderBlueprint();
 
     if (result.blueprint_ready) {
+      blueprintReady = true;
       productChoiceReady = true;
+      document.querySelectorAll("[data-wallpaper-choice]").forEach((button) => { button.disabled = false; });
+      const wallpaperStatus = $("#iam-wallpaper-status");
+      if (wallpaperStatus) wallpaperStatus.textContent = "Your Blueprint is ready. Choose a wallpaper format to create your complimentary design.";
+
       $("#iam-product-handoff")?.classList.remove("iam-hidden");
       setStatus("Your Vision Blueprint is taking shape. When you’re ready, say “choose my vision product” or use the choices below.");
     } else {
@@ -338,6 +346,32 @@ async function loadSanctuary() {
         '<span class="iam-note">Your personalized affirmations will appear here.</span>';
     }
   }
+}
+
+
+function setupWallpaperChoices() {
+  const buttons = document.querySelectorAll("[data-wallpaper-choice]");
+  buttons.forEach((button) => {
+    button.disabled = !blueprintReady;
+    button.addEventListener("click", () => {
+      const status = $("#iam-wallpaper-status");
+      const format = button.dataset.wallpaperChoice;
+      localStorage.setItem("iamreel_wallpaper_format", format);
+      if (status) status.textContent = "Your " + format + " wallpaper is selected. Image generation will create one complimentary, non-editable wallpaper from your approved Vision Blueprint.";
+    });
+  });
+}
+
+function setupProductHandoff() {
+  const input = $("#iam-message");
+  if (!input) return;
+  const panel = $("#iam-product-handoff");
+  const reveal = () => {
+    if (!panel) return;
+    panel.classList.remove("iam-hidden");
+    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  document.querySelectorAll("[data-choose-vision-product]").forEach((button) => button.addEventListener("click", reveal));
 }
 
 async function initializeIamReel() {
