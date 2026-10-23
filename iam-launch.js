@@ -67,6 +67,10 @@ async function refreshAccount() {
 
   if (data && data[0]) {
     currentVision = data[0];
+    blueprintReady = currentVision.status === "blueprint_ready" || currentVision.status === "production_ready";
+    document.querySelectorAll("[data-wallpaper-choice]").forEach((button) => { button.disabled = !blueprintReady; });
+    const wallpaperStatus = $("#iam-wallpaper-status");
+    if (blueprintReady && wallpaperStatus) wallpaperStatus.textContent = "Your Blueprint is ready. Choose a wallpaper format to create your complimentary design.";
 
     const title = $("#iam-vision-title");
     if (title) {
@@ -409,6 +413,8 @@ async function initializeIamReel() {
   );
 
 
+  setupWallpaperChoices();
+  setupProductHandoff();
   await refreshAccount();
 }
 
