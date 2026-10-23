@@ -7,7 +7,7 @@ const SUPABASE_URL = "https://jtlqvxcmbgqtcpdhldbm.supabase.co";
 
 let iamSupabase = null;
 let currentVision = null;
-let paypalClientId = null;
+let paypalClientId = null;\nlet productChoiceReady = false;
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -119,7 +119,7 @@ async function signIn() {
   }
 
   setStatus("Welcome back.");
-  await refreshAccount();
+  await refreshAccount();\n\n  iamSupabase.auth.onAuthStateChange((_event, session) => {\n    if (session) refreshAccount();\n  });
 }
 
 async function signOut() {
@@ -259,162 +259,20 @@ async function sendVisionMessage() {
     renderBlueprint();
 
     if (result.blueprint_ready) {
-      setStatus("Your Vision Blueprint is ready to review.");
+      productChoiceReady = true;
+      $("#iam-product-handoff")?.classList.remove("iam-hidden");
+      setStatus("Your Vision Blueprint is taking shape. When you’re ready, say “choose my vision product” or use the choices below.");
     } else {
       setStatus("");
     }
 
+    if (/choose\s+(my\s+)?vision\s+product|choose\s+(a\s+)?product|vision\s+product/i.test(text)) {
+      productChoiceReady = true;
+      $("#iam-product-handoff")?.classList.remove("iam-hidden");
+      $("#iam-product-handoff")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
     await loadSanctuary();
-  } catch (error) {
-    setStatus(error.message);
-  }
-}
-
-async function getPayPalConfiguration() {
-  const session = await getSession();
-
-  const response = await fetch(
-    SUPABASE_URL + "/functions/v1/paypal-checkout",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + session.access_token
-      },
-      body: JSON.stringify({
-        action: "config"
-      })
-    }
-  );
-
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.error || "PayPal is unavailable.");
-  }
-
-  return result;
-}
-
-async function loadPayPal() {
-  if (window.paypal) return;
-
-  if (!paypalClientId) {
-    const configuration = await getPayPalConfiguration();
-    paypalClientId = configuration.client_id;
-  }
-
-  await new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-
-    script.src =
-      "https://www.paypal.com/sdk/js?client-id=" +
-      encodeURIComponent(paypalClientId) +
-      "&currency=USD&intent=capture";
-
-    script.onload = resolve;
-    script.onerror = reject;
-
-    document.head.appendChild(script);
-  });
-}
-
-async function buyProduct(productCode) {
-  try {
-    const session = await getSession();
-
-    if (!session) {
-      throw new Error(
-        "Create your free account or sign in before checkout."
-      );
-    }
-
-    setStatus("Opening secure PayPal Sandbox checkout…");
-
-    const vision = await ensureVision();
-
-    const response = await fetch(
-      SUPABASE_URL + "/functions/v1/paypal-checkout",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + session.access_token
-        },
-        body: JSON.stringify({
-          action: "create",
-          product_code: productCode,
-          vision_id: vision.id
-        })
-      }
-    );
-
-    const order = await response.json();
-
-    if (!response.ok) {
-      throw new Error(order.error || "Could not create the order.");
-    }
-
-    await loadPayPal();
-
-    const paypalZone = $("#paypal-zone");
-    const paypalModal = $("#paypal-modal");
-
-    if (!paypalZone || !paypalModal) {
-      throw new Error("PayPal checkout area is not available.");
-    }
-
-    paypalZone.innerHTML = "";
-    paypalModal.classList.remove("iam-hidden");
-
-    window.paypal
-      .Buttons({
-        createOrder: () => order.id,
-
-        onApprove: async (data) => {
-          setStatus("Verifying your PayPal payment…");
-
-          const captureResponse = await fetch(
-            SUPABASE_URL + "/functions/v1/paypal-checkout",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + session.access_token
-              },
-              body: JSON.stringify({
-                action: "capture",
-                paypal_order_id: data.orderID
-              })
-            }
-          );
-
-          const capture = await captureResponse.json();
-
-          if (!captureResponse.ok) {
-            throw new Error(
-              capture.error || "Payment verification failed."
-            );
-          }
-
-          paypalModal.classList.add("iam-hidden");
-
-          setStatus(
-            "Sandbox payment completed. Your order is now in My Sanctuary."
-          );
-
-          await loadSanctuary();
-        },
-
-        onCancel: () => {
-          setStatus("Checkout cancelled.");
-        },
-
-        onError: () => {
-          setStatus("PayPal checkout could not complete.");
-        }
-      })
-      .render("#paypal-zone");
   } catch (error) {
     setStatus(error.message);
   }
@@ -510,22 +368,7 @@ async function initializeIamReel() {
       }
     }
   );
-
-  document
-    .querySelectorAll("[data-buy]")
-    .forEach((button) => {
-      button.addEventListener("click", () => {
-        buyProduct(button.dataset.buy);
-      });
-    });
-
-  $("#paypal-close")?.addEventListener(
-    "click",
-    () => {
-      $("#paypal-modal")?.classList.add("iam-hidden");
-    }
-  );
-
+\n
   await refreshAccount();
 }
 
