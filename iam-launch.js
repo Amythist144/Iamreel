@@ -7,7 +7,8 @@ const SUPABASE_URL = "https://jtlqvxcmbgqtcpdhldbm.supabase.co";
 
 let iamSupabase = null;
 let currentVision = null;
-let paypalClientId = null;\nlet productChoiceReady = false;
+let paypalClientId = null;
+let productChoiceReady = false;
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -119,7 +120,11 @@ async function signIn() {
   }
 
   setStatus("Welcome back.");
-  await refreshAccount();\n\n  iamSupabase.auth.onAuthStateChange((_event, session) => {\n    if (session) refreshAccount();\n  });
+  await refreshAccount();
+
+  iamSupabase.auth.onAuthStateChange((_event, session) => {
+    if (session) refreshAccount();
+  });
 }
 
 async function signOut() {
@@ -368,7 +373,8 @@ async function initializeIamReel() {
       }
     }
   );
-\n
+
+
   await refreshAccount();
 }
 
