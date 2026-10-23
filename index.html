@@ -32,21 +32,45 @@
 
 
 </main><footer class="wrap site-footer"><div class="footer-brand"><a href="#home" aria-label="I AM REEL home"><img src="assets/logo-animation-loop.gif" alt="I AM REEL" width="840" height="224" loading="lazy"></a><p>Helping humanity envision a brighter future,<br>one person at a time.</p></div><nav class="footer-nav" aria-label="Footer navigation"><a href="index.html">Home</a><a href="create.html">Create your vision</a><a href="collection.html">Vision collection</a><a href="why-it-works.html">Why it works</a><a href="professional.html">Partner program</a><a href="global.html">Global vision project</a><a href="professional.html#contact">Contact</a><a href="create.html" class="button footer-create-cta">Create your vision</a></nav><a class="text-link footer-top" href="#home">Back to top</a></footer>
-<dialog id="vision-video-modal" class="vision-video-modal" aria-labelledby="vision-video-title"><div class="video-modal-heading"><h2 id="vision-video-title">A personal vision</h2><button type="button" class="video-modal-close" aria-label="Close video">✕</button></div><div class="video-modal-player"><iframe title="Sample personal vision video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><a class="video-youtube-link" href="https://www.youtube.com/watch?v=i6ZtQEbf62w" target="_blank" rel="noopener noreferrer">Watch on YouTube</a></dialog><aside class="vision-guide-peek" aria-label="Vision Guide">
-  <div class="vision-guide-peek-copy">
-    <span class="vision-guide-peek-brand">I AM REEL</span>
+<dialog id="vision-video-modal" class="vision-video-modal" aria-labelledby="vision-video-title"><div class="video-modal-heading"><h2 id="vision-video-title">A personal vision</h2><button type="button" class="video-modal-close" aria-label="Close video">✕</button></div><div class="video-modal-player"><iframe title="Sample personal vision video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><a class="video-youtube-link" href="https://www.youtube.com/watch?v=i6ZtQEbf62w" target="_blank" rel="noopener noreferrer">Watch on YouTube</a></dialog><aside id="home-vision-guide" class="home-guide" aria-label="Vision Guide">
+  <button id="home-guide-tab" class="home-guide-tab" type="button" aria-expanded="false">
+    <span class="home-guide-brand">I AM REEL</span>
     <strong>Your Vision Guide</strong>
     <span>What is your dream future?</span>
+  </button>
+  <div class="home-guide-panel" aria-hidden="true">
+    <div class="home-guide-head"><div><span class="home-guide-brand">I AM REEL</span><h2>Your Vision Guide</h2></div><button id="home-guide-close" type="button" aria-label="Close Vision Guide">×</button></div>
+    <p class="home-guide-intro">What is your dream future?</p>
+    <div id="home-guide-chat" class="home-guide-chat">
+      <div class="home-guide-msg guide">Tell me what you would love your life to look and feel like. We’ll shape it together.</div>
+    </div>
+    <div class="home-guide-starters">
+      <button type="button">I Am Wealthy</button><button type="button">I Am Successful</button><button type="button">I Am Happy</button><button type="button">I Have a Happy Relationship</button><button type="button">I Travel the World</button>
+    </div>
+    <div class="home-guide-compose"><input id="home-guide-input" type="text" placeholder="Describe the future you want…"><button id="home-guide-send" type="button">Send</button></div>
+    <p class="home-guide-note">You can begin right here. We’ll invite you to create a free account when you’re ready to save your vision.</p>
   </div>
-  <a class="vision-guide-peek-button" href="create.html#vision-guide">Begin</a>
 </aside>
 <style>
-.vision-guide-peek{position:fixed;right:0;top:42%;z-index:9999;width:292px;transform:translateX(118px);display:flex;align-items:center;gap:12px;padding:14px 14px 14px 18px;border:1px solid rgba(255,255,255,.28);border-right:0;border-radius:18px 0 0 18px;background:rgba(13,34,65,.96);box-shadow:0 12px 35px rgba(0,0,0,.28);color:#fff;transition:transform .25s ease;backdrop-filter:blur(10px)}
-.vision-guide-peek:hover,.vision-guide-peek:focus-within{transform:translateX(0)}
-.vision-guide-peek-copy{min-width:185px;display:grid;gap:2px;font-size:13px;line-height:1.25}
-.vision-guide-peek-copy strong{font-size:17px}.vision-guide-peek-brand{font-size:10px;letter-spacing:.14em;color:#bdebdc;font-weight:700}
-.vision-guide-peek-button{flex:0 0 58px;min-height:58px;border-radius:50%;display:grid;place-items:center;background:#bdebdc;color:#102542;text-decoration:none;font-weight:800;font-size:12px}
-@media(max-width:700px){.vision-guide-peek{top:auto;bottom:22px;width:265px;transform:translateX(105px)}}
+.home-guide{position:fixed;right:0;top:38%;z-index:9999;color:#fff;font-family:inherit}
+.home-guide-tab{width:220px;transform:translateX(92px);text-align:left;display:grid;gap:3px;padding:16px 18px;border:1px solid rgba(255,255,255,.3);border-right:0;border-radius:18px 0 0 18px;background:rgba(13,34,65,.97);box-shadow:0 12px 35px rgba(0,0,0,.3);color:#fff;cursor:pointer}
+.home-guide-tab strong{font-size:17px}.home-guide-tab>span:last-child{font-size:13px}.home-guide-brand{font-size:10px;letter-spacing:.15em;color:#bdebdc;font-weight:800}
+.home-guide-panel{display:none;width:min(430px,calc(100vw - 24px));max-height:78vh;overflow:auto;padding:20px;background:rgba(13,34,65,.985);border:1px solid rgba(255,255,255,.25);border-right:0;border-radius:22px 0 0 22px;box-shadow:0 18px 50px rgba(0,0,0,.38)}
+.home-guide.open .home-guide-tab{display:none}.home-guide.open .home-guide-panel{display:block}
+.home-guide-head{display:flex;justify-content:space-between;align-items:flex-start}.home-guide-head h2{margin:3px 0 0;font-size:24px;color:#fff}.home-guide-head button{border:0;background:transparent;color:#fff;font-size:30px;cursor:pointer}
+.home-guide-intro{font-size:20px;margin:20px 0 12px}.home-guide-chat{display:grid;gap:10px;max-height:260px;overflow:auto;margin-bottom:12px}.home-guide-msg{padding:11px 13px;border-radius:14px;background:rgba(255,255,255,.1);line-height:1.4}.home-guide-msg.user{background:#bdebdc;color:#102542;margin-left:34px}
+.home-guide-starters{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.home-guide-starters button{border:1px solid rgba(189,235,220,.6);background:transparent;color:#fff;border-radius:999px;padding:8px 10px;cursor:pointer}
+.home-guide-compose{display:flex;gap:8px}.home-guide-compose input{min-width:0;flex:1;border-radius:10px;border:1px solid rgba(255,255,255,.3);padding:11px;background:#fff;color:#14233d}.home-guide-compose button{border:0;border-radius:10px;padding:0 16px;background:#bdebdc;color:#102542;font-weight:800;cursor:pointer}.home-guide-note{font-size:12px;opacity:.75;margin:12px 0 0}
+@media(max-width:700px){.home-guide{top:auto;bottom:20px}.home-guide-tab{width:205px;transform:translateX(78px)}.home-guide-panel{max-height:72vh}}
 </style>
+<script>
+(()=>{const guide=document.getElementById('home-vision-guide'),tab=document.getElementById('home-guide-tab'),panel=guide.querySelector('.home-guide-panel'),close=document.getElementById('home-guide-close'),input=document.getElementById('home-guide-input'),send=document.getElementById('home-guide-send'),chat=document.getElementById('home-guide-chat');
+const open=()=>{guide.classList.add('open');tab.setAttribute('aria-expanded','true');panel.setAttribute('aria-hidden','false');setTimeout(()=>input.focus(),50)};
+const shut=()=>{guide.classList.remove('open');tab.setAttribute('aria-expanded','false');panel.setAttribute('aria-hidden','true')};
+const add=(role,text)=>{const d=document.createElement('div');d.className='home-guide-msg '+role;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight};
+const submit=()=>{const text=input.value.trim();if(!text)return;add('user',text);input.value='';add('guide','I can see the beginning of it. What would make that future feel most real to you — where are you, what are you doing, and how do you feel?')};
+tab.addEventListener('click',open);close.addEventListener('click',shut);send.addEventListener('click',submit);input.addEventListener('keydown',e=>{if(e.key==='Enter')submit()});guide.querySelectorAll('.home-guide-starters button').forEach(b=>b.addEventListener('click',()=>{open();input.value=b.textContent;submit()}));
+})();
+</script>
 <script src="script.js"></script></body></html>
 
