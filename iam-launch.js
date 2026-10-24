@@ -162,36 +162,65 @@ async function signIn() {
 
 async function resetVisionGuide() {
   const session = await getSession();
-  if (!session || !currentVision) return;
+  if (!session) return;
   const button = $("#iam-reset-vision");
-  if (button) { button.disabled = true; button.textContent = "Resetting…"; }
-  setStatus("Resetting your Vision Guide…");
+  if (button) { button.disabled = true; button.textContent = "Starting over…"; }
+  setStatus("Starting a fresh Vision Guide…");
   try {
-    const response = await fetch(SUPABASE_URL + "/functions/v1/vision-guide", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: "Bearer " + session.access_token },
-      body: JSON.stringify({ vision_id: currentVision.id, action: "reset" })
-    });
-    const result = await response.json();
-    if (!response.ok || !result.reset) throw new Error(result.error || "Reset failed.");
+    const oldVision = currentVision;
+    if (oldVision?.id) {
+      // Retire the old session so refreshAccount will never choose it again.
+      await iamSupabase.from("visions").update({
+        status: "reset",
+        updated_at: new Date(Date.now() - 60000).toISOString()
+      }).eq("id", oldVision.id).eq("user_id", session.user.id);
+    }
 
-    currentVision = { ...currentVision, title:"My Dream Future", status:"draft", blueprint:{}, conversation_summary:null };
+    const { data: fresh, error } = await iamSupabase.from("visions").insert({
+      user_id: session.user.id,
+      title: "My Dream Future",
+      path: "standard",
+      status: "draft",
+      blueprint: {}
+    }).select().single();
+    if (error) throw error;
+
+    currentVision = fresh;
     blueprintReady = false;
     productChoiceReady = false;
     localStorage.removeItem("iamreel_rejected_affirmations");
     localStorage.removeItem("iamreel_wallpaper_format");
+    localStorage.removeItem("iamreel_promo_code");
+
     const chat = $("#iam-chat"); if (chat) chat.innerHTML = "";
     const list = $("#iam-affirmation-list"); if (list) list.innerHTML = "";
+    const starters = $("#iam-starter-pills");
+    if (starters) {
+      starters.classList.remove("is-used");
+      starters.innerHTML = `
+        <button type="button" data-vision-starter="I AM abundant.">I AM abundant</button>
+        <button type="button" data-vision-starter="I AM happy.">I AM happy</button>
+        <button type="button" data-vision-starter="I AM traveling the world.">I AM traveling the world</button>
+        <button type="button" data-vision-starter="I AM in a happy relationship.">I AM in a happy relationship</button>
+        <button type="button" data-vision-starter="I AM healthy.">I AM healthy</button>`;
+      starters.querySelectorAll("[data-vision-starter]").forEach(b => b.addEventListener("click", () => {
+        const field=$("#iam-message"); if(!field)return;
+        field.value=b.dataset.visionStarter||b.textContent.trim();
+        starters.classList.add("is-used");
+        sendVisionMessage();
+      }));
+    }
     $("#iam-product-handoff")?.classList.add("iam-hidden");
-    $("#iam-starter-pills")?.classList.remove("is-used");
-    const submit = $("#iam-submit-vision"); if (submit) { submit.disabled = false; submit.textContent = "Submit my vision"; }
-    const title = $("#iam-vision-title"); if (title) title.textContent = "My Dream Future";
+    const submit=$("#iam-submit-vision"); if(submit){submit.disabled=false;submit.textContent="Submit my vision";}
+    const title=$("#iam-vision-title"); if(title)title.textContent="Let’s build your dream future";
+    const promo=$("#iam-promo-code"); if(promo)promo.value="";
+    const promoStatus=$("#iam-promo-status"); if(promoStatus)promoStatus.textContent="";
     addMessage("guide","What is your dream future? Choose an intention below or tell me what you want your life to look and feel like.");
     setStatus("");
   } catch (error) {
-    setStatus(error.message || "Reset failed.");
+    setStatus(error.message || "Could not start a fresh vision.");
   } finally {
-    if (button) { button.disabled = false; button.textContent = "Reset to start over"; }
+    if (button) { button.disabled=false; button.textContent="Reset to start over"; }
   }
 }
 async function signOut() {
