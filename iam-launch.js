@@ -130,7 +130,7 @@ async function signIn() {
   const inlineProducts = [...document.querySelectorAll("#iam-inline-store input[type=checkbox]")];
   const inlineCheckout = $("#iam-inline-checkout");
   const inlineSummary = $("#iam-cart-summary");
-  const inlinePrices = { dream_portrait: 999, audio_meditation: 2900, video_meditation: 4900, cinematic_reel: 19900 };
+  const inlinePrices = { dream_portrait: 999, audio_meditation: 4900, video_meditation: 9900, cinematic_reel: 19900 };
   const updateInlineCart = () => {
     const selected = inlineProducts.filter(x => x.checked);
     inlineProducts.forEach(x => {
