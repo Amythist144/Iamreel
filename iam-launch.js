@@ -170,20 +170,39 @@ async function signIn() {
 
   // Wallpaper choice leads to products
   document.querySelectorAll("#iam-wallpaper-choices [data-wallpaper-choice]").forEach(btn => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       document.querySelectorAll("#iam-wallpaper-choices .iam-action-btn").forEach(b => b.classList.remove("is-chosen"));
       btn.classList.add("is-chosen");
       const format = btn.dataset.wallpaperChoice;
       localStorage.setItem("iamreel_wallpaper_format", format);
       const result = $("#iam-wallpaper-result");
       const status = $("#iam-wallpaper-status");
+      const img = $("#iam-wallpaper-image");
       if (status) status.textContent = "Creating your free " + format + " wallpaper from the best scene in your vision…";
+      if (img) img.style.display = "none";
       result?.classList.remove("iam-hidden");
       result?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      // Placeholder: actual generation can call an Edge Function here
-      setTimeout(() => {
-        if (status) status.textContent = "Your free " + format + " wallpaper is ready — based on the strongest scene from your Vision Blueprint.";
-      }, 800);
+
+      try {
+        const session = await getSession();
+        const response = await fetch(SUPABASE_URL + "/functions/v1/generate-wallpaper", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + session.access_token,
+          },
+          body: JSON.stringify({ vision_id: currentVision?.id, format }),
+        });
+        const data = await response.json();
+        if (!response.ok || !data.url) throw new Error(data.error || "Could not create wallpaper");
+        if (img) {
+          img.src = data.url;
+          img.style.display = "block";
+        }
+        if (status) status.textContent = "Your free " + format + " wallpaper is ready.";
+      } catch (err) {
+        if (status) status.textContent = "We couldn’t create the wallpaper just yet. " + (err.message || "Please try again in a moment.");
+      }
     });
   });
 
@@ -474,7 +493,7 @@ async function sendVisionMessage() {
       $("#iam-decision")?.classList.remove("iam-hidden");
       $("#iam-decision")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
       const note = $("#iam-requirements-note");
-      if (note) note.textContent = "Your vision is ready. Get your free wallpaper, or add a photo after you choose a personalized product below.";
+      if (note) note.textContent = "If this is the vision you want to create, choose to get your wallpaper below — or give us one more detail in the chat.";
       setStatus("");
     } else {
       setStatus("");
@@ -684,20 +703,39 @@ async function initializeIamReel() {
 
   // Wallpaper choice leads to products
   document.querySelectorAll("#iam-wallpaper-choices [data-wallpaper-choice]").forEach(btn => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       document.querySelectorAll("#iam-wallpaper-choices .iam-action-btn").forEach(b => b.classList.remove("is-chosen"));
       btn.classList.add("is-chosen");
       const format = btn.dataset.wallpaperChoice;
       localStorage.setItem("iamreel_wallpaper_format", format);
       const result = $("#iam-wallpaper-result");
       const status = $("#iam-wallpaper-status");
+      const img = $("#iam-wallpaper-image");
       if (status) status.textContent = "Creating your free " + format + " wallpaper from the best scene in your vision…";
+      if (img) img.style.display = "none";
       result?.classList.remove("iam-hidden");
       result?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      // Placeholder: actual generation can call an Edge Function here
-      setTimeout(() => {
-        if (status) status.textContent = "Your free " + format + " wallpaper is ready — based on the strongest scene from your Vision Blueprint.";
-      }, 800);
+
+      try {
+        const session = await getSession();
+        const response = await fetch(SUPABASE_URL + "/functions/v1/generate-wallpaper", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + session.access_token,
+          },
+          body: JSON.stringify({ vision_id: currentVision?.id, format }),
+        });
+        const data = await response.json();
+        if (!response.ok || !data.url) throw new Error(data.error || "Could not create wallpaper");
+        if (img) {
+          img.src = data.url;
+          img.style.display = "block";
+        }
+        if (status) status.textContent = "Your free " + format + " wallpaper is ready.";
+      } catch (err) {
+        if (status) status.textContent = "We couldn’t create the wallpaper just yet. " + (err.message || "Please try again in a moment.");
+      }
     });
   });
 
