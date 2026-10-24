@@ -26,12 +26,18 @@
 .iam-photo-panel{margin-top:18px;padding:18px;border:1px solid #d9e3ec;border-radius:18px;background:#fbfdff}
 .iam-photo-panel input[type=file]{margin:8px 0}
 
+
+.iam-btn.gold-btn{background:#f0b429;color:#1a1530;border:1px solid #e09a10;border-radius:999px;padding:8px 16px;font-weight:700}
+.iam-btn.gold-btn:hover{background:#f5c518}
+.iam-send-arrow{width:44px;height:44px;border-radius:50%;border:0;background:#064bbf;color:#fff;font-size:20px;cursor:pointer;display:grid;place-items:center;flex-shrink:0}
+.iam-send-arrow:hover{background:#093a8c}
+.iam-chat-row{align-items:center}
 </style>
 </head><body class="customer-page"><a class="skip" href="#main">Skip to content</a>
 <header><a class="brand" href="index.html" aria-label="I AM REEL home"><img class="brand-animation" src="assets/logo-animation-loop.gif" alt="I AM REEL" width="840" height="224"></a><button class="menu-toggle" aria-expanded="false" aria-controls="nav">Menu <span>☰</span></button><nav id="nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="create.html">Create your vision</a><a href="collection.html">Vision collection</a><a href="why-it-works.html">Why it works</a><a href="professional.html">Partner program</a><a href="global.html">Global vision project</a><a href="create.html" class="nav-cta">Create your vision</a></nav></header>
 <main id="main" class="ev-create page-create"><section class="section home-partner-hero create-partner-hero" aria-labelledby="create-hero"><div class="wrap home-partner-intro"><div class="home-partner-copy"><p class="eyebrow">Personalized cinematic experience</p><h1 id="create-hero">Be the star<br>of your own show.<br><em>Step into your future.</em></h1><p class="home-partner-lead">Create your reality by seeing it up close and personal.</p><div class="actions"><a class="button" href="#cv-products-heading">Create your vision</a><a class="button gold" href="https://www.youtube.com/watch?v=i6ZtQEbf62w" data-vision-video aria-haspopup="dialog" aria-controls="vision-video-modal">See a sample</a></div></div><img class="home-partner-hero-image" src="assets/ev-create/create-header-stage.jpg" alt="Sheri and her band performing live on stage with colorful lights and a cheering crowd" width="2172" height="724" fetchpriority="high"/></div></section><div class="cv-celestial"><section class="iam-personalization-intro"><div class="container"><p class="cv-eyebrow">SEE YOURSELF THERE</p><h2>See yourself living the future you describe.</h2><p>Your Vision Guide turns your ideas into a vivid Dream Future and personal affirmations. After you purchase a visual experience, upload three photos where you love how you look. You will approve your Future Self before we use it in your personalized vision.</p></div></section><section class="cv-intake" aria-labelledby="cv-intake-heading"><div class="container cv-intake-grid"><div class="cv-intake-copy"><p class="cv-eyebrow">Begin creating your future</p><h2 id="cv-intake-heading" class="cv-heading cv-heading--left">Your dream begins with a few details</h2><p class="cv-lead cv-lead--left">Choose your experience, share your dream, and tell us what would make it feel unmistakably yours.</p></div><div id="vision-form" class="iam-launch">
 <section id="iam-auth" class="iam-panel"><p class="cv-eyebrow">Your private vision space</p><h2>Create your free account</h2><p>Save your Vision Blueprint, affirmations and creations in My Sanctuary.</p><div class="iam-auth-grid"><label class="iam-field">Email<input id="auth-email" type="email" autocomplete="email"></label><label class="iam-field">Password<input id="auth-password" type="password" autocomplete="current-password" minlength="8"></label></div><div class="actions"><button id="signup" class="iam-btn gold" type="button">Create free account</button><button id="signin" class="iam-btn ghost" type="button">Sign in</button></div></section>
-<section id="iam-member" class="iam-hidden"><div class="iam-panel iam-guide-only"><div class="iam-topline"><div><div class="iam-guide-brand"><img src="assets/vision-guide-icon-light.jpg" alt="Vision Guide"><div><p class="cv-eyebrow">Your Vision Guide</p><h2 id="iam-vision-title">Let’s build your dream future</h2></div></div><span id="iam-email" class="iam-note iam-hidden"></span></div><div class="iam-guide-actions"><button id="iam-reset-vision" class="iam-btn ghost" type="button">Reset to start over</button></div></div><div id="iam-promo-wrap" class="iam-promo-wrap"><label for="iam-promo-code"><strong>Have a promo code?</strong><span>Enter it here for special offers or experiences.</span></label><div class="iam-promo-row"><input id="iam-promo-code" type="text" autocomplete="off" placeholder="Promo code"><button id="iam-apply-promo" class="iam-btn ghost" type="button">Apply</button></div><p id="iam-promo-status" class="iam-note"></p></div><p class="iam-guide-intro">Choose an intention below or tell your Guide what you want to create.</p>
+<section id="iam-member" class="iam-hidden"><div class="iam-panel iam-guide-only"><div class="iam-topline"><div><div class="iam-guide-brand"><img src="assets/vision-guide-icon-light.jpg" alt="Vision Guide"><div><p class="cv-eyebrow">Your Vision Guide</p><h2 id="iam-vision-title">Let’s build your dream future</h2></div></div><span id="iam-email" class="iam-note iam-hidden"></span></div><div class="iam-guide-actions"><button id="iam-reset-vision" class="iam-btn gold-btn" type="button">Reset to start over</button></div></div><div id="iam-promo-wrap" class="iam-promo-wrap"><label for="iam-promo-code"><strong>Have a promo code?</strong><span>Enter it here for special offers or experiences.</span></label><div class="iam-promo-row"><input id="iam-promo-code" type="text" autocomplete="off" placeholder="Promo code"><button id="iam-apply-promo" class="iam-btn gold-btn" type="button">Apply</button></div><p id="iam-promo-status" class="iam-note"></p></div><p class="iam-guide-intro">What is your dream future? Choose one below or tell us in your own words.</p>
 <div id="iam-starter-pills" class="iam-starter-pills">
 <button type="button" data-vision-starter="I AM abundant.">I AM abundant</button>
 <button type="button" data-vision-starter="I AM happy.">I AM happy</button>
@@ -40,31 +46,33 @@
 <button type="button" data-vision-starter="I AM healthy.">I AM healthy</button>
 </div>
 <div id="iam-chat" class="iam-chat"></div>
+
+<div class="iam-chat-row"><input id="iam-message" type="text" placeholder="Tell me what you see in your future…"><button id="iam-send" class="iam-send-arrow" type="button" aria-label="Send">➤</button></div><div class="iam-ready-row">
+<div id="iam-decision" class="iam-decision-row iam-hidden">
+<button type="button" id="iam-yes-wallpaper" class="iam-action-btn">Get my free wallpaper</button>
+</div>
+<div id="iam-wallpaper-choices" class="iam-wallpaper-row iam-hidden">
+<p class="iam-note" style="width:100%;margin:0 0 8px">Choose your free Dream Future wallpaper. We’ll create the best scene from your vision.</p>
+<button type="button" data-wallpaper-choice="phone" class="iam-action-btn">Phone wallpaper</button>
+<button type="button" data-wallpaper-choice="desktop" class="iam-action-btn">Desktop wallpaper</button>
+</div>
+<div id="iam-wallpaper-result" class="iam-hidden" style="margin:12px 0;padding:14px;background:#f8f6ff;border-radius:14px">
+<p id="iam-wallpaper-status" class="iam-note"></p>
+<p style="margin:10px 0 6px"><strong>Personalize it with your own photo?</strong></p>
+<p class="iam-note">Choosing any product below lets you upload up to 3 photos. After you purchase, we’ll generate a preview so you can confirm it looks like you before we use it in your vision. Free wallpaper and Audio Meditation do not need a photo.</p>
+<button type="button" id="iam-show-products" class="iam-action-btn">Yes — see purchase options</button>
+</div>
+<p id="iam-requirements-note" class="iam-note">Answer a few questions (about 4). Then get your free wallpaper.</p>
+</div><div id="iam-blueprint" class="iam-hidden"></div><div id="iam-wallpaper" class="iam-hidden"><button type="button" data-wallpaper-choice="phone">Phone</button><button type="button" data-wallpaper-choice="desktop">Desktop</button><span id="iam-wallpaper-status"></span></div></div>
 <div id="iam-affirmations-panel" class="iam-affirmations-panel">
 <p class="cv-eyebrow">Your affirmations</p>
 <p class="iam-note">We’ll create affirmations as your vision takes shape. Keep the ones that feel right. Uncheck any you want to change, then tell your Guide what you’d rather say.</p>
 <div id="iam-affirmation-list"></div>
 </div>
-<div class="iam-chat-row"><input id="iam-message" type="text" placeholder="Tell me what you see in your future…"><button id="iam-send" class="iam-btn gold" type="button">Send</button></div><div class="iam-ready-row">
-<div id="iam-decision" class="iam-decision-row iam-hidden">
-<button type="button" id="iam-yes-wallpaper" class="iam-action-btn">Get my free wallpaper</button>
-<button type="button" id="iam-add-photo" class="iam-action-btn">Add my photo to personalize</button>
-</div>
-<div id="iam-wallpaper-choices" class="iam-wallpaper-row iam-hidden">
-<p class="iam-note" style="width:100%;margin:0 0 8px">Choose your free Dream Future wallpaper:</p>
-<button type="button" data-wallpaper-choice="phone" class="iam-action-btn">Phone wallpaper</button>
-<button type="button" data-wallpaper-choice="desktop" class="iam-action-btn">Desktop wallpaper</button>
-<button type="button" data-wallpaper-choice="none" class="iam-action-btn ghost">No wallpaper</button>
-</div>
-<div id="iam-photo-explain" class="iam-note iam-hidden" style="margin-top:10px;padding:12px;background:#f4f0fa;border-radius:12px">
-To add your photo and make the vision personal, choose a personalized product below (Photograph, Video Meditation, or Cinematic Reel). After purchase you can upload up to 3 photos. The free wallpaper and Audio Meditation do not need a photo.
-</div>
-<p id="iam-requirements-note" class="iam-note">Answer a few questions (about 4). Then get your free wallpaper or add a photo after you choose a personalized product.</p>
-</div><div id="iam-blueprint" class="iam-hidden"></div><div id="iam-wallpaper" class="iam-hidden"><button type="button" data-wallpaper-choice="phone">Phone</button><button type="button" data-wallpaper-choice="desktop">Desktop</button><span id="iam-wallpaper-status"></span></div></div>
 <div id="iam-product-handoff" class="iam-panel iam-hidden">
 <p class="cv-eyebrow">Your vision is ready</p>
 <h2>Choose how you want to experience your future</h2>
-<p>Select one or more. You can purchase directly here—there’s no need to leave your Vision Guide.</p>
+<p>Choose any product to personalize your vision with your own photo. After purchase you can upload up to 3 photos. We’ll generate a preview so you can confirm it looks like you before we use it in your product. Audio Meditation needs no photo.</p>
 <div id="iam-photo-panel" class="iam-photo-panel iam-hidden">
 <p class="cv-eyebrow">Make it personal</p>
 <p>Upload up to 3 photos where you love how you look. We’ll generate a preview of you in your vision and ask if it looks like you.</p>

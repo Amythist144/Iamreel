@@ -174,12 +174,23 @@ async function signIn() {
       document.querySelectorAll("#iam-wallpaper-choices .iam-action-btn").forEach(b => b.classList.remove("is-chosen"));
       btn.classList.add("is-chosen");
       const format = btn.dataset.wallpaperChoice;
-      if (format !== "none") localStorage.setItem("iamreel_wallpaper_format", format);
-      else localStorage.removeItem("iamreel_wallpaper_format");
-      $("#iam-product-handoff")?.classList.remove("iam-hidden");
-      $("#iam-product-handoff")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      setStatus(format === "none" ? "No wallpaper selected. Choose how you want to experience your vision." : "Your free " + format + " wallpaper will be created from this vision. Choose a product below if you want more.");
+      localStorage.setItem("iamreel_wallpaper_format", format);
+      const result = $("#iam-wallpaper-result");
+      const status = $("#iam-wallpaper-status");
+      if (status) status.textContent = "Creating your free " + format + " wallpaper from the best scene in your vision…";
+      result?.classList.remove("iam-hidden");
+      result?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      // Placeholder: actual generation can call an Edge Function here
+      setTimeout(() => {
+        if (status) status.textContent = "Your free " + format + " wallpaper is ready — based on the strongest scene from your Vision Blueprint.";
+      }, 800);
     });
+  });
+
+  $("#iam-show-products")?.addEventListener("click", () => {
+    $("#iam-show-products")?.classList.add("is-chosen");
+    $("#iam-product-handoff")?.classList.remove("iam-hidden");
+    $("#iam-product-handoff")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   // Show photo panel only for personalized visual products
@@ -266,7 +277,7 @@ async function resetVisionGuide() {
     const title=$("#iam-vision-title"); if(title)title.textContent="Let’s build your dream future";
     const promo=$("#iam-promo-code"); if(promo)promo.value="";
     const promoStatus=$("#iam-promo-status"); if(promoStatus)promoStatus.textContent="";
-    addMessage("guide","What is your dream future? Choose an intention below or tell me what you want your life to look and feel like.");
+    addMessage("guide","Tell me more about the life you want to step into.");
     setStatus("");
   } catch (error) {
     setStatus(error.message || "Could not start a fresh vision.");
@@ -677,12 +688,23 @@ async function initializeIamReel() {
       document.querySelectorAll("#iam-wallpaper-choices .iam-action-btn").forEach(b => b.classList.remove("is-chosen"));
       btn.classList.add("is-chosen");
       const format = btn.dataset.wallpaperChoice;
-      if (format !== "none") localStorage.setItem("iamreel_wallpaper_format", format);
-      else localStorage.removeItem("iamreel_wallpaper_format");
-      $("#iam-product-handoff")?.classList.remove("iam-hidden");
-      $("#iam-product-handoff")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      setStatus(format === "none" ? "No wallpaper selected. Choose how you want to experience your vision." : "Your free " + format + " wallpaper will be created from this vision. Choose a product below if you want more.");
+      localStorage.setItem("iamreel_wallpaper_format", format);
+      const result = $("#iam-wallpaper-result");
+      const status = $("#iam-wallpaper-status");
+      if (status) status.textContent = "Creating your free " + format + " wallpaper from the best scene in your vision…";
+      result?.classList.remove("iam-hidden");
+      result?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      // Placeholder: actual generation can call an Edge Function here
+      setTimeout(() => {
+        if (status) status.textContent = "Your free " + format + " wallpaper is ready — based on the strongest scene from your Vision Blueprint.";
+      }, 800);
     });
+  });
+
+  $("#iam-show-products")?.addEventListener("click", () => {
+    $("#iam-show-products")?.classList.add("is-chosen");
+    $("#iam-product-handoff")?.classList.remove("iam-hidden");
+    $("#iam-product-handoff")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   // Show photo panel only for personalized visual products
