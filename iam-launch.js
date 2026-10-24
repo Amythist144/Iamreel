@@ -160,6 +160,34 @@ async function signIn() {
   });
 }
 
+async function resetVisionGuide() {
+  const session = await getSession();
+  if (!session) return;
+  const ok = window.confirm("Start a new vision? This will clear the current Guide conversation from this screen and begin a fresh Vision Blueprint.");
+  if (!ok) return;
+  const { data, error } = await iamSupabase.from("visions").insert({
+    user_id: session.user.id,
+    title: "My Dream Future",
+    path: "standard"
+  }).select().single();
+  if (error) { setStatus(error.message); return; }
+  currentVision = data;
+  blueprintReady = false;
+  productChoiceReady = false;
+  const chat = $("#iam-chat");
+  if (chat) chat.innerHTML = "";
+  const affirmations = $("#iam-affirmation-list");
+  if (affirmations) affirmations.innerHTML = "";
+  $("#iam-product-handoff")?.classList.add("iam-hidden");
+  const submit = $("#iam-submit-vision");
+  if (submit) { submit.disabled = true; submit.textContent = "Submit my vision"; }
+  const note = $("#iam-requirements-note");
+  if (note) note.textContent = "Your Guide will ask the questions needed to complete your Vision Blueprint. Submit unlocks when the Blueprint has enough detail.";
+  $("#iam-starter-pills")?.classList.remove("is-used");
+  addMessage("guide","What is your dream future? Choose an intention below or tell me what you want your life to look and feel like.");
+  setStatus("");
+}
+
 async function signOut() {
   await iamSupabase.auth.signOut();
   currentVision = null;
@@ -213,6 +241,8 @@ async function loadMessages() {
     );
     return;
   }
+
+  $("#iam-starter-pills")?.classList.add("is-used");
 
   data.forEach((item) => {
     addMessage(
@@ -454,6 +484,14 @@ async function initializeIamReel() {
   $("#signup")?.addEventListener("click", signUp);
   $("#signin")?.addEventListener("click", signIn);
   $("#signout")?.addEventListener("click", signOut);
+  $("#iam-reset-vision")?.addEventListener("click", resetVisionGuide);
+  document.querySelectorAll("[data-vision-starter]").forEach(button => button.addEventListener("click", () => {
+    const input = $("#iam-message");
+    if (!input) return;
+    input.value = button.dataset.visionStarter || button.textContent.trim();
+    $("#iam-starter-pills")?.classList.add("is-used");
+    sendVisionMessage();
+  }));
 
   $("#iam-send")?.addEventListener(
     "click",
