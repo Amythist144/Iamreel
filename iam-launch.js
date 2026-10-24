@@ -355,6 +355,23 @@ async function sendVisionMessage() {
 
     addMessage("guide", result.message);
 
+    if (String(result.path || "").toLowerCase() === "roses") {
+      const starters = $("#iam-starter-pills");
+      if (starters) {
+        starters.classList.remove("is-used");
+        starters.innerHTML = `
+          <button type="button" data-vision-starter="Ascended Master Portrait">Ascended Master Portrait</button>
+          <button type="button" data-vision-starter="I AM Mighty I AM Presence Chart">I AM Mighty I AM Presence Chart</button>
+          <button type="button" data-vision-starter="Sacred Fire">Sacred Fire</button>`;
+        starters.querySelectorAll("[data-vision-starter]").forEach(button => button.addEventListener("click", () => {
+          const field = $("#iam-message"); if (!field) return;
+          field.value = button.dataset.visionStarter || button.textContent.trim();
+          starters.classList.add("is-used");
+          sendVisionMessage();
+        }));
+      }
+    }
+
     currentVision.blueprint =
       result.blueprint || currentVision.blueprint || {};
 
