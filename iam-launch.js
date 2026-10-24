@@ -153,27 +153,32 @@ async function signIn() {
 
   // Decision after ~4 turns
   $("#iam-yes-wallpaper")?.addEventListener("click", () => {
-    $("#iam-decision")?.classList.add("iam-hidden");
+    document.querySelectorAll(".iam-action-btn").forEach(b => b.classList.remove("is-chosen"));
+    $("#iam-yes-wallpaper")?.classList.add("is-chosen");
     $("#iam-wallpaper-choices")?.classList.remove("iam-hidden");
+    $("#iam-photo-explain")?.classList.add("iam-hidden");
     $("#iam-wallpaper-choices")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    setStatus("Choose a free wallpaper, or skip it.");
   });
-  $("#iam-keep-working")?.addEventListener("click", () => {
-    $("#iam-decision")?.classList.add("iam-hidden");
-    setStatus("Keep talking with your Vision Guide. You can ask for the wallpaper anytime.");
-    $("#iam-message")?.focus();
+  $("#iam-add-photo")?.addEventListener("click", () => {
+    document.querySelectorAll(".iam-action-btn").forEach(b => b.classList.remove("is-chosen"));
+    $("#iam-add-photo")?.classList.add("is-chosen");
+    $("#iam-wallpaper-choices")?.classList.add("iam-hidden");
+    $("#iam-photo-explain")?.classList.remove("iam-hidden");
+    $("#iam-product-handoff")?.classList.remove("iam-hidden");
+    $("#iam-product-handoff")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   // Wallpaper choice leads to products
   document.querySelectorAll("#iam-wallpaper-choices [data-wallpaper-choice]").forEach(btn => {
     btn.addEventListener("click", () => {
+      document.querySelectorAll("#iam-wallpaper-choices .iam-action-btn").forEach(b => b.classList.remove("is-chosen"));
+      btn.classList.add("is-chosen");
       const format = btn.dataset.wallpaperChoice;
       if (format !== "none") localStorage.setItem("iamreel_wallpaper_format", format);
       else localStorage.removeItem("iamreel_wallpaper_format");
-      $("#iam-wallpaper-choices")?.classList.add("iam-hidden");
       $("#iam-product-handoff")?.classList.remove("iam-hidden");
       $("#iam-product-handoff")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      setStatus(format === "none" ? "No wallpaper selected. Choose how you want to experience your vision." : "Your free " + format + " wallpaper will be created from this vision. Choose a product below.");
+      setStatus(format === "none" ? "No wallpaper selected. Choose how you want to experience your vision." : "Your free " + format + " wallpaper will be created from this vision. Choose a product below if you want more.");
     });
   });
 
@@ -457,7 +462,9 @@ async function sendVisionMessage() {
       blueprintReady = true;
       $("#iam-decision")?.classList.remove("iam-hidden");
       $("#iam-decision")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      setStatus("Your vision is taking shape. Create your free wallpaper or keep refining it.");
+      const note = $("#iam-requirements-note");
+      if (note) note.textContent = "Your vision is ready. Get your free wallpaper, or add a photo after you choose a personalized product below.";
+      setStatus("");
     } else {
       setStatus("");
     }
@@ -649,27 +656,32 @@ async function initializeIamReel() {
 
   // Decision after ~4 turns
   $("#iam-yes-wallpaper")?.addEventListener("click", () => {
-    $("#iam-decision")?.classList.add("iam-hidden");
+    document.querySelectorAll(".iam-action-btn").forEach(b => b.classList.remove("is-chosen"));
+    $("#iam-yes-wallpaper")?.classList.add("is-chosen");
     $("#iam-wallpaper-choices")?.classList.remove("iam-hidden");
+    $("#iam-photo-explain")?.classList.add("iam-hidden");
     $("#iam-wallpaper-choices")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    setStatus("Choose a free wallpaper, or skip it.");
   });
-  $("#iam-keep-working")?.addEventListener("click", () => {
-    $("#iam-decision")?.classList.add("iam-hidden");
-    setStatus("Keep talking with your Vision Guide. You can ask for the wallpaper anytime.");
-    $("#iam-message")?.focus();
+  $("#iam-add-photo")?.addEventListener("click", () => {
+    document.querySelectorAll(".iam-action-btn").forEach(b => b.classList.remove("is-chosen"));
+    $("#iam-add-photo")?.classList.add("is-chosen");
+    $("#iam-wallpaper-choices")?.classList.add("iam-hidden");
+    $("#iam-photo-explain")?.classList.remove("iam-hidden");
+    $("#iam-product-handoff")?.classList.remove("iam-hidden");
+    $("#iam-product-handoff")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   // Wallpaper choice leads to products
   document.querySelectorAll("#iam-wallpaper-choices [data-wallpaper-choice]").forEach(btn => {
     btn.addEventListener("click", () => {
+      document.querySelectorAll("#iam-wallpaper-choices .iam-action-btn").forEach(b => b.classList.remove("is-chosen"));
+      btn.classList.add("is-chosen");
       const format = btn.dataset.wallpaperChoice;
       if (format !== "none") localStorage.setItem("iamreel_wallpaper_format", format);
       else localStorage.removeItem("iamreel_wallpaper_format");
-      $("#iam-wallpaper-choices")?.classList.add("iam-hidden");
       $("#iam-product-handoff")?.classList.remove("iam-hidden");
       $("#iam-product-handoff")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      setStatus(format === "none" ? "No wallpaper selected. Choose how you want to experience your vision." : "Your free " + format + " wallpaper will be created from this vision. Choose a product below.");
+      setStatus(format === "none" ? "No wallpaper selected. Choose how you want to experience your vision." : "Your free " + format + " wallpaper will be created from this vision. Choose a product below if you want more.");
     });
   });
 

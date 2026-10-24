@@ -16,7 +16,7 @@
 #vg-demo.vg-inline .vg-layout{overflow:visible}
 .iam-product-image{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:16px;margin-bottom:14px;display:block}.iam-choice-card.selected{outline:3px solid #d5aa19;box-shadow:0 10px 28px rgba(213,170,25,.18)}
 .iam-affirmations-panel{margin:18px 0;padding:18px;border:1px solid #d9e3ec;border-radius:18px;background:#fbfdff}.iam-affirmation-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #edf1f5}.iam-affirmation-item:last-child{border-bottom:0}.iam-affirmation-item input{margin-top:5px;accent-color:#d5aa19}.iam-audio-preview{width:100%;aspect-ratio:16/9;border-radius:16px;margin-bottom:14px;background:linear-gradient(135deg,#102b50,#7758a8);display:flex;align-items:center;justify-content:center;gap:18px;color:white;overflow:hidden}.iam-play{width:58px;height:58px;border:2px solid rgba(255,255,255,.75);border-radius:50%;display:grid;place-items:center;padding-left:4px;font-size:23px}.iam-wave{font-size:23px;letter-spacing:3px;white-space:nowrap;opacity:.9}
-.iam-guide-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.iam-starter-pills{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 20px}.iam-starter-pills button{border:1px solid #064bbf;background:#064bbf;color:#fff;border-radius:999px;padding:8px 16px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;line-height:1.2;white-space:nowrap}.iam-starter-pills button:hover{background:#093a8c}.iam-starter-pills.is-used{display:none}
+.iam-guide-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.iam-starter-pills{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 20px}.iam-starter-pills button,.iam-action-btn{display:inline-flex;align-items:center;justify-content:center;min-width:160px;height:44px;border:1px solid #064bbf;background:#064bbf;color:#fff;border-radius:999px;padding:0 18px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;line-height:1;white-space:nowrap}.iam-starter-pills button:hover,.iam-action-btn:hover{background:#093a8c}.iam-starter-pills button.is-chosen,.iam-action-btn.is-chosen{background:#b8a9d4;border-color:#b8a9d4;color:#1a1530}.iam-action-btn.ghost{background:transparent;color:#064bbf}.iam-action-btn.ghost.is-chosen{background:#b8a9d4;color:#1a1530;border-color:#b8a9d4}.iam-starter-pills button:hover{background:#093a8c}.iam-starter-pills.is-used{display:none}
 .iam-guide-brand{display:flex;align-items:center;gap:18px}.iam-guide-brand img{width:92px;height:92px;object-fit:cover;border-radius:18px;display:block}@media(max-width:640px){.iam-guide-brand img{width:72px;height:72px}.iam-guide-brand{align-items:flex-start}}
 
 .iam-decision-row,.iam-wallpaper-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
@@ -39,23 +39,28 @@
 <button type="button" data-vision-starter="I AM in a happy relationship.">I AM in a happy relationship</button>
 <button type="button" data-vision-starter="I AM healthy.">I AM healthy</button>
 </div>
-<div id="iam-decision" class="iam-decision-row iam-hidden">
-<button type="button" id="iam-yes-wallpaper">Yes — create my free wallpaper</button>
-<button type="button" id="iam-keep-working" class="ghost">Keep working on it</button>
-</div>
-<div id="iam-wallpaper-choices" class="iam-wallpaper-row iam-hidden">
-<p class="iam-note" style="width:100%;margin:0 0 6px">Choose your free Dream Future wallpaper:</p>
-<button type="button" data-wallpaper-choice="phone">Phone wallpaper</button>
-<button type="button" data-wallpaper-choice="desktop">Desktop wallpaper</button>
-<button type="button" data-wallpaper-choice="none" class="ghost">No wallpaper</button>
-</div>
 <div id="iam-chat" class="iam-chat"></div>
 <div id="iam-affirmations-panel" class="iam-affirmations-panel">
 <p class="cv-eyebrow">Your affirmations</p>
 <p class="iam-note">We’ll create affirmations as your vision takes shape. Keep the ones that feel right. Uncheck any you want to change, then tell your Guide what you’d rather say.</p>
 <div id="iam-affirmation-list"></div>
 </div>
-<div class="iam-chat-row"><input id="iam-message" type="text" placeholder="Tell me what you see in your future…"><button id="iam-send" class="iam-btn gold" type="button">Send</button></div><div class="iam-ready-row"><button id="iam-submit-vision" class="iam-btn gold" type="button" disabled>Submit my vision</button><p id="iam-requirements-note" class="iam-note">Keep talking until your future feels vivid and personal. You can submit your vision whenever it feels ready.</p></div><div id="iam-blueprint" class="iam-hidden"></div><div id="iam-wallpaper" class="iam-hidden"><button type="button" data-wallpaper-choice="phone">Phone</button><button type="button" data-wallpaper-choice="desktop">Desktop</button><span id="iam-wallpaper-status"></span></div></div>
+<div class="iam-chat-row"><input id="iam-message" type="text" placeholder="Tell me what you see in your future…"><button id="iam-send" class="iam-btn gold" type="button">Send</button></div><div class="iam-ready-row">
+<div id="iam-decision" class="iam-decision-row iam-hidden">
+<button type="button" id="iam-yes-wallpaper" class="iam-action-btn">Get my free wallpaper</button>
+<button type="button" id="iam-add-photo" class="iam-action-btn">Add my photo to personalize</button>
+</div>
+<div id="iam-wallpaper-choices" class="iam-wallpaper-row iam-hidden">
+<p class="iam-note" style="width:100%;margin:0 0 8px">Choose your free Dream Future wallpaper:</p>
+<button type="button" data-wallpaper-choice="phone" class="iam-action-btn">Phone wallpaper</button>
+<button type="button" data-wallpaper-choice="desktop" class="iam-action-btn">Desktop wallpaper</button>
+<button type="button" data-wallpaper-choice="none" class="iam-action-btn ghost">No wallpaper</button>
+</div>
+<div id="iam-photo-explain" class="iam-note iam-hidden" style="margin-top:10px;padding:12px;background:#f4f0fa;border-radius:12px">
+To add your photo and make the vision personal, choose a personalized product below (Photograph, Video Meditation, or Cinematic Reel). After purchase you can upload up to 3 photos. The free wallpaper and Audio Meditation do not need a photo.
+</div>
+<p id="iam-requirements-note" class="iam-note">Answer a few questions (about 4). Then get your free wallpaper or add a photo after you choose a personalized product.</p>
+</div><div id="iam-blueprint" class="iam-hidden"></div><div id="iam-wallpaper" class="iam-hidden"><button type="button" data-wallpaper-choice="phone">Phone</button><button type="button" data-wallpaper-choice="desktop">Desktop</button><span id="iam-wallpaper-status"></span></div></div>
 <div id="iam-product-handoff" class="iam-panel iam-hidden">
 <p class="cv-eyebrow">Your vision is ready</p>
 <h2>Choose how you want to experience your future</h2>
