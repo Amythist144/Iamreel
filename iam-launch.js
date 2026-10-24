@@ -510,6 +510,27 @@ async function initializeIamReel() {
   $("#signin")?.addEventListener("click", signIn);
   $("#signout")?.addEventListener("click", signOut);
   $("#iam-reset-vision")?.addEventListener("click", resetVisionGuide);
+  $("#iam-apply-promo")?.addEventListener("click", async () => {
+    const field = $("#iam-promo-code"); const status = $("#iam-promo-status"); const input = $("#iam-message");
+    const code = String(field?.value || "").trim().toUpperCase();
+    if (!code) { if (status) status.textContent = "Promo code is optional."; return; }
+    if (code !== "ROSES" && code !== "SPIRITUAL") { if (status) status.textContent = "Promo code saved. Any eligible offer will be applied at checkout."; localStorage.setItem("iamreel_promo_code", code); return; }
+    localStorage.setItem("iamreel_promo_code", code);
+    if (status) status.textContent = "Special experience unlocked.";
+    if (input) input.value = code === "ROSES" ? "roses" : "spiritual";
+    await sendVisionMessage();
+    const starters = $("#iam-starter-pills");
+    if (!starters) return;
+    starters.classList.remove("is-used");
+    const choices = code === "ROSES"
+      ? [["Ascended Master Portrait","Ascended Master Portrait"],["I AM Mighty I AM Presence Chart","I AM Mighty I AM Presence Chart"],["Sacred Fire","Sacred Fire"]]
+      : [["With Master Jesus","A spiritual portrait of me with Master Jesus"],["With Mother Mary","A spiritual portrait of me with Mother Mary"],["Held in Angel Wings","A spiritual portrait of me held in an angel's wings"],["Healing with Christ","A symbolic spiritual portrait of me receiving healing light with Christ"],["Healing with Archangel Raphael","A symbolic spiritual portrait of me receiving healing light with Archangel Raphael"]];
+    starters.innerHTML = choices.map(([label,value]) => '<button type="button" data-vision-starter="'+value.replace(/"/g,"&quot;")+'">'+label+'</button>').join("");
+    starters.querySelectorAll("[data-vision-starter]").forEach(button => button.addEventListener("click", () => {
+      const box=$("#iam-message"); if(!box)return; box.value=button.dataset.visionStarter||button.textContent.trim(); starters.classList.add("is-used"); sendVisionMessage();
+    }));
+  });
+
   document.querySelectorAll("[data-vision-starter]").forEach(button => button.addEventListener("click", () => {
     const input = $("#iam-message");
     if (!input) return;
