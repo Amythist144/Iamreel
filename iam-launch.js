@@ -56,8 +56,6 @@ async function refreshAccount() {
 
   if (!signedIn) return;
 
-  const email = $("#iam-email");
-  if (email) email.textContent = session.user.email || "";
 
   const { data } = await iamSupabase
     .from("visions")
@@ -69,7 +67,7 @@ async function refreshAccount() {
     currentVision = data[0];
     blueprintReady = currentVision.status === "blueprint_ready" || currentVision.status === "production_ready";
     const submitVision = $("#iam-submit-vision");
-    if (submitVision) submitVision.disabled = !blueprintReady;
+    if (submitVision) submitVision.disabled = false;
     document.querySelectorAll("[data-wallpaper-choice]").forEach((button) => { button.disabled = !blueprintReady; });
     const wallpaperStatus = $("#iam-wallpaper-status");
     if (blueprintReady && wallpaperStatus) wallpaperStatus.textContent = "Your Blueprint is ready. Choose a wallpaper format to create your complimentary design.";
