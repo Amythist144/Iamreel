@@ -68,6 +68,8 @@ async function refreshAccount() {
   if (data && data[0]) {
     currentVision = data[0];
     blueprintReady = currentVision.status === "blueprint_ready" || currentVision.status === "production_ready";
+    const submitVision = $("#iam-submit-vision");
+    if (submitVision) submitVision.disabled = !blueprintReady;
     document.querySelectorAll("[data-wallpaper-choice]").forEach((button) => { button.disabled = !blueprintReady; });
     const wallpaperStatus = $("#iam-wallpaper-status");
     if (blueprintReady && wallpaperStatus) wallpaperStatus.textContent = "Your Blueprint is ready. Choose a wallpaper format to create your complimentary design.";
@@ -273,6 +275,10 @@ async function sendVisionMessage() {
     if (result.blueprint_ready) {
       blueprintReady = true;
       productChoiceReady = true;
+      const submitVision = $("#iam-submit-vision");
+      if (submitVision) submitVision.disabled = false;
+      const requirementsNote = $("#iam-requirements-note");
+      if (requirementsNote) requirementsNote.textContent = "Your Vision Blueprint has enough detail. Review your conversation, then submit when you’re ready.";
       document.querySelectorAll("[data-wallpaper-choice]").forEach((button) => { button.disabled = false; });
       const wallpaperStatus = $("#iam-wallpaper-status");
       if (wallpaperStatus) wallpaperStatus.textContent = "Your Blueprint is ready. Choose a wallpaper format to create your complimentary design.";
