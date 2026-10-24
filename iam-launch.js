@@ -137,7 +137,7 @@ async function signIn() {
       const card = x.closest(".iam-choice-card");
       card?.classList.toggle("selected", x.checked);
       const label = card?.querySelector(".iam-btn");
-      if (label) label.textContent = x.checked ? "Added to My Vision ✓" : "Add to My Vision";
+      if (label) label.textContent = x.checked ? "Added to cart ✓" : "Add to cart";
     });
     const total = selected.reduce((sum,x)=>sum+(inlinePrices[x.value]||0),0);
     if (inlineSummary) inlineSummary.textContent = selected.length ? selected.length + " selected · $" + (total/100).toFixed(2) : "Choose one or more experiences above.";
