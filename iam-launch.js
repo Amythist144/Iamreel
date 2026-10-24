@@ -162,14 +162,26 @@ async function signIn() {
 
 async function resetVisionGuide() {
   const session = await getSession();
-  if (!session) return;
-  const ok = window.confirm("Start a new vision? This will clear the current Guide conversation from this screen and begin a fresh Vision Blueprint.");
+  if (!session || !currentVision) return;
+  const ok = window.confirm("Reset and start over? This will permanently clear this Vision Guide conversation, Blueprint, and affirmations.");
   if (!ok) return;
-  const { data, error } = await iamSupabase.from("visions").insert({
-    user_id: session.user.id,
+  setStatus("Resetting your Vision Guide…");
+  const visionId = currentVision.id;
+  const [{ error: msgError }, { error: affError }] = await Promise.all([
+    iamSupabase.from("vision_messages").delete().eq("vision_id", visionId),
+    iamSupabase.from("affirmations").delete().eq("vision_id", visionId)
+  ]);
+  if (msgError || affError) { setStatus((msgError || affError).message); return; }
+  const { data, error } = await iamSupabase.from("visions").update({
     title: "My Dream Future",
-    path: "standard"
-  }).select().single();
+    status: "draft",
+    blueprint: {},
+    conversation_summary: null,
+    wallpaper_format: null,
+    wallpaper_requested_at: null,
+    blueprint_completed_at: null,
+    customer_feedback: null
+  }).eq("id", visionId).select().single();
   if (error) { setStatus(error.message); return; }
   currentVision = data;
   blueprintReady = false;
@@ -185,9 +197,10 @@ async function resetVisionGuide() {
   if (note) note.textContent = "Your Guide will ask the questions needed to complete your Vision Blueprint. Submit unlocks when the Blueprint has enough detail.";
   $("#iam-starter-pills")?.classList.remove("is-used");
   addMessage("guide","What is your dream future? Choose an intention below or tell me what you want your life to look and feel like.");
+  localStorage.removeItem("iamreel_rejected_affirmations");
+  localStorage.removeItem("iamreel_wallpaper_format");
   setStatus("");
 }
-
 async function signOut() {
   await iamSupabase.auth.signOut();
   currentVision = null;
