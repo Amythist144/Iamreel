@@ -250,6 +250,32 @@ function renderBlueprint() {
     .join("");
 }
 
+function renderVisionAffirmations(items) {
+  const list = $("#iam-affirmation-list");
+  if (!list || !Array.isArray(items)) return;
+  const seen = new Set();
+  const unique = items.filter(item => {
+    const statement = typeof item === "string" ? item : item?.statement;
+    if (!statement || seen.has(statement)) return false;
+    seen.add(statement); return true;
+  });
+  list.innerHTML = unique.map((item,i) => {
+    const statement = typeof item === "string" ? item : item.statement;
+    return '<label class="iam-affirmation-item"><input type="checkbox" class="iam-affirmation-choice" data-statement="' + escapeHtml(statement) + '" checked><span>' + escapeHtml(statement) + '</span></label>';
+  }).join("");
+  list.querySelectorAll(".iam-affirmation-choice").forEach(box => box.addEventListener("change", () => {
+    const rejected = [...list.querySelectorAll(".iam-affirmation-choice:not(:checked)")].map(x => x.dataset.statement);
+    localStorage.setItem("iamreel_rejected_affirmations", JSON.stringify(rejected));
+    if (!box.checked) {
+      const input = $("#iam-message");
+      if (input) {
+        input.placeholder = "Tell your Guide how you’d like to change that affirmation…";
+        input.focus();
+      }
+    }
+  }));
+}
+
 async function sendVisionMessage() {
   const input = $("#iam-message");
 
@@ -295,6 +321,7 @@ async function sendVisionMessage() {
       result.blueprint || currentVision.blueprint || {};
 
     renderBlueprint();
+    renderVisionAffirmations(result.affirmations || []);
 
     if (result.blueprint_ready) {
       blueprintReady = true;
