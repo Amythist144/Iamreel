@@ -127,6 +127,30 @@ async function signIn() {
   }
 
   setStatus("Welcome back.");
+  const inlineProducts = [...document.querySelectorAll("#iam-inline-store input[type=checkbox]")];
+  const inlineCheckout = $("#iam-inline-checkout");
+  const inlineSummary = $("#iam-cart-summary");
+  const inlinePrices = { dream_portrait: 999, audio_meditation: 2900, video_meditation: 4900, cinematic_reel: 19900 };
+  const updateInlineCart = () => {
+    const selected = inlineProducts.filter(x => x.checked);
+    inlineProducts.forEach(x => {
+      const card = x.closest(".iam-choice-card");
+      card?.classList.toggle("selected", x.checked);
+      const label = card?.querySelector(".iam-btn");
+      if (label) label.textContent = x.checked ? "Added to My Vision ✓" : "Add to My Vision";
+    });
+    const total = selected.reduce((sum,x)=>sum+(inlinePrices[x.value]||0),0);
+    if (inlineSummary) inlineSummary.textContent = selected.length ? selected.length + " selected · $" + (total/100).toFixed(2) : "Choose one or more experiences above.";
+    if (inlineCheckout) inlineCheckout.disabled = selected.length === 0;
+  };
+  inlineProducts.forEach(x => x.addEventListener("change", updateInlineCart));
+  inlineCheckout?.addEventListener("click", () => {
+    const codes = inlineProducts.filter(x => x.checked).map(x => x.value);
+    if (!codes.length) return;
+    location.href = "collection.html?checkout=" + encodeURIComponent(codes.join(",")) + "#vision-store";
+  });
+  updateInlineCart();
+
   setupWallpaperChoices();
   setupProductHandoff();
   await refreshAccount();
