@@ -16,8 +16,16 @@
 #vg-demo.vg-inline .vg-layout{overflow:visible}
 .iam-product-image{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:16px;margin-bottom:14px;display:block}.iam-choice-card.selected{outline:3px solid #d5aa19;box-shadow:0 10px 28px rgba(213,170,25,.18)}
 .iam-affirmations-panel{margin:18px 0;padding:18px;border:1px solid #d9e3ec;border-radius:18px;background:#fbfdff}.iam-affirmation-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #edf1f5}.iam-affirmation-item:last-child{border-bottom:0}.iam-affirmation-item input{margin-top:5px;accent-color:#d5aa19}.iam-audio-preview{width:100%;aspect-ratio:16/9;border-radius:16px;margin-bottom:14px;background:linear-gradient(135deg,#102b50,#7758a8);display:flex;align-items:center;justify-content:center;gap:18px;color:white;overflow:hidden}.iam-play{width:58px;height:58px;border:2px solid rgba(255,255,255,.75);border-radius:50%;display:grid;place-items:center;padding-left:4px;font-size:23px}.iam-wave{font-size:23px;letter-spacing:3px;white-space:nowrap;opacity:.9}
-.iam-guide-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.iam-starter-pills{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 20px}.iam-starter-pills button{border:1px solid #b8cde0;background:#f7fbff;color:#092849;border-radius:999px;padding:11px 17px;font:inherit;font-weight:700;cursor:pointer}.iam-starter-pills button:hover{background:#eaf4fb}.iam-starter-pills.is-used{display:none}
+.iam-guide-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.iam-starter-pills{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 20px}.iam-starter-pills button{border:1px solid #064bbf;background:#064bbf;color:#fff;border-radius:999px;padding:8px 16px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;line-height:1.2;white-space:nowrap}.iam-starter-pills button:hover{background:#093a8c}.iam-starter-pills.is-used{display:none}
 .iam-guide-brand{display:flex;align-items:center;gap:18px}.iam-guide-brand img{width:92px;height:92px;object-fit:cover;border-radius:18px;display:block}@media(max-width:640px){.iam-guide-brand img{width:72px;height:72px}.iam-guide-brand{align-items:flex-start}}
+
+.iam-decision-row,.iam-wallpaper-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.iam-decision-row button,.iam-wallpaper-row button{background:#064bbf;color:#fff;border:1px solid #064bbf;border-radius:999px;padding:10px 18px;font:inherit;font-weight:700;cursor:pointer}
+.iam-decision-row button:hover,.iam-wallpaper-row button:hover{background:#093a8c}
+.iam-decision-row button.ghost,.iam-wallpaper-row button.ghost{background:transparent;color:#064bbf}
+.iam-photo-panel{margin-top:18px;padding:18px;border:1px solid #d9e3ec;border-radius:18px;background:#fbfdff}
+.iam-photo-panel input[type=file]{margin:8px 0}
+
 </style>
 </head><body class="customer-page"><a class="skip" href="#main">Skip to content</a>
 <header><a class="brand" href="index.html" aria-label="I AM REEL home"><img class="brand-animation" src="assets/logo-animation-loop.gif" alt="I AM REEL" width="840" height="224"></a><button class="menu-toggle" aria-expanded="false" aria-controls="nav">Menu <span>☰</span></button><nav id="nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="create.html">Create your vision</a><a href="collection.html">Vision collection</a><a href="why-it-works.html">Why it works</a><a href="professional.html">Partner program</a><a href="global.html">Global vision project</a><a href="create.html" class="nav-cta">Create your vision</a></nav></header>
@@ -31,6 +39,16 @@
 <button type="button" data-vision-starter="I AM in a happy relationship.">I AM in a happy relationship</button>
 <button type="button" data-vision-starter="I AM healthy.">I AM healthy</button>
 </div>
+<div id="iam-decision" class="iam-decision-row iam-hidden">
+<button type="button" id="iam-yes-wallpaper">Yes — create my free wallpaper</button>
+<button type="button" id="iam-keep-working" class="ghost">Keep working on it</button>
+</div>
+<div id="iam-wallpaper-choices" class="iam-wallpaper-row iam-hidden">
+<p class="iam-note" style="width:100%;margin:0 0 6px">Choose your free Dream Future wallpaper:</p>
+<button type="button" data-wallpaper-choice="phone">Phone wallpaper</button>
+<button type="button" data-wallpaper-choice="desktop">Desktop wallpaper</button>
+<button type="button" data-wallpaper-choice="none" class="ghost">No wallpaper</button>
+</div>
 <div id="iam-chat" class="iam-chat"></div>
 <div id="iam-affirmations-panel" class="iam-affirmations-panel">
 <p class="cv-eyebrow">Your affirmations</p>
@@ -42,11 +60,22 @@
 <p class="cv-eyebrow">Your vision is ready</p>
 <h2>Choose how you want to experience your future</h2>
 <p>Select one or more. You can purchase directly here—there’s no need to leave your Vision Guide.</p>
+<div id="iam-photo-panel" class="iam-photo-panel iam-hidden">
+<p class="cv-eyebrow">Make it personal</p>
+<p>Upload up to 3 photos where you love how you look. We’ll generate a preview of you in your vision and ask if it looks like you.</p>
+<input type="file" id="iam-photo-upload" accept="image/*" multiple>
+<div id="iam-photo-preview"></div>
+<div class="iam-decision-row">
+<button type="button" id="iam-photo-yes">Yes, this looks like me</button>
+<button type="button" id="iam-photo-no" class="ghost">No — try again</button>
+</div>
+<p id="iam-photo-status" class="iam-note"></p>
+</div>
 <div class="iam-products iam-product-choices" id="iam-inline-store">
-<label class="iam-product iam-choice-card" data-product="dream_portrait"><img class="iam-product-image" src="assets/ev-collection/digital-vision-board.webp" alt="Example personalized dream photograph"><strong>Personalized Photograph</strong><span class="iam-price">$9.99</span><p>One high-resolution personalized image of you inside a meaningful scene from your future.</p><span class="iam-btn">Add to cart</span><input type="checkbox" value="dream_portrait" hidden></label>
-<label class="iam-product iam-choice-card iam-audio-card" data-product="audio_meditation"><div class="iam-audio-preview" aria-hidden="true"><span class="iam-play">▶</span><span class="iam-wave">▂▅▃▇▄▆▂▅▇▃▆▄▂▇▅▃▆▂▅▇</span></div><strong>Audio Meditation</strong><span class="iam-price">$49</span><p>Personalized audio meditation using your Dream Future, selected affirmations and a calming frequency-based soundscape. No photo required.</p><span class="iam-btn">Add to cart</span><input type="checkbox" value="audio_meditation" hidden></label>
-<label class="iam-product iam-choice-card" data-product="video_meditation"><img class="iam-product-image" src="assets/ev-collection/meditation-video-cosmic.png" alt="Example personalized video meditation"><strong>Personalized Video Meditation — See Yourself There</strong><span class="iam-price">$99</span><p>Your Dream Future, affirmations and meditation brought to life with personalized imagery of your approved Future Self.</p><span class="iam-btn">Add to cart</span><input type="checkbox" value="video_meditation" hidden></label>
-<label class="iam-product iam-choice-card" data-product="cinematic_reel"><img class="iam-product-image" src="assets/ev-collection/computer-wallpaper.webp" alt="Example cinematic dream reel"><strong>Cinematic Reel — Me Living My Dream</strong><span class="iam-price">$199</span><p>A 100-second personalized cinematic visualization of you living the future you described.</p><span class="iam-btn gold">Add to cart</span><input type="checkbox" value="cinematic_reel" hidden></label>
+<label class="iam-product iam-choice-card" data-product="dream_portrait"><img class="iam-product-image" src="assets/ev-collection/digital-vision-board.webp" alt="Example personalized dream photograph"><strong>Personalized Photograph</strong><span class="iam-price">$9.99</span><p>One high-resolution image of you inside a scene from your vision. Photo upload required.</p><span class="iam-btn">Add to cart</span><input type="checkbox" value="dream_portrait" hidden></label>
+<label class="iam-product iam-choice-card iam-audio-card" data-product="audio_meditation"><div class="iam-audio-preview" aria-hidden="true"><span class="iam-play">▶</span><span class="iam-wave">▂▅▃▇▄▆▂▅▇▃▆▄▂▇▅▃▆▂▅▇</span></div><strong>Audio Meditation</strong><span class="iam-price">$49</span><p>Your Vision Blueprint, affirmations, and a soothing voice guided over solfeggio frequency music. No photo required.</p><span class="iam-btn">Add to cart</span><input type="checkbox" value="audio_meditation" hidden></label>
+<label class="iam-product iam-choice-card" data-product="video_meditation"><img class="iam-product-image" src="assets/ev-collection/meditation-video-cosmic.png" alt="Example personalized video meditation"><strong>Personalized Video Meditation</strong><span class="iam-price">$99</span><p>Your vision with slow-fade images, kaleidoscope bookends, affirmations, and the same audio. Photo upload required for your Future Self.</p><span class="iam-btn">Add to cart</span><input type="checkbox" value="video_meditation" hidden></label>
+<label class="iam-product iam-choice-card" data-product="cinematic_reel"><img class="iam-product-image" src="assets/ev-collection/computer-wallpaper.webp" alt="Example cinematic dream reel"><strong>Cinematic Reel — Me Living My Dream</strong><span class="iam-price">$199</span><p>A 100-second personalized cinematic of you living your vision. Photo upload required.</p><span class="iam-btn gold">Add to cart</span><input type="checkbox" value="cinematic_reel" hidden></label>
 </div>
 <div class="iam-inline-cart"><div><strong>My Vision</strong><p id="iam-cart-summary">Choose one or more experiences above.</p></div><button id="iam-inline-checkout" class="iam-btn gold" type="button" disabled>Continue to checkout</button></div>
 <p class="iam-note">Want to browse first? <a href="collection.html#vision-store">View the full Vision Collection</a>.</p>

@@ -10,6 +10,7 @@ let currentVision = null;
 let paypalClientId = null;
 let productChoiceReady = false;
 let blueprintReady = false;
+let userTurnCount = 0;
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -148,6 +149,51 @@ async function signIn() {
     location.href = "collection.html?checkout=" + encodeURIComponent(codes.join(",")) + "#vision-store";
   });
   updateInlineCart();
+
+
+  // Decision after ~4 turns
+  $("#iam-yes-wallpaper")?.addEventListener("click", () => {
+    $("#iam-decision")?.classList.add("iam-hidden");
+    $("#iam-wallpaper-choices")?.classList.remove("iam-hidden");
+    $("#iam-wallpaper-choices")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    setStatus("Choose a free wallpaper, or skip it.");
+  });
+  $("#iam-keep-working")?.addEventListener("click", () => {
+    $("#iam-decision")?.classList.add("iam-hidden");
+    setStatus("Keep talking with your Vision Guide. You can ask for the wallpaper anytime.");
+    $("#iam-message")?.focus();
+  });
+
+  // Wallpaper choice leads to products
+  document.querySelectorAll("#iam-wallpaper-choices [data-wallpaper-choice]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const format = btn.dataset.wallpaperChoice;
+      if (format !== "none") localStorage.setItem("iamreel_wallpaper_format", format);
+      else localStorage.removeItem("iamreel_wallpaper_format");
+      $("#iam-wallpaper-choices")?.classList.add("iam-hidden");
+      $("#iam-product-handoff")?.classList.remove("iam-hidden");
+      $("#iam-product-handoff")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      setStatus(format === "none" ? "No wallpaper selected. Choose how you want to experience your vision." : "Your free " + format + " wallpaper will be created from this vision. Choose a product below.");
+    });
+  });
+
+  // Show photo panel only for personalized visual products
+  const personalized = ["dream_portrait", "video_meditation", "cinematic_reel"];
+  document.querySelectorAll("#iam-inline-store input[type=checkbox]").forEach(box => {
+    box.addEventListener("change", () => {
+      const anyPersonal = [...document.querySelectorAll("#iam-inline-store input[type=checkbox]")]
+        .some(x => x.checked && personalized.includes(x.value));
+      $("#iam-photo-panel")?.classList.toggle("iam-hidden", !anyPersonal);
+    });
+  });
+
+  $("#iam-photo-yes")?.addEventListener("click", () => {
+    $("#iam-photo-status").textContent = "Great — we’ll use this Future Self in your personalized vision.";
+  });
+  $("#iam-photo-no")?.addEventListener("click", () => {
+    $("#iam-photo-status").textContent = "We’ll generate another version. You can also upload a different photo.";
+    $("#iam-photo-upload")?.click();
+  });
 
   setupWallpaperChoices();
   setupProductHandoff();
@@ -352,6 +398,7 @@ async function sendVisionMessage() {
 
   input.value = "";
   addMessage("user", text);
+  userTurnCount++;
 
   setStatus("Your Vision Guide is thinking…");
 
@@ -405,19 +452,12 @@ async function sendVisionMessage() {
     renderBlueprint();
     renderVisionAffirmations(result.affirmations || []);
 
-    if (result.blueprint_ready) {
+    const ready = result.blueprint_ready || userTurnCount >= 4;
+    if (ready) {
       blueprintReady = true;
-      productChoiceReady = true;
-      const submitVision = $("#iam-submit-vision");
-      if (submitVision) submitVision.disabled = false;
-      const requirementsNote = $("#iam-requirements-note");
-      if (requirementsNote) requirementsNote.textContent = "Your Vision Blueprint has enough detail. Review your conversation, then submit when you’re ready.";
-      document.querySelectorAll("[data-wallpaper-choice]").forEach((button) => { button.disabled = false; });
-      const wallpaperStatus = $("#iam-wallpaper-status");
-      if (wallpaperStatus) wallpaperStatus.textContent = "Your Blueprint is ready. Choose a wallpaper format to create your complimentary design.";
-
-      $("#iam-product-handoff")?.classList.remove("iam-hidden");
-      setStatus("Your Vision Blueprint is taking shape. When you’re ready, say “choose my vision product” or use the choices below.");
+      $("#iam-decision")?.classList.remove("iam-hidden");
+      $("#iam-decision")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      setStatus("Your vision is taking shape. Create your free wallpaper or keep refining it.");
     } else {
       setStatus("");
     }
@@ -605,6 +645,51 @@ async function initializeIamReel() {
     }
   );
 
+
+
+  // Decision after ~4 turns
+  $("#iam-yes-wallpaper")?.addEventListener("click", () => {
+    $("#iam-decision")?.classList.add("iam-hidden");
+    $("#iam-wallpaper-choices")?.classList.remove("iam-hidden");
+    $("#iam-wallpaper-choices")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    setStatus("Choose a free wallpaper, or skip it.");
+  });
+  $("#iam-keep-working")?.addEventListener("click", () => {
+    $("#iam-decision")?.classList.add("iam-hidden");
+    setStatus("Keep talking with your Vision Guide. You can ask for the wallpaper anytime.");
+    $("#iam-message")?.focus();
+  });
+
+  // Wallpaper choice leads to products
+  document.querySelectorAll("#iam-wallpaper-choices [data-wallpaper-choice]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const format = btn.dataset.wallpaperChoice;
+      if (format !== "none") localStorage.setItem("iamreel_wallpaper_format", format);
+      else localStorage.removeItem("iamreel_wallpaper_format");
+      $("#iam-wallpaper-choices")?.classList.add("iam-hidden");
+      $("#iam-product-handoff")?.classList.remove("iam-hidden");
+      $("#iam-product-handoff")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      setStatus(format === "none" ? "No wallpaper selected. Choose how you want to experience your vision." : "Your free " + format + " wallpaper will be created from this vision. Choose a product below.");
+    });
+  });
+
+  // Show photo panel only for personalized visual products
+  const personalized = ["dream_portrait", "video_meditation", "cinematic_reel"];
+  document.querySelectorAll("#iam-inline-store input[type=checkbox]").forEach(box => {
+    box.addEventListener("change", () => {
+      const anyPersonal = [...document.querySelectorAll("#iam-inline-store input[type=checkbox]")]
+        .some(x => x.checked && personalized.includes(x.value));
+      $("#iam-photo-panel")?.classList.toggle("iam-hidden", !anyPersonal);
+    });
+  });
+
+  $("#iam-photo-yes")?.addEventListener("click", () => {
+    $("#iam-photo-status").textContent = "Great — we’ll use this Future Self in your personalized vision.";
+  });
+  $("#iam-photo-no")?.addEventListener("click", () => {
+    $("#iam-photo-status").textContent = "We’ll generate another version. You can also upload a different photo.";
+    $("#iam-photo-upload")?.click();
+  });
 
   setupWallpaperChoices();
   setupProductHandoff();
