@@ -154,6 +154,8 @@ async function signIn() {
   setupWallpaperChoices();
   setupProductHandoff();
   await refreshAccount();
+  const submitVisionButton = $("#iam-submit-vision");
+  if (submitVisionButton && currentVision) submitVisionButton.disabled = false;
 
   iamSupabase.auth.onAuthStateChange((_event, session) => {
     if (session) refreshAccount();
@@ -184,7 +186,7 @@ async function resetVisionGuide() {
     const list = $("#iam-affirmation-list"); if (list) list.innerHTML = "";
     $("#iam-product-handoff")?.classList.add("iam-hidden");
     $("#iam-starter-pills")?.classList.remove("is-used");
-    const submit = $("#iam-submit-vision"); if (submit) { submit.disabled = true; submit.textContent = "Submit my vision"; }
+    const submit = $("#iam-submit-vision"); if (submit) { submit.disabled = false; submit.textContent = "Submit my vision"; }
     const title = $("#iam-vision-title"); if (title) title.textContent = "My Dream Future";
     addMessage("guide","What is your dream future? Choose an intention below or tell me what you want your life to look and feel like.");
     setStatus("");
@@ -508,7 +510,7 @@ async function initializeIamReel() {
     if (!currentVision) return;
     const button = $("#iam-submit-vision");
     button.disabled = true;
-    setStatus("Finishing your Vision Blueprint…");
+    setStatus("Creating your Dream Future…");
     const { error } = await iamSupabase.from("visions").update({
       status: "blueprint_ready",
       blueprint_completed_at: new Date().toISOString()
