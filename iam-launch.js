@@ -166,48 +166,33 @@ async function resetVisionGuide() {
   const button = $("#iam-reset-vision");
   if (button) { button.disabled = true; button.textContent = "Resetting…"; }
   setStatus("Resetting your Vision Guide…");
-  const visionId = currentVision.id;
+  try {
+    const response = await fetch(SUPABASE_URL + "/functions/v1/vision-guide", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + session.access_token },
+      body: JSON.stringify({ vision_id: currentVision.id, action: "reset" })
+    });
+    const result = await response.json();
+    if (!response.ok || !result.reset) throw new Error(result.error || "Reset failed.");
 
-  const { error: msgError } = await iamSupabase.from("vision_messages").delete().eq("vision_id", visionId).eq("user_id", session.user.id);
-  if (msgError) { setStatus(msgError.message); if(button){button.disabled=false;button.textContent="Reset to start over";} return; }
-
-  const { error: affError } = await iamSupabase.from("affirmations").delete().eq("vision_id", visionId).eq("user_id", session.user.id);
-  if (affError) { setStatus(affError.message); if(button){button.disabled=false;button.textContent="Reset to start over";} return; }
-
-  const { data, error } = await iamSupabase.from("visions").update({
-    title: "My Dream Future",
-    status: "draft",
-    blueprint: {},
-    conversation_summary: null,
-    wallpaper_format: null,
-    wallpaper_requested_at: null,
-    blueprint_completed_at: null,
-    customer_feedback: null
-  }).eq("id", visionId).eq("user_id", session.user.id).select().single();
-  if (error) { setStatus(error.message); if(button){button.disabled=false;button.textContent="Reset to start over";} return; }
-
-  currentVision = data;
-  blueprintReady = false;
-  productChoiceReady = false;
-  localStorage.removeItem("iamreel_rejected_affirmations");
-  localStorage.removeItem("iamreel_wallpaper_format");
-
-  const chat = $("#iam-chat");
-  if (chat) chat.innerHTML = "";
-  const affirmationList = $("#iam-affirmation-list");
-  if (affirmationList) affirmationList.innerHTML = "";
-  $("#iam-product-handoff")?.classList.add("iam-hidden");
-  $("#iam-starter-pills")?.classList.remove("is-used");
-  const submit = $("#iam-submit-vision");
-  if (submit) { submit.disabled = true; submit.textContent = "Submit my vision"; }
-  const note = $("#iam-requirements-note");
-  if (note) note.textContent = "Your Guide will ask the questions needed to complete your Vision Blueprint. Submit unlocks when the Blueprint has enough detail.";
-  addMessage("guide","What is your dream future? Choose an intention below or tell me what you want your life to look and feel like.");
-  setStatus("");
-  if (button) { button.disabled = false; button.textContent = "Reset to start over"; }
-
-  // Re-read the cleared state so stale in-memory data cannot repaint the old conversation.
-  await loadMessages();
+    currentVision = { ...currentVision, title:"My Dream Future", status:"draft", blueprint:{}, conversation_summary:null };
+    blueprintReady = false;
+    productChoiceReady = false;
+    localStorage.removeItem("iamreel_rejected_affirmations");
+    localStorage.removeItem("iamreel_wallpaper_format");
+    const chat = $("#iam-chat"); if (chat) chat.innerHTML = "";
+    const list = $("#iam-affirmation-list"); if (list) list.innerHTML = "";
+    $("#iam-product-handoff")?.classList.add("iam-hidden");
+    $("#iam-starter-pills")?.classList.remove("is-used");
+    const submit = $("#iam-submit-vision"); if (submit) { submit.disabled = true; submit.textContent = "Submit my vision"; }
+    const title = $("#iam-vision-title"); if (title) title.textContent = "My Dream Future";
+    addMessage("guide","What is your dream future? Choose an intention below or tell me what you want your life to look and feel like.");
+    setStatus("");
+  } catch (error) {
+    setStatus(error.message || "Reset failed.");
+  } finally {
+    if (button) { button.disabled = false; button.textContent = "Reset to start over"; }
+  }
 }
 async function signOut() {
   await iamSupabase.auth.signOut();
