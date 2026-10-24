@@ -403,6 +403,31 @@ async function initializeIamReel() {
     sendVisionMessage
   );
 
+  $("#iam-submit-vision")?.addEventListener("click", async () => {
+    if (!currentVision) return;
+    const button = $("#iam-submit-vision");
+    button.disabled = true;
+    setStatus("Finishing your Vision Blueprint…");
+    const { error } = await iamSupabase.from("visions").update({
+      status: "blueprint_ready",
+      blueprint_completed_at: new Date().toISOString()
+    }).eq("id", currentVision.id);
+    if (error) {
+      setStatus(error.message);
+      button.disabled = false;
+      return;
+    }
+    blueprintReady = true;
+    productChoiceReady = true;
+    setStatus("Your Vision Blueprint is ready.");
+    const panel = $("#iam-product-handoff");
+    if (panel) {
+      panel.classList.remove("iam-hidden");
+      panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    button.textContent = "Vision submitted";
+  });
+
   $("#iam-message")?.addEventListener(
     "keydown",
     (event) => {
