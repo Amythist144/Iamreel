@@ -163,15 +163,17 @@ async function signIn() {
 async function resetVisionGuide() {
   const session = await getSession();
   if (!session || !currentVision) return;
-  const ok = window.confirm("Reset and start over? This will permanently clear this Vision Guide conversation, Blueprint, and affirmations.");
-  if (!ok) return;
+  const button = $("#iam-reset-vision");
+  if (button) { button.disabled = true; button.textContent = "Resetting…"; }
   setStatus("Resetting your Vision Guide…");
   const visionId = currentVision.id;
-  const [{ error: msgError }, { error: affError }] = await Promise.all([
-    iamSupabase.from("vision_messages").delete().eq("vision_id", visionId),
-    iamSupabase.from("affirmations").delete().eq("vision_id", visionId)
-  ]);
-  if (msgError || affError) { setStatus((msgError || affError).message); return; }
+
+  const { error: msgError } = await iamSupabase.from("vision_messages").delete().eq("vision_id", visionId).eq("user_id", session.user.id);
+  if (msgError) { setStatus(msgError.message); if(button){button.disabled=false;button.textContent="Reset to start over";} return; }
+
+  const { error: affError } = await iamSupabase.from("affirmations").delete().eq("vision_id", visionId).eq("user_id", session.user.id);
+  if (affError) { setStatus(affError.message); if(button){button.disabled=false;button.textContent="Reset to start over";} return; }
+
   const { data, error } = await iamSupabase.from("visions").update({
     title: "My Dream Future",
     status: "draft",
@@ -181,25 +183,31 @@ async function resetVisionGuide() {
     wallpaper_requested_at: null,
     blueprint_completed_at: null,
     customer_feedback: null
-  }).eq("id", visionId).select().single();
-  if (error) { setStatus(error.message); return; }
+  }).eq("id", visionId).eq("user_id", session.user.id).select().single();
+  if (error) { setStatus(error.message); if(button){button.disabled=false;button.textContent="Reset to start over";} return; }
+
   currentVision = data;
   blueprintReady = false;
   productChoiceReady = false;
+  localStorage.removeItem("iamreel_rejected_affirmations");
+  localStorage.removeItem("iamreel_wallpaper_format");
+
   const chat = $("#iam-chat");
   if (chat) chat.innerHTML = "";
-  const affirmations = $("#iam-affirmation-list");
-  if (affirmations) affirmations.innerHTML = "";
+  const affirmationList = $("#iam-affirmation-list");
+  if (affirmationList) affirmationList.innerHTML = "";
   $("#iam-product-handoff")?.classList.add("iam-hidden");
+  $("#iam-starter-pills")?.classList.remove("is-used");
   const submit = $("#iam-submit-vision");
   if (submit) { submit.disabled = true; submit.textContent = "Submit my vision"; }
   const note = $("#iam-requirements-note");
   if (note) note.textContent = "Your Guide will ask the questions needed to complete your Vision Blueprint. Submit unlocks when the Blueprint has enough detail.";
-  $("#iam-starter-pills")?.classList.remove("is-used");
   addMessage("guide","What is your dream future? Choose an intention below or tell me what you want your life to look and feel like.");
-  localStorage.removeItem("iamreel_rejected_affirmations");
-  localStorage.removeItem("iamreel_wallpaper_format");
   setStatus("");
+  if (button) { button.disabled = false; button.textContent = "Reset to start over"; }
+
+  // Re-read the cleared state so stale in-memory data cannot repaint the old conversation.
+  await loadMessages();
 }
 async function signOut() {
   await iamSupabase.auth.signOut();
