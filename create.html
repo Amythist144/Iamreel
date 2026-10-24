@@ -5,7 +5,13 @@
 <meta name="robots" content="noindex, nofollow, noarchive">
 <link rel="stylesheet" href="blue-theme.css"><link rel="stylesheet" href="iam-launch.css">
 <style>
-.cv-intake .cv-intake-grid{grid-template-columns:1fr}
+.cv-intake .cv-intake-grid{grid-template-columns:1fr !important}
+@media(max-width:1100px){
+  .cv-intake .cv-intake-grid{grid-template-columns:1fr !important;display:block}
+  .cv-intake .cv-intake-copy{max-width:none;margin-bottom:18px}
+  #vision-form.iam-launch,.iam-launch{max-width:none;width:100%;margin:0;padding:0 8px}
+  .iam-panel{padding:22px}
+}
 .cv-intake .cv-intake-copy{max-width:900px}
 .cv-embedded-guide{min-width:0;scroll-margin-top:100px}
 #vg-demo.vg-inline #vg-dialog{position:static;display:block;width:100%;max-height:none;margin:0;box-shadow:0 14px 50px #0004}
@@ -32,6 +38,13 @@
 .iam-send-arrow{width:44px;height:44px;border-radius:50%;border:0;background:#064bbf;color:#fff;font-size:20px;cursor:pointer;display:grid;place-items:center;flex-shrink:0}
 .iam-send-arrow:hover{background:#093a8c}
 .iam-chat-row{align-items:center}
+
+.iam-promo-row{display:flex;align-items:center;gap:12px;margin-top:8px}
+.iam-promo-row input{flex:1;min-width:0;padding:12px 14px;border:1px solid #bfd0dc;border-radius:12px}
+.iam-promo-row .gold-btn{flex-shrink:0;min-width:100px;height:44px}
+.iam-guide-actions{margin-top:4px}
+.iam-guide-actions .gold-btn{min-width:140px;height:42px}
+.iam-topline{align-items:flex-start;gap:16px}
 </style>
 </head><body class="customer-page"><a class="skip" href="#main">Skip to content</a>
 <header><a class="brand" href="index.html" aria-label="I AM REEL home"><img class="brand-animation" src="assets/logo-animation-loop.gif" alt="I AM REEL" width="840" height="224"></a><button class="menu-toggle" aria-expanded="false" aria-controls="nav">Menu <span>☰</span></button><nav id="nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="create.html">Create your vision</a><a href="collection.html">Vision collection</a><a href="why-it-works.html">Why it works</a><a href="professional.html">Partner program</a><a href="global.html">Global vision project</a><a href="create.html" class="nav-cta">Create your vision</a></nav></header>
@@ -63,7 +76,7 @@
 <p class="iam-note">Choosing any product below lets you upload up to 3 photos. After you purchase, we’ll generate a preview so you can confirm it looks like you before we use it in your vision. Free wallpaper and Audio Meditation do not need a photo.</p>
 <button type="button" id="iam-show-products" class="iam-action-btn">Yes — see purchase options</button>
 </div>
-<p id="iam-requirements-note" class="iam-note">Your free complementary vision is ready. Choose your free wallpaper now, or purchase a product to personalize it with your photo. Free wallpaper and Audio Meditation do not need a photo.</p>
+<p id="iam-requirements-note" class="iam-note iam-hidden">Your free complementary vision is ready. Choose your free wallpaper now, or purchase a product to personalize it with your photo. Free wallpaper and Audio Meditation do not need a photo.</p>
 </div><div id="iam-blueprint" class="iam-hidden"></div><div id="iam-wallpaper" class="iam-hidden"><button type="button" data-wallpaper-choice="phone">Phone</button><button type="button" data-wallpaper-choice="desktop">Desktop</button><span id="iam-wallpaper-status"></span></div></div>
 <div id="iam-affirmations-panel" class="iam-affirmations-panel">
 <p class="cv-eyebrow">Your affirmations</p>

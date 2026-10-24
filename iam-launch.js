@@ -493,7 +493,10 @@ async function sendVisionMessage() {
       $("#iam-decision")?.classList.remove("iam-hidden");
       $("#iam-decision")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
       const note = $("#iam-requirements-note");
-      if (note) note.textContent = "Your free complementary vision is ready. Choose your free wallpaper now, or purchase a product to personalize it with your photo. Free wallpaper and Audio Meditation do not need a photo.";
+      if (note) {
+        note.textContent = "Your free complementary vision is ready. Choose your free wallpaper now, or purchase a product to personalize it with your photo. Free wallpaper and Audio Meditation do not need a photo.";
+        note.classList.remove("iam-hidden");
+      }
       setStatus("");
     } else {
       setStatus("");
