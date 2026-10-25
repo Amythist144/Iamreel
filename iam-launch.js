@@ -184,28 +184,24 @@ async function signIn() {
       result?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
       try {
-        const bp = currentVision?.blueprint || {};
-        const bits = [
-          bp.summary,
-          bp.environment,
-          bp.intention,
-          ...(Array.isArray(bp.locations) ? bp.locations : []),
-          ...(Array.isArray(bp.feelings) ? bp.feelings : []),
-          ...(Array.isArray(bp.activities) ? bp.activities : []),
-          bp.spiritual_scene
-        ].filter(Boolean).join(", ");
-        const scene = bits || "a peaceful, abundant, joyful future with soft golden light";
-        const prompt = "A beautiful cinematic inspirational wallpaper of " + scene + ", soft golden light, serene atmosphere, high quality, no text, no watermark";
-        const size = format === "phone" ? "768x1344" : "1344x768";
-        const [w, h] = size.split("x");
-        const url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + "?width=" + w + "&height=" + h + "&nologo=true&model=flux";
+        const session = await getSession();
+        const response = await fetch(SUPABASE_URL + "/functions/v1/generate-wallpaper", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + (session?.access_token || ""),
+          },
+          body: JSON.stringify({ vision_id: currentVision?.id, format }),
+        });
+        const data = await response.json();
+        if (!response.ok || !data.url) throw new Error(data.error || "Could not create wallpaper");
         if (img) {
-          img.onload = () => { img.style.display = "block"; if (status) status.textContent = "Your free " + format + " wallpaper is ready."; };
-          img.onerror = () => { if (status) status.textContent = "The wallpaper image could not load. Please try again."; };
-          img.src = url;
+          img.src = data.url;
+          img.style.display = "block";
         }
+        if (status) status.textContent = "Your free " + format + " wallpaper is ready.";
       } catch (err) {
-        if (status) status.textContent = "We couldn’t create the wallpaper just yet. " + (err.message || "Please try again in a moment.");
+        if (status) status.textContent = "Wallpaper needs the OpenAI function deployed. " + (err.message || "");
       }
     });
   });
@@ -466,7 +462,7 @@ async function sendVisionMessage() {
       throw new Error(result.error || "The Vision Guide is unavailable.");
     }
 
-    const ready = userTurnCount >= 4;
+    const ready = userTurnCount >= 3;
     const closing = /does this feel like|want to create\?|keep it as is|submit it|soften, add|make more vivid/i.test(result.message || "");
     if (!(ready && closing)) {
       addMessage("guide", result.message);
@@ -684,6 +680,14 @@ async function initializeIamReel() {
     button.textContent = "Vision submitted";
   });
 
+
+  const msgField = $("#iam-message");
+  const counter = $("#iam-char-count");
+  msgField?.addEventListener("input", () => {
+    if (msgField.value.length > 280) msgField.value = msgField.value.slice(0, 280);
+    if (counter) counter.textContent = msgField.value.length + " / 280";
+  });
+
   $("#iam-message")?.addEventListener(
     "keydown",
     (event) => {
@@ -728,28 +732,24 @@ async function initializeIamReel() {
       result?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
       try {
-        const bp = currentVision?.blueprint || {};
-        const bits = [
-          bp.summary,
-          bp.environment,
-          bp.intention,
-          ...(Array.isArray(bp.locations) ? bp.locations : []),
-          ...(Array.isArray(bp.feelings) ? bp.feelings : []),
-          ...(Array.isArray(bp.activities) ? bp.activities : []),
-          bp.spiritual_scene
-        ].filter(Boolean).join(", ");
-        const scene = bits || "a peaceful, abundant, joyful future with soft golden light";
-        const prompt = "A beautiful cinematic inspirational wallpaper of " + scene + ", soft golden light, serene atmosphere, high quality, no text, no watermark";
-        const size = format === "phone" ? "768x1344" : "1344x768";
-        const [w, h] = size.split("x");
-        const url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + "?width=" + w + "&height=" + h + "&nologo=true&model=flux";
+        const session = await getSession();
+        const response = await fetch(SUPABASE_URL + "/functions/v1/generate-wallpaper", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + (session?.access_token || ""),
+          },
+          body: JSON.stringify({ vision_id: currentVision?.id, format }),
+        });
+        const data = await response.json();
+        if (!response.ok || !data.url) throw new Error(data.error || "Could not create wallpaper");
         if (img) {
-          img.onload = () => { img.style.display = "block"; if (status) status.textContent = "Your free " + format + " wallpaper is ready."; };
-          img.onerror = () => { if (status) status.textContent = "The wallpaper image could not load. Please try again."; };
-          img.src = url;
+          img.src = data.url;
+          img.style.display = "block";
         }
+        if (status) status.textContent = "Your free " + format + " wallpaper is ready.";
       } catch (err) {
-        if (status) status.textContent = "We couldn’t create the wallpaper just yet. " + (err.message || "Please try again in a moment.");
+        if (status) status.textContent = "Wallpaper needs the OpenAI function deployed. " + (err.message || "");
       }
     });
   });

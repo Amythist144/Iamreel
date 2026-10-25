@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
     ].filter(Boolean).join(". ");
 
     const size = format === "phone" ? "1024x1792" : "1792x1024";
-    const prompt = `A beautiful, cinematic, uplifting scene representing this personal vision: ${scene || "a peaceful, abundant, joyful future"}. Soft golden light, serene atmosphere, no text, no people unless the vision specifically describes them, high quality wallpaper style, inspirational and calm.`;
+    const prompt = `Cinematic inspirational wallpaper. Place: ${bp.environment || bp.locations?.[0] || "a beautiful meaningful place"}. What they are looking at: ${bp.summary || scene || "a vivid hopeful scene"}. Feeling: ${(bp.feelings || []).join(", ") || "peaceful, free, deeply happy"}. Soft golden light, no text, no watermark, high quality.`;
 
     const imgRes = await fetch("https://api.openai.com/v1/images/generations", {
       method: "POST",
