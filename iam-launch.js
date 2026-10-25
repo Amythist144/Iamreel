@@ -269,6 +269,11 @@ async function resetVisionGuide() {
     currentVision = fresh;
     blueprintReady = false;
     productChoiceReady = false;
+    userTurnCount = 0;
+    $("#iam-wallpaper-choices")?.classList.add("iam-hidden");
+    $("#iam-requirements-note")?.classList.add("iam-hidden");
+    $("#iam-wallpaper-result")?.classList.add("iam-hidden");
+    $("#iam-decision")?.classList.add("iam-hidden");
     localStorage.removeItem("iamreel_rejected_affirmations");
     localStorage.removeItem("iamreel_wallpaper_format");
     localStorage.removeItem("iamreel_promo_code");
@@ -462,7 +467,9 @@ async function sendVisionMessage() {
       throw new Error(result.error || "The Vision Guide is unavailable.");
     }
 
-    const ready = userTurnCount >= 3;
+    const bp = result.blueprint || currentVision?.blueprint || {};
+    const hasBlueprint = !!(bp.summary || bp.environment || (bp.feelings && bp.feelings.length) || (bp.locations && bp.locations.length));
+    const ready = userTurnCount >= 4 && hasBlueprint;
     const closing = /does this feel like|want to create\?|keep it as is|submit it|soften, add|make more vivid/i.test(result.message || "");
     if (!(ready && closing)) {
       addMessage("guide", result.message);
