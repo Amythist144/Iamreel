@@ -462,7 +462,11 @@ async function sendVisionMessage() {
       throw new Error(result.error || "The Vision Guide is unavailable.");
     }
 
-    addMessage("guide", result.message);
+    const ready = result.blueprint_ready || userTurnCount >= 4;
+    const closing = /does this feel like|want to create\?|keep it as is|submit it|soften, add|make more vivid/i.test(result.message || "");
+    if (!(ready && closing)) {
+      addMessage("guide", result.message);
+    }
 
     if (String(result.path || "").toLowerCase() === "roses") {
       const starters = $("#iam-starter-pills");
@@ -487,14 +491,14 @@ async function sendVisionMessage() {
     renderBlueprint();
     renderVisionAffirmations(result.affirmations || []);
 
-    const ready = result.blueprint_ready || userTurnCount >= 4;
     if (ready) {
       blueprintReady = true;
-      $("#iam-decision")?.classList.remove("iam-hidden");
-      $("#iam-decision")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      $("#iam-decision")?.classList.add("iam-hidden");
+      $("#iam-wallpaper-choices")?.classList.remove("iam-hidden");
+      $("#iam-wallpaper-choices")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
       const note = $("#iam-requirements-note");
       if (note) {
-        note.textContent = "Your free complementary vision is ready. Choose your free wallpaper now, or purchase a product to personalize it with your photo. Free wallpaper and Audio Meditation do not need a photo.";
+        note.textContent = "Your free vision is ready. Choose a phone or desktop wallpaper below. To add your photo to the images, purchase one of the products below. Free wallpaper and Audio Meditation do not need a photo.";
         note.classList.remove("iam-hidden");
       }
       setStatus("");
