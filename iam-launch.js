@@ -155,9 +155,19 @@ async function signIn() {
   $("#iam-yes-wallpaper")?.addEventListener("click", () => {
     document.querySelectorAll(".iam-action-btn").forEach(b => b.classList.remove("is-chosen"));
     $("#iam-yes-wallpaper")?.classList.add("is-chosen");
+    $("#iam-decision")?.classList.add("iam-hidden");
     $("#iam-wallpaper-choices")?.classList.remove("iam-hidden");
-    $("#iam-photo-explain")?.classList.add("iam-hidden");
+    const note = $("#iam-requirements-note");
+    if (note) {
+      note.textContent = "To add your photo to the images, purchase one of the products below. Free wallpaper and Audio Meditation do not need a photo.";
+      note.classList.remove("iam-hidden");
+    }
     $("#iam-wallpaper-choices")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+  $("#iam-add-more")?.addEventListener("click", () => {
+    $("#iam-decision")?.classList.add("iam-hidden");
+    $("#iam-message")?.focus();
+    setStatus("Add one more short detail, then you can get your wallpaper.");
   });
   $("#iam-add-photo")?.addEventListener("click", () => {
     document.querySelectorAll(".iam-action-btn").forEach(b => b.classList.remove("is-chosen"));
@@ -469,7 +479,7 @@ async function sendVisionMessage() {
 
     const bp = result.blueprint || currentVision?.blueprint || {};
     const hasBlueprint = !!(bp.summary || bp.environment || (bp.feelings && bp.feelings.length) || (bp.locations && bp.locations.length));
-    const ready = userTurnCount >= 4 && hasBlueprint;
+    const ready = userTurnCount >= 2 && hasBlueprint;
     const closing = /does this feel like|want to create\?|keep it as is|submit it|soften, add|make more vivid/i.test(result.message || "");
     if (!(ready && closing)) {
       addMessage("guide", result.message);
@@ -500,14 +510,8 @@ async function sendVisionMessage() {
 
     if (ready) {
       blueprintReady = true;
-      $("#iam-decision")?.classList.add("iam-hidden");
-      $("#iam-wallpaper-choices")?.classList.remove("iam-hidden");
-      $("#iam-wallpaper-choices")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      const note = $("#iam-requirements-note");
-      if (note) {
-        note.textContent = "To add your photo to the images, purchase one of the products below. Free wallpaper and Audio Meditation do not need a photo.";
-        note.classList.remove("iam-hidden");
-      }
+      $("#iam-decision")?.classList.remove("iam-hidden");
+      $("#iam-decision")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
       setStatus("");
     } else {
       setStatus("");
@@ -710,9 +714,19 @@ async function initializeIamReel() {
   $("#iam-yes-wallpaper")?.addEventListener("click", () => {
     document.querySelectorAll(".iam-action-btn").forEach(b => b.classList.remove("is-chosen"));
     $("#iam-yes-wallpaper")?.classList.add("is-chosen");
+    $("#iam-decision")?.classList.add("iam-hidden");
     $("#iam-wallpaper-choices")?.classList.remove("iam-hidden");
-    $("#iam-photo-explain")?.classList.add("iam-hidden");
+    const note = $("#iam-requirements-note");
+    if (note) {
+      note.textContent = "To add your photo to the images, purchase one of the products below. Free wallpaper and Audio Meditation do not need a photo.";
+      note.classList.remove("iam-hidden");
+    }
     $("#iam-wallpaper-choices")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+  $("#iam-add-more")?.addEventListener("click", () => {
+    $("#iam-decision")?.classList.add("iam-hidden");
+    $("#iam-message")?.focus();
+    setStatus("Add one more short detail, then you can get your wallpaper.");
   });
   $("#iam-add-photo")?.addEventListener("click", () => {
     document.querySelectorAll(".iam-action-btn").forEach(b => b.classList.remove("is-chosen"));
