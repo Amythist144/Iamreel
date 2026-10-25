@@ -184,22 +184,26 @@ async function signIn() {
       result?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
       try {
-        const session = await getSession();
-        const response = await fetch(SUPABASE_URL + "/functions/v1/generate-wallpaper", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + session.access_token,
-          },
-          body: JSON.stringify({ vision_id: currentVision?.id, format }),
-        });
-        const data = await response.json();
-        if (!response.ok || !data.url) throw new Error(data.error || "Could not create wallpaper");
+        const bp = currentVision?.blueprint || {};
+        const bits = [
+          bp.summary,
+          bp.environment,
+          bp.intention,
+          ...(Array.isArray(bp.locations) ? bp.locations : []),
+          ...(Array.isArray(bp.feelings) ? bp.feelings : []),
+          ...(Array.isArray(bp.activities) ? bp.activities : []),
+          bp.spiritual_scene
+        ].filter(Boolean).join(", ");
+        const scene = bits || "a peaceful, abundant, joyful future with soft golden light";
+        const prompt = "A beautiful cinematic inspirational wallpaper of " + scene + ", soft golden light, serene atmosphere, high quality, no text, no watermark";
+        const size = format === "phone" ? "768x1344" : "1344x768";
+        const [w, h] = size.split("x");
+        const url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + "?width=" + w + "&height=" + h + "&nologo=true&model=flux";
         if (img) {
-          img.src = data.url;
-          img.style.display = "block";
+          img.onload = () => { img.style.display = "block"; if (status) status.textContent = "Your free " + format + " wallpaper is ready."; };
+          img.onerror = () => { if (status) status.textContent = "The wallpaper image could not load. Please try again."; };
+          img.src = url;
         }
-        if (status) status.textContent = "Your free " + format + " wallpaper is ready.";
       } catch (err) {
         if (status) status.textContent = "We couldn’t create the wallpaper just yet. " + (err.message || "Please try again in a moment.");
       }
@@ -724,22 +728,26 @@ async function initializeIamReel() {
       result?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
       try {
-        const session = await getSession();
-        const response = await fetch(SUPABASE_URL + "/functions/v1/generate-wallpaper", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + session.access_token,
-          },
-          body: JSON.stringify({ vision_id: currentVision?.id, format }),
-        });
-        const data = await response.json();
-        if (!response.ok || !data.url) throw new Error(data.error || "Could not create wallpaper");
+        const bp = currentVision?.blueprint || {};
+        const bits = [
+          bp.summary,
+          bp.environment,
+          bp.intention,
+          ...(Array.isArray(bp.locations) ? bp.locations : []),
+          ...(Array.isArray(bp.feelings) ? bp.feelings : []),
+          ...(Array.isArray(bp.activities) ? bp.activities : []),
+          bp.spiritual_scene
+        ].filter(Boolean).join(", ");
+        const scene = bits || "a peaceful, abundant, joyful future with soft golden light";
+        const prompt = "A beautiful cinematic inspirational wallpaper of " + scene + ", soft golden light, serene atmosphere, high quality, no text, no watermark";
+        const size = format === "phone" ? "768x1344" : "1344x768";
+        const [w, h] = size.split("x");
+        const url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + "?width=" + w + "&height=" + h + "&nologo=true&model=flux";
         if (img) {
-          img.src = data.url;
-          img.style.display = "block";
+          img.onload = () => { img.style.display = "block"; if (status) status.textContent = "Your free " + format + " wallpaper is ready."; };
+          img.onerror = () => { if (status) status.textContent = "The wallpaper image could not load. Please try again."; };
+          img.src = url;
         }
-        if (status) status.textContent = "Your free " + format + " wallpaper is ready.";
       } catch (err) {
         if (status) status.textContent = "We couldn’t create the wallpaper just yet. " + (err.message || "Please try again in a moment.");
       }
