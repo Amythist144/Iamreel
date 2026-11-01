@@ -8,11 +8,20 @@
 body.sanctuary-page{min-height:100vh;background:radial-gradient(circle at 20% 10%,rgba(171,142,226,.38),transparent 30%),linear-gradient(145deg,#35226d 0%,#6d55a7 48%,#b69cda 100%);color:#102333}
 .sanctuary-shell{max-width:1120px;margin:0 auto;padding:54px 22px 80px}.sanctuary-hero{text-align:center;color:#fff;margin:0 auto 34px;max-width:760px}.sanctuary-hero .eyebrow{color:#f0cf62}.sanctuary-hero h1{font-family:"Cormorant Garamond",serif;font-size:clamp(3rem,7vw,5.6rem);margin:.05em 0}.sanctuary-hero p{font-size:1.08rem;line-height:1.7}.sanctuary-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.sanctuary-grid .iam-panel{margin:0}.sanctuary-wide{grid-column:1/-1}.sanctuary-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}.iam-creation-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.iam-field select,.iam-field input{padding:13px 14px;border:1px solid #bfd0dc;border-radius:12px;font:inherit;background:#fff}.sanctuary-empty{padding:18px;border-radius:14px;background:#f4f8fb;color:#607381}.sanctuary-page header{background:#fff}.sanctuary-page .nav-cta{background:#7358a6}.sanctuary-page footer{background:rgba(255,255,255,.96);max-width:none;padding-left:max(22px,calc((100vw - 1180px)/2));padding-right:max(22px,calc((100vw - 1180px)/2))}
 @media(max-width:760px){.sanctuary-shell{padding-top:34px}.sanctuary-grid,.iam-creation-grid{grid-template-columns:1fr}.sanctuary-wide{grid-column:auto}}
-</style></head>
+</style><link rel="stylesheet" href="buttons.css?v=20261031">
+</head>
 <body class="customer-page sanctuary-page"><a class="skip" href="#main">Skip to content</a>
 <header><a class="brand" href="index.html" aria-label="I AM REEL home"><img class="brand-animation" src="assets/logo-animation-loop.gif" alt="I AM REEL" width="840" height="224"></a><button class="menu-toggle" aria-expanded="false" aria-controls="nav">Menu <span>☰</span></button><nav id="nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="create.html">Create your vision</a><a href="collection.html">Vision collection</a><a href="why-it-works.html">Why it works</a><a href="professional.html">Partner program</a><a href="global.html">Global vision project</a><a href="sanctuary.html" class="nav-cta">My Sanctuary</a></nav></header>
 <main id="main" class="sanctuary-shell">
 <section class="sanctuary-hero"><p class="eyebrow">MY SANCTUARY</p><h1>Your vision lives here</h1><p>Your private place for the future you’re creating—your wallpaper, Future Self, affirmations, purchases and finished creations.</p><div class="sanctuary-actions"><a class="button gold" href="create.html#vision-form">Continue my Vision Guide</a><a class="button" href="collection.html#vision-store">Vision Collection</a></div></section>
+<section id="saved-dream" class="iam-panel" hidden style="margin-bottom:22px">
+<p class="eyebrow">YOUR SAVED DREAM VISION</p>
+<h2 id="saved-dream-title">Your dream, alive</h2>
+<div id="saved-dream-vision"></div>
+<div id="saved-dream-affirms"></div>
+<p id="saved-dream-choice" class="iam-note" hidden></p>
+<p id="saved-dream-sync" class="iam-note"></p>
+</section>
 <div id="sanctuary-auth" class="iam-panel"><p class="eyebrow">PRIVATE MEMBER SPACE</p><h2>Sign in to My Sanctuary</h2><p>Your Sanctuary is connected to your I AM REEL account.</p><div class="iam-auth-grid"><label class="iam-field">Email<input id="sanctuary-email" type="email" autocomplete="email"></label><label class="iam-field">Password<input id="sanctuary-password" type="password" autocomplete="current-password"></label></div><button id="sanctuary-signin" class="iam-btn gold" type="button">Sign in</button></div>
 <div id="sanctuary-member" class="sanctuary-grid iam-hidden">
 <section class="iam-panel"><p class="eyebrow">YOUR FREE MEMBER GIFT</p><h2>Dream Future Wallpaper</h2><p>When your Vision Blueprint is ready, your complimentary phone or desktop wallpaper will appear here.</p><div id="sanctuary-wallpaper" class="sanctuary-empty">Your wallpaper is not ready yet.</div></section>
@@ -45,4 +54,33 @@ sb.auth.onAuthStateChange((_e,s)=>{if(s)loadMember(s)});
 }
 document.addEventListener('DOMContentLoaded',init);
 })();
-</script><script src="script.js"></script></body></html>
+</script><script src="script.js"></script><script>
+/* Saved dream vision from the free Vision Guide (assets/vision-guide/guide.js).
+   Shows the copy saved on this device and, once signed in, syncs it to Supabase
+   (visions + affirmations) if it has not been synced yet. */
+(()=>{const KEY='iamreel_saved_vision_v1',U='https://jtlqvxcmbgqtcpdhldbm.supabase.co';
+const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
+if(!saved||!saved.blueprint)return;
+const bp=saved.blueprint,$=id=>document.getElementById(id);
+$('saved-dream').hidden=false;
+const paras=(bp.dream_vision&&bp.dream_vision.length)?bp.dream_vision:[bp.dream,bp.moment,bp.people_pets_place,bp.feeling].filter(Boolean);
+$('saved-dream-vision').innerHTML=paras.map(p=>'<p>'+esc(p)+'</p>').join('');
+if(bp.affirmations&&bp.affirmations.length)$('saved-dream-affirms').innerHTML='<p class="eyebrow" style="margin-top:14px">YOUR AFFIRMATIONS</p><ul style="margin:6px 0 0;padding-left:20px;line-height:1.6">'+bp.affirmations.map(a=>'<li>'+esc(a)+'</li>').join('')+'</ul>';
+let cart=[];try{cart=JSON.parse(sessionStorage.getItem('iamreel_checkout_cart')||'[]')}catch(e){}
+const code=new URLSearchParams(location.search).get('checkout')||cart[0]||bp.chosen_product;const cat=window.IAMREEL_PRODUCTS||{};
+if(code&&cat[code]){const p=cat[code];$('saved-dream-choice').hidden=false;$('saved-dream-choice').textContent='Your selection is saved: '+p.name+(p.price==null?'':' · $'+(p.price%1?Number(p.price).toFixed(2):p.price))+'. Secure checkout continues here after you sign in.';}
+/* TODO(checkout): start the real payment for `code` here once a provider (PayPal) is wired; then create the orders row server-side. */
+const syncNote=t=>{$('saved-dream-sync').textContent=t||''};
+if(!saved.cloud||saved.cloud.pending)syncNote('Saved privately on this device. Sign in below and it moves into your Sanctuary.');
+if(!window.supabase||!window.IAMREEL_SUPABASE_KEY)return;
+const sb=window.supabase.createClient(U,window.IAMREEL_SUPABASE_KEY);
+let syncing=false;const sync=async session=>{if(!session||syncing)return;if(saved.cloud&&saved.cloud.pending===false){syncNote('');return}syncing=true;
+ try{const {data,error}=await sb.from('visions').insert({user_id:session.user.id,title:(bp.dream||'My Dream Future').slice(0,60),path:'standard',status:bp.approved?'blueprint_ready':'draft',blueprint:bp,conversation_summary:saved.summary||''}).select().single();if(error)throw error;
+ if(bp.affirmations&&bp.affirmations.length){const r=await sb.from('affirmations').insert(bp.affirmations.map((s,i)=>({user_id:session.user.id,vision_id:data.id,statement:s,sort_order:i})));if(r.error)console.warn('affirmations not saved',r.error.message)}
+ saved.cloud={pending:false,visionId:data.id,syncedAt:new Date().toISOString()};localStorage.setItem(KEY,JSON.stringify(saved));syncNote('Saved to your Sanctuary.');}
+ catch(e){console.warn('Saved dream sync failed',e&&e.message);syncNote('Saved on this device. We couldn’t reach your Sanctuary just now and will try again next time you visit.')}};
+sb.auth.getSession().then(r=>sync(r.data&&r.data.session));sb.auth.onAuthStateChange((_e,session)=>sync(session));
+})();
+</script>
+</body></html>

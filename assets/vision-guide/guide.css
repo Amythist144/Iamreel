@@ -1,0 +1,139 @@
+/* I AM REEL — Vision Guide (pre-payment). Evolved from the original guide widget. */
+#vg-guide{font-family:Inter,Arial,sans-serif;color:#f1f5ff;font-size:16px;line-height:1.55;--vg-gold:#f7b500;--vg-gold-hi:#ffd23f;--vg-blue:#0b63f6;--vg-blue-hi:#2e86ff;--vg-glow:0 0 0 2px #fff,0 0 16px 4px rgba(255,255,255,.75),0 0 34px 10px rgba(255,255,255,.35)}
+#vg-guide *{box-sizing:border-box}
+#vg-guide button,#vg-guide input,#vg-guide textarea{font:inherit}
+#vg-guide [hidden]{display:none!important}
+/* Launcher tab (right side, like the original guide tab) */
+#vg-guide .vg-launch{position:fixed;z-index:9999;right:0;top:50%;transform:translateY(-50%);width:272px;display:grid;grid-template-columns:auto 1fr;gap:3px 12px;align-items:center;text-align:left;padding:14px 16px;border:1px solid rgba(255,255,255,.3);border-right:0;border-radius:999px 0 0 999px;background:#102b50;color:#fff;cursor:pointer;box-shadow:0 12px 35px rgba(0,0,0,.35);transition:box-shadow .2s}
+#vg-guide .vg-launch:is(:hover,:focus-visible){box-shadow:var(--vg-glow);outline:none}
+#vg-guide .vg-launch img{grid-row:1 / span 3;width:44px;height:44px;border-radius:50%;object-fit:cover;box-shadow:0 0 14px rgba(255,214,120,.55)}
+#vg-guide .vg-launch .vg-eyebrow{font-size:10px}
+#vg-guide .vg-launch strong{font-size:17px;line-height:1.2}
+#vg-guide .vg-launch span:last-child{font-size:13px;color:#dce6f5}
+/* Dialog + shell */
+#vg-dialog{padding:0;border:1px solid #6176a3;border-radius:22px;width:min(1080px,96vw);max-width:none;max-height:92dvh;overflow:hidden;background:#101b33;color:#f1f5ff;box-shadow:0 24px 100px #0009}
+#vg-dialog::backdrop{background:#060d20b8;backdrop-filter:blur(5px)}
+#vg-guide .vg-shell{display:flex;flex-direction:column;height:min(820px,90dvh)}
+#vg-guide .vg-header{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 22px;position:static;top:auto;min-height:0;height:auto;z-index:auto;backdrop-filter:none;flex-wrap:nowrap;background:#162641;border-bottom:1px solid #314360}
+#vg-guide .vg-brand{display:flex;align-items:center;gap:13px;min-width:0}
+#vg-guide .vg-logo{width:48px;height:48px;border-radius:50%;object-fit:cover;flex:none;box-shadow:0 0 16px rgba(255,214,120,.5)}
+#vg-guide .vg-header-actions{display:flex;align-items:center;gap:6px}
+#vg-guide h2{font-size:24px;margin:2px 0;font-weight:600;color:#fff;line-height:1.2}
+#vg-guide h3{font-size:26px;line-height:1.25;margin:10px 0 16px;color:#f1efff}
+#vg-guide h4{font-size:18px;color:#eef2ff;margin:0 0 8px}
+#vg-guide p{margin:0 0 14px;color:#d0dbef;font-size:16px}
+#vg-guide .vg-eyebrow{display:block;font-size:12px;letter-spacing:.14em;color:#ffd77a;font-weight:700;text-transform:uppercase}
+#vg-guide .vg-close{font-size:30px;line-height:1;background:none;color:#fff;border:0;padding:4px 10px;cursor:pointer;border-radius:999px}
+#vg-guide .vg-close:is(:hover,:focus-visible){box-shadow:var(--vg-glow);outline:none}
+#vg-guide .vg-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;flex:1;min-height:0}
+#vg-guide .vg-main{padding:26px 28px 34px;overflow-y:auto;outline:none;scroll-behavior:smooth}
+#vg-guide .vg-blueprint{padding:24px 22px;background:#14243a;overflow-y:auto;border-left:1px solid #314360}
+#vg-guide .vg-blueprint h3{font-size:20px}
+#vg-guide .vg-field{border-bottom:1px solid #34445f;padding:12px 0}
+#vg-guide .vg-field>span{font-size:12px;color:#aabedd;text-transform:uppercase;letter-spacing:.05em}
+#vg-guide .vg-field p{font-size:14px;margin:6px 0 0;overflow-wrap:anywhere;color:#eef3ff}
+#vg-guide .vg-field ul{margin:6px 0 0;padding-left:18px;font-size:14px;color:#eef3ff}
+#vg-guide .vg-field li{margin:4px 0}
+#vg-guide .vg-gift{border:1px solid #d9a93a;border-radius:16px;padding:15px;margin:22px 0 12px;font-size:14px;font-weight:700;color:#ffe4a3;background:linear-gradient(160deg,#2a2a45,#1a2a48)}
+#vg-guide .vg-gift p{font-size:13px;font-weight:400;margin:7px 0 0;color:#e6ecfa}
+#vg-guide .vg-small{font-size:13px}
+#vg-guide .vg-muted{color:#a9b7d2}
+/* Buttons: pill, gold primary / blue secondary, white glow */
+#vg-guide .vg-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:2px solid transparent;border-radius:999px;padding:11px 20px;margin:5px 8px 5px 0;cursor:pointer;font-size:15px;font-weight:700;line-height:1.3;transition:box-shadow .2s,background-color .2s,transform .2s}
+#vg-guide .vg-primary{background:var(--vg-gold);color:#1a1200}
+#vg-guide .vg-primary:hover{background:var(--vg-gold-hi)}
+#vg-guide .vg-secondary{background:var(--vg-blue);color:#fff}
+#vg-guide .vg-secondary:hover{background:var(--vg-blue-hi)}
+#vg-guide .vg-button:is(:hover,:focus-visible,:active,.is-selected,[aria-pressed="true"]){box-shadow:var(--vg-glow);border-color:#fff;outline:none}
+#vg-guide .vg-button:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+#vg-guide .vg-button.vg-small-btn{padding:7px 14px;font-size:13px;margin:0}
+#vg-guide a:focus-visible,#vg-guide input:focus-visible{outline:3px solid #ffd77a;outline-offset:3px}
+#vg-guide .vg-actions{display:flex;flex-wrap:wrap;align-items:center;margin:18px 0}
+#vg-guide .vg-faq,#vg-guide .vg-card{margin-top:22px;padding:20px;border:1px solid #354c70;border-radius:16px;background:#14233c}
+/* Welcome */
+/* Chat */
+#vg-guide .vg-chat{display:flex;flex-direction:column;gap:10px;margin:8px 0 14px}
+#vg-guide .vg-msg{max-width:88%;padding:12px 15px;border-radius:18px;line-height:1.5;font-size:15px;overflow-wrap:anywhere;white-space:pre-wrap}
+#vg-guide .vg-msg.guide{align-self:flex-start;background:#1d3050;border:1px solid #3e5277;border-bottom-left-radius:6px;color:#eef3ff}
+#vg-guide .vg-msg.user{align-self:flex-end;background:#0b63f6;color:#fff;border-bottom-right-radius:6px}
+#vg-guide .vg-msg.note{align-self:flex-start;background:#2e2a43;border:1px solid #d9a93a;color:#ffe9b8}
+#vg-guide .vg-typing{align-self:flex-start;color:#a9b7d2;font-size:13px;padding:2px 6px}
+#vg-guide .vg-compose{position:sticky;bottom:-34px;background:#101b33;padding:10px 0 12px;z-index:2}
+#vg-guide .vg-compose-row{display:flex;gap:10px;align-items:flex-end}
+#vg-guide .vg-compose textarea{flex:1;min-height:52px;max-height:160px;resize:none;padding:13px 16px;border:1px solid #7185a8;border-radius:24px;background:#0c182d;color:#fff;font-size:16px;line-height:1.45}
+#vg-guide .vg-compose .vg-button{margin:0;min-height:52px}
+#vg-guide .vg-hint{font-size:12.5px;color:#aebcd6;margin:8px 4px 0}
+#vg-guide .vg-guidelines summary{cursor:pointer;font-weight:700;color:#f7d77a;margin-bottom:2px}
+#vg-guide .vg-guidelines:not([open]) summary{margin:0}
+#vg-guide .vg-startover{white-space:nowrap}
+#vg-guide .vg-guidelines{font-size:12.5px;color:#c9d5ee;border-left:3px solid #d9a93a;padding:6px 10px;margin:10px 0 0;background:#16223a;border-radius:0 10px 10px 0}
+#vg-guide .vg-warn{display:block;margin:8px 0 0;padding:10px 12px;border-radius:12px;background:#3a2b20;border:1px solid #e0a54a;color:#ffe2b0;font-size:13.5px}
+/* Review */
+#vg-guide .vg-section{margin-top:30px;padding-top:24px;border-top:1px solid #314360}
+#vg-guide label.vg-label{display:block;margin:16px 0 7px;color:#e1e9ff;font-size:14px;font-weight:600}
+#vg-guide .vg-label small{display:block;font-weight:400;color:#aebcd6;font-size:12.5px;margin-top:3px}
+#vg-guide .vg-section textarea{width:100%;min-height:74px;resize:vertical;padding:12px 14px;border:1px solid #7185a8;border-radius:14px;background:#0c182d;color:#fff;font-size:15px}
+#vg-guide textarea::placeholder{color:#91a2c0}
+#vg-guide textarea:focus{outline:2px solid #ffd77a;outline-offset:2px}
+#vg-guide .vg-affirms{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:8px}
+#vg-guide .vg-affirms li{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border:1px solid #3e5277;border-radius:14px;background:#15243e}
+#vg-guide .vg-affirms li.off{opacity:.55}
+#vg-guide .vg-affirms li.off span{text-decoration:line-through}
+#vg-guide .vg-affirms input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:#f7b500;cursor:pointer}
+#vg-guide .vg-affirms label{cursor:pointer;color:#f3f6ff;font-size:15px;margin:0;display:flex;gap:11px;align-items:flex-start;width:100%}
+/* Vision + products */
+#vg-guide .vg-vision{background:linear-gradient(160deg,#1f2d55,#162641 60%,#2b2350);border:1px solid #5a6fa0;border-radius:20px;padding:24px 24px 18px;box-shadow:0 0 40px rgba(120,140,255,.15) inset}
+#vg-guide .vg-vision p{font-size:17px;line-height:1.7;color:#f2f5ff}
+#vg-guide .vg-ready,#vg-guide .vg-vision p.vg-ready{font-family:"Cormorant Garamond",Georgia,serif;font-size:30px;font-weight:600;color:#ffd77a;margin:6px 0 2px}
+#vg-guide .vg-kaleido{display:flex;gap:14px;align-items:center;margin:16px 0 18px;padding:14px 16px;border-radius:16px;background:#1a2440;border:1px solid #6b5aa8}
+#vg-guide .vg-kaleido img{width:56px;height:56px;border-radius:50%;object-fit:cover;flex:none;animation:vg-spin 18s linear infinite}
+#vg-guide .vg-kaleido p{margin:0;font-size:14px}
+@keyframes vg-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){#vg-guide .vg-kaleido img{animation:none}}
+#vg-guide .vg-products{display:grid;gap:15px}
+#vg-guide .vg-product{display:grid;grid-template-columns:120px 1fr;gap:18px;background:#1b2a43;padding:16px;border:1px solid #435776;border-radius:18px}
+#vg-guide .vg-product.is-selected{box-shadow:var(--vg-glow);border-color:#fff}
+#vg-guide .vg-product img{width:120px;height:130px;object-fit:cover;border-radius:12px}
+#vg-guide .vg-product h4{margin:0 0 4px}
+#vg-guide .vg-product p{font-size:14px;margin-bottom:8px}
+#vg-guide .vg-price{font-size:18px;font-weight:800;color:#fff}
+#vg-guide .vg-included{display:block;color:#ffe08a;font-size:13px;margin:6px 0 4px;font-weight:600}
+#vg-guide .vg-wallpaper{display:grid;grid-template-columns:110px 1fr;gap:18px;margin-top:18px;padding:18px;border-radius:18px;border:1px solid #d9a93a;background:linear-gradient(160deg,#2b2747,#18294a)}
+#vg-guide .vg-wallpaper img{width:110px;height:190px;object-fit:cover;border-radius:16px;border:3px solid #0b1224}
+#vg-guide .vg-wallpaper p{font-size:14.5px}
+/* Save panel */
+#vg-guide .vg-save{position:absolute;inset:0;z-index:5;background:#0a1328e6;display:flex;align-items:center;justify-content:center;padding:20px}
+#vg-guide .vg-save-card{width:min(470px,100%);background:#162641;border:1px solid #6176a3;border-radius:22px;padding:24px;box-shadow:0 20px 60px #0008;max-height:100%;overflow:auto}
+#vg-guide .vg-save-card input{width:100%;padding:12px 14px;border-radius:999px;border:1px solid #7185a8;background:#0c182d;color:#fff;font-size:16px}
+#vg-guide .vg-save-card label{display:block;margin:12px 0 6px;font-size:14px;color:#e1e9ff}
+#vg-guide .vg-status{min-height:20px;font-size:13.5px;color:#ffe08a;margin:10px 0 0}
+#vg-guide .vg-linkish{background:none;border:0;color:#cfe0ff;text-decoration:underline;cursor:pointer;font-size:13px;padding:6px;border-radius:999px}
+/* Footer: Save always pinned */
+#vg-guide .vg-footer{padding:12px 20px;border-top:1px solid #344767;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#162641;position:relative;z-index:3}
+#vg-guide .vg-footer span{font-size:12.5px;color:#b2c1da}
+#vg-guide .vg-footer .vg-button{margin:0}
+#vg-guide .vg-shell{position:relative}
+/* Inline mode (create page) */
+#vg-guide.vg-inline #vg-dialog{position:static;display:block;width:100%;max-height:none;margin:0;box-shadow:0 14px 50px #0004}
+#vg-guide.vg-inline .vg-launch,#vg-guide.vg-inline .vg-close{display:none}
+#vg-guide.vg-inline .vg-shell{height:min(1240px,92vh)}
+#vg-guide.vg-inline .vg-save{position:fixed;z-index:1000}
+@media(max-width:760px){
+  #vg-guide .vg-layout{display:block;overflow:auto}
+  #vg-guide .vg-main{overflow:visible;padding:20px 16px}
+  #vg-guide .vg-blueprint{border-left:0;border-top:1px solid #354964;overflow:visible;padding:20px}
+  #vg-guide .vg-shell{height:92dvh}
+  #vg-guide.vg-inline .vg-shell{height:88dvh}
+  #vg-guide .vg-launch{top:auto;bottom:14px;transform:none;width:232px;padding:10px 14px}
+  #vg-guide .vg-footer>span{display:none}
+  #vg-guide .vg-footer{justify-content:center}
+  #vg-guide .vg-header{padding:10px 14px}
+  #vg-guide .vg-logo{width:38px;height:38px}
+  #vg-guide h2{font-size:20px}
+  #vg-guide h3{font-size:23px}
+  #vg-guide .vg-product{grid-template-columns:84px 1fr;gap:12px}
+  #vg-guide .vg-product img{width:84px;height:104px}
+  #vg-guide .vg-wallpaper{grid-template-columns:80px 1fr}
+  #vg-guide .vg-wallpaper img{width:80px;height:140px}
+  #vg-guide .vg-compose{bottom:0}
+}

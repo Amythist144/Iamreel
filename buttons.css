@@ -1,0 +1,64 @@
+/* I AM REEL — shared button system (all pages).
+   Pill-shaped, bright gold (primary) or bright blue (secondary),
+   with a soft white glow on hover, keyboard focus and when active/selected. */
+:root{
+  --iam-gold:#f7b500;--iam-gold-hi:#ffd23f;--iam-gold-ink:#1a1200;
+  --iam-blue:#0b63f6;--iam-blue-hi:#2e86ff;--iam-blue-ink:#ffffff;
+  --iam-glow:0 0 0 2px #ffffff,0 0 16px 4px rgba(255,255,255,.75),0 0 34px 10px rgba(255,255,255,.35);
+}
+html body :is(.button,.iam-btn,.iam-action-btn,.nav-cta,.btn,.global-secondary,[id="vision-checkout"],[data-wallpaper],.vg-button){
+  border-radius:999px!important;
+  background:var(--iam-blue)!important;background-image:none!important;
+  color:var(--iam-blue-ink)!important;
+  border:2px solid transparent!important;
+  font-weight:700;letter-spacing:.01em;cursor:pointer;
+  transition:box-shadow .2s ease,transform .2s ease,background-color .2s ease,border-color .2s ease;
+  text-decoration:none;
+}
+/* Primary = bright gold */
+html body :is(.button.gold,.iam-btn.gold,.iam-btn.gold-btn,.footer-create-cta,.vg-primary,[id="vision-checkout"],.iam-primary){
+  background:var(--iam-gold)!important;color:var(--iam-gold-ink)!important;
+}
+/* Secondary / outline / ghost = bright blue */
+html body :is(.button.outline,.iam-btn.ghost,.iam-action-btn.ghost,.vg-secondary,.global-secondary){
+  background:var(--iam-blue)!important;color:#fff!important;
+}
+html body :is(.button,.iam-btn,.iam-action-btn,.nav-cta,.btn,.global-secondary,[id="vision-checkout"],[data-wallpaper],.vg-button):is(:hover,:focus-visible,:active,.is-selected,.selected,[aria-pressed="true"]){
+  box-shadow:var(--iam-glow)!important;border-color:#fff!important;outline:none!important;transform:translateY(-1px);
+}
+html body :is(.button,.iam-btn,.iam-action-btn,.nav-cta,.btn,.global-secondary,[data-wallpaper],.vg-button):hover{background:var(--iam-blue-hi)!important}
+html body :is(.button.gold,.iam-btn.gold,.iam-btn.gold-btn,.footer-create-cta,.vg-primary,[id="vision-checkout"]):hover{background:var(--iam-gold-hi)!important}
+html body :is(.button,.iam-btn,.iam-action-btn,.btn,[id="vision-checkout"],.vg-button):disabled{opacity:.55;cursor:not-allowed;box-shadow:none!important;transform:none}
+html body .vision-product.selected{box-shadow:var(--iam-glow)}
+@media (prefers-reduced-motion:reduce){html body :is(.button,.iam-btn,.iam-action-btn,.nav-cta,.btn,.vg-button){transition:none;transform:none!important}}
+
+/* Specificity lock: some page rules use long selectors with !important
+   (e.g. ".create-partner-hero .button{color:#fff!important}"), which made
+   gold buttons white-on-gold. The :not(#iam-x) adds id weight so these win. */
+html body :is(.button.gold,.iam-btn.gold,.iam-btn.gold-btn,.footer-create-cta,.vg-primary,[id="vision-checkout"],.iam-primary):not(#iam-x){color:var(--iam-gold-ink)!important;background-color:var(--iam-gold)!important}
+html body :is(.button.gold,.iam-btn.gold,.iam-btn.gold-btn,.footer-create-cta,.vg-primary,[id="vision-checkout"],.iam-primary):not(#iam-x):hover{background-color:var(--iam-gold-hi)!important}
+html body :is(.button.outline,.iam-btn.ghost,.iam-action-btn.ghost,.vg-secondary,.global-secondary):not(#iam-x){color:#fff!important}
+
+/* Readable text on light (white) cards — dark navy, WCAG AA.
+   The dark page themes set light body text, which was inherited inside
+   white .iam-panel cards (e.g. My Sanctuary sign-in, saved dream). */
+html body main .iam-panel:not(#iam-x){color:#102b50}
+html body main .iam-panel:not(#iam-x) :is(p,li,label,span,small,strong,em,h1,h2,h3,h4,dt,dd,.iam-note,.iam-field):not(.iam-btn):not(.button):not(.vg-button){color:#102b50}
+html body main .iam-panel:not(#iam-x) :is(.eyebrow,.cv-eyebrow,.store-kicker){color:#7a5600}
+html body main .iam-panel:not(#iam-x) :is(input,textarea,select){color:#102b50;background:#fff;border-color:#8ea3bf}
+html body main .iam-panel:not(#iam-x) :is(input,textarea)::placeholder{color:#5b6b82}
+html body main .iam-panel:not(#iam-x) a:not(.button):not(.iam-btn){color:#0b4fc4}
+
+/* Readability on the dark starfield sections (light text on dark, AA). */
+html body main#main #collection .collection-categories figcaption > span:not(#iam-x),
+html body main#main .partner-intro .eyebrow:not(#iam-x),
+html body main#main .contact-founder > span:not(#iam-x),
+html body main#main .soft-section .section-heading .eyebrow:not(#iam-x){color:#cdb9ff!important}
+html body main#main .science-findings .science-count:not(#iam-x){color:#8fc0ff!important}
+html body main#main .cta-band .product-ribbon:not(#iam-x) :is(a,span){color:#e6ecff!important}
+html body main#main .cta-band .product-ribbon:not(#iam-x) a{text-decoration:underline}
+html body main#main .vision-store-intro:not(#iam-x) h3{color:#fff!important}
+html body main#main .vision-store-intro:not(#iam-x) p{color:#dfe8ff!important}
+/* White gift card on the collection page: darker eyebrow */
+html body main#main .vision-free-gift .eyebrow:not(#iam-x){color:#0b6b62!important}
+html body main#main .vision-store .store-kicker:not(#iam-x){color:#7a5c00!important}
