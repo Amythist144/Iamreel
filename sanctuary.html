@@ -14,7 +14,7 @@ body.sanctuary-page{min-height:100vh;background:radial-gradient(circle at 20% 10
 <body class="customer-page sanctuary-page"><a class="skip" href="#main">Skip to content</a>
 <header><a class="brand" href="index.html" aria-label="I AM REEL home"><img class="brand-animation" src="assets/logo-animation-loop.gif" alt="I AM REEL" width="840" height="224"></a><button class="menu-toggle" aria-expanded="false" aria-controls="nav">Menu <span>☰</span></button><nav id="nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="create.html">Create your vision</a><a href="collection.html">Vision collection</a><a href="why-it-works.html">Why it works</a><a href="professional.html">Partner program</a><a href="global.html">Global vision project</a><a href="sanctuary.html" class="nav-cta">My Sanctuary</a></nav></header>
 <main id="main" class="sanctuary-shell">
-<section class="sanctuary-hero"><p class="eyebrow">MY SANCTUARY</p><h1>Your vision lives here</h1><p>Your private place for the future you’re creating—your wallpaper, Future Self, affirmations, purchases and finished creations.</p><div class="sanctuary-actions"><a class="button gold" href="create.html#vision-form">Continue my Vision Guide</a><a class="button" href="collection.html#vision-store">Vision Collection</a></div></section>
+<section class="sanctuary-hero"><p class="eyebrow">MY SANCTUARY</p><h1>Your vision lives here</h1><p>Your private place for the future you’re creating—your wallpaper, Future Self, affirmations, purchases and finished creations.</p><div class="sanctuary-actions"><a id="hero-continue" class="button gold" href="create.html#vision-form">Continue my Vision Guide</a><a class="button" href="collection.html#vision-store">Vision Collection</a></div></section>
 <section id="saved-dream" class="iam-panel" hidden style="margin-bottom:22px">
 <p class="eyebrow">YOUR SAVED DREAM VISION</p>
 <h2 id="saved-dream-title">Your dream, alive</h2>
@@ -22,7 +22,9 @@ body.sanctuary-page{min-height:100vh;background:radial-gradient(circle at 20% 10
 <div id="saved-dream-affirms"></div>
 <p id="saved-dream-choice" class="iam-note" hidden></p>
 <p id="saved-dream-sync" class="iam-note"></p>
+<div class="sanctuary-actions" style="margin-top:14px"><button id="saved-dream-continue" class="button gold iam-continue-pill" type="button" aria-expanded="false" aria-controls="saved-dream-guide">✦ Continue this dream</button></div>
 </section>
+<div id="saved-dream-guide" hidden style="margin:0 0 22px"><div data-vision-guide-inline data-vg-mode="sanctuary"></div></div>
 <div id="sanctuary-auth" class="iam-panel iam-hidden"><p class="eyebrow">PRIVATE MEMBER SPACE</p><h2>Sign in to My Sanctuary</h2><p>Your Sanctuary is connected to your I AM REEL account.</p><div class="iam-auth-grid"><label class="iam-field">Email<input id="sanctuary-email" type="email" autocomplete="email"></label><label class="iam-field">Password<input id="sanctuary-password" type="password" autocomplete="current-password"></label></div><button id="sanctuary-signin" class="iam-btn gold" type="button">Sign in</button></div>
 <div id="sanctuary-member" class="sanctuary-grid iam-hidden">
 <section class="iam-panel"><p class="eyebrow">YOUR FREE MEMBER GIFT</p><h2>Dream Future Wallpaper</h2><p>When your Vision Blueprint is ready, your complimentary phone or desktop wallpaper will appear here.</p><div id="sanctuary-wallpaper" class="sanctuary-empty">Your wallpaper is not ready yet.</div></section>
@@ -59,30 +61,59 @@ document.addEventListener('DOMContentLoaded',init);
 </script><script src="script.js"></script><script>
 /* Saved dream vision from the free Vision Guide (assets/vision-guide/guide.js).
    Shows the copy saved on this device and, once signed in, syncs it to Supabase
-   (visions + affirmations) if it has not been synced yet. */
-(()=>{const KEY='iamreel_saved_vision_v1',U='https://jtlqvxcmbgqtcpdhldbm.supabase.co';
+   (visions + affirmations), updating the same vision row when it already exists.
+   "Continue this dream" mounts the Vision Guide inline here with the full chat restored. */
+(()=>{const KEY='iamreel_saved_vision_v1',U='https://jtlqvxcmbgqtcpdhldbm.supabase.co',GV='20261031c';
 const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
-if(!saved||!saved.blueprint)return;
-const bp=saved.blueprint,$=id=>document.getElementById(id);
-$('saved-dream').hidden=false;
-const paras=(bp.dream_vision&&bp.dream_vision.length)?bp.dream_vision:[bp.dream,bp.moment,bp.people_pets_place,bp.feeling].filter(Boolean);
-$('saved-dream-vision').innerHTML=paras.map(p=>'<p>'+esc(p)+'</p>').join('');
-if(bp.affirmations&&bp.affirmations.length)$('saved-dream-affirms').innerHTML='<p class="eyebrow" style="margin-top:14px">YOUR AFFIRMATIONS</p><ul style="margin:6px 0 0;padding-left:20px;line-height:1.6">'+bp.affirmations.map(a=>'<li>'+esc(a)+'</li>').join('')+'</ul>';
-let cart=[];try{cart=JSON.parse(sessionStorage.getItem('iamreel_checkout_cart')||'[]')}catch(e){}
-const code=new URLSearchParams(location.search).get('checkout')||cart[0]||bp.chosen_product;const cat=window.IAMREEL_PRODUCTS||{};
-if(code&&cat[code]){const p=cat[code];$('saved-dream-choice').hidden=false;$('saved-dream-choice').textContent='Your selection is saved: '+p.name+(p.price==null?'':' · $'+(p.price%1?Number(p.price).toFixed(2):p.price))+'. Secure checkout continues here after you sign in.';}
-/* TODO(checkout): start the real payment for `code` here once a provider (PayPal) is wired; then create the orders row server-side. */
+const $=id=>document.getElementById(id);
+const load=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}};
+const store=v=>{try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}};
+let saved=load(),sb=null,session=null;
 const syncNote=t=>{$('saved-dream-sync').textContent=t||''};
-if(!saved.cloud||saved.cloud.pending)syncNote('Saved privately on this device. Sign in and it moves into your Sanctuary.');
+function render(){saved=load();if(!saved||!saved.blueprint)return false;const bp=saved.blueprint;
+ $('saved-dream').hidden=false;
+ const paras=(bp.dream_vision&&bp.dream_vision.length)?bp.dream_vision:[bp.dream,bp.moment,bp.people_pets_place,bp.feeling].filter(Boolean);
+ $('saved-dream-vision').innerHTML=paras.map(p=>'<p>'+esc(p)+'</p>').join('');
+ $('saved-dream-affirms').innerHTML=(bp.affirmations&&bp.affirmations.length)?'<p class="eyebrow" style="margin-top:14px">YOUR AFFIRMATIONS</p><ul style="margin:6px 0 0;padding-left:20px;line-height:1.6">'+bp.affirmations.map(a=>'<li>'+esc(a)+'</li>').join('')+'</ul>':'';
+ let cart=[];try{cart=JSON.parse(sessionStorage.getItem('iamreel_checkout_cart')||'[]')}catch(e){}
+ const code=new URLSearchParams(location.search).get('checkout')||cart[0]||bp.chosen_product;const cat=window.IAMREEL_PRODUCTS||{};
+ if(code&&cat[code]){const p=cat[code];$('saved-dream-choice').hidden=false;$('saved-dream-choice').textContent='Your selection is saved: '+p.name+(p.price==null?'':' · $'+(p.price%1?Number(p.price).toFixed(2):p.price))+'. Secure checkout continues here after you sign in.';}
+ /* TODO(checkout): start the real payment for `code` here once a provider (PayPal) is wired; then create the orders row server-side. */
+ if(!saved.cloud||saved.cloud.pending)syncNote('Saved privately on this device. Sign in and it moves into your Sanctuary.');
+ return true;}
+/* Continue this dream: load the guide inline, restored from the saved vision (chat, answers, affirmations, answers left). */
+let mounted=false;
+function continueDream(){const wrap=$('saved-dream-guide'),btn=$('saved-dream-continue');
+ wrap.hidden=false;btn.setAttribute('aria-expanded','true');btn.textContent='✦ Continuing your dream';
+ if(!mounted){mounted=true;
+  if(!document.querySelector('link[data-vg-css]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/vision-guide/guide.css?v='+GV;l.setAttribute('data-vg-css','');document.head.appendChild(l)}
+  const sc=document.createElement('script');sc.src='assets/vision-guide/guide.js?v='+GV;sc.defer=true;document.body.appendChild(sc);}
+ setTimeout(()=>wrap.scrollIntoView({behavior:'smooth',block:'start'}),60);}
+$('saved-dream-continue').addEventListener('click',continueDream);
+let syncing=false;
+const sync=async()=>{saved=load();if(!sb||!session||!saved||!saved.blueprint||syncing)return;if(saved.cloud&&saved.cloud.pending===false){syncNote('');return}syncing=true;const bp=saved.blueprint;
+ try{const row={title:(bp.dream||'My Dream Future').slice(0,60),path:'standard',status:bp.approved?'blueprint_ready':'draft',blueprint:bp,conversation_summary:saved.summary||''};
+  const id=saved.cloud&&saved.cloud.visionId;let res=null;
+  if(id){res=await sb.from('visions').update(row).eq('id',id).select().single();if(res.error||!res.data)res=null}
+  if(!res){res=await sb.from('visions').insert(Object.assign({user_id:session.user.id},row)).select().single();if(res.error)throw res.error}
+  const data=res.data;
+  if(bp.affirmations&&bp.affirmations.length){if(id&&data.id===id)await sb.from('affirmations').delete().eq('vision_id',data.id);const r=await sb.from('affirmations').insert(bp.affirmations.map((s,i)=>({user_id:session.user.id,vision_id:data.id,statement:s,sort_order:i})));if(r.error)console.warn('affirmations not saved',r.error.message)}
+  const cur=load()||saved;cur.cloud={pending:false,visionId:data.id,syncedAt:new Date().toISOString()};store(cur);syncNote('Saved to your Sanctuary.');}
+ catch(e){console.warn('Saved dream sync failed',e&&e.message);syncNote('Saved on this device. We couldn’t reach your Sanctuary just now and will try again next time you visit.')}
+ finally{syncing=false}};
+/* Signed in on a new device with nothing saved locally: bring back the latest saved vision (blueprint holds the chat). */
+const pull=async()=>{if(!sb||!session||load())return;try{const {data}=await sb.from('visions').select('id,blueprint,conversation_summary').order('updated_at',{ascending:false}).limit(1);const v=data&&data[0];if(!v||!v.blueprint||!v.blueprint.dream)return;
+ store({blueprint:v.blueprint,summary:v.conversation_summary||'',messages:(v.blueprint.transcript||[]),savedAt:new Date().toISOString(),cloud:{pending:false,visionId:v.id}});render();}catch(e){}};
+const has=render();
+const hero=$('hero-continue');if(hero)hero.addEventListener('click',e=>{if(load()){e.preventDefault();render();continueDream()}});
+if(has&&/[?&#]continue\b/.test(location.search+location.hash))continueDream();
+/* The guide autosaves back into the same saved vision as you continue. */
+let t=null;const refresh=()=>{clearTimeout(t);t=setTimeout(()=>{render();sync()},400)};
+window.addEventListener('iamreel:vision-updated',refresh);window.addEventListener('iamreel:vision-saved',refresh);
 if(!window.supabase||!window.IAMREEL_SUPABASE_KEY)return;
-const sb=window.supabase.createClient(U,window.IAMREEL_SUPABASE_KEY);
-let syncing=false;const sync=async session=>{if(!session||syncing)return;if(saved.cloud&&saved.cloud.pending===false){syncNote('');return}syncing=true;
- try{const {data,error}=await sb.from('visions').insert({user_id:session.user.id,title:(bp.dream||'My Dream Future').slice(0,60),path:'standard',status:bp.approved?'blueprint_ready':'draft',blueprint:bp,conversation_summary:saved.summary||''}).select().single();if(error)throw error;
- if(bp.affirmations&&bp.affirmations.length){const r=await sb.from('affirmations').insert(bp.affirmations.map((s,i)=>({user_id:session.user.id,vision_id:data.id,statement:s,sort_order:i})));if(r.error)console.warn('affirmations not saved',r.error.message)}
- saved.cloud={pending:false,visionId:data.id,syncedAt:new Date().toISOString()};localStorage.setItem(KEY,JSON.stringify(saved));syncNote('Saved to your Sanctuary.');}
- catch(e){console.warn('Saved dream sync failed',e&&e.message);syncNote('Saved on this device. We couldn’t reach your Sanctuary just now and will try again next time you visit.')}};
-sb.auth.getSession().then(r=>sync(r.data&&r.data.session));sb.auth.onAuthStateChange((_e,session)=>sync(session));
+sb=window.supabase.createClient(U,window.IAMREEL_SUPABASE_KEY);
+const onSession=async s=>{if(!s)return;session=s;await pull();sync()};
+sb.auth.getSession().then(r=>onSession(r.data&&r.data.session));sb.auth.onAuthStateChange((_e,s)=>onSession(s));
 })();
 </script>
 </body></html>

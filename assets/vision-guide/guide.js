@@ -21,11 +21,25 @@
   var asset = function (path) { return new URL('../../' + path, base).href; };
   var esc = function (v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); };
 
+  /* ---------------- Answer limits ----------------
+     Each answer is at most 255 characters. The free guide allows 4 rounds of answers (the opening dream is round 1);
+     paid customers get 6. Paid is a hook for after checkout: set window.IAMREEL_GUIDE_PAID = true before guide.js loads,
+     or localStorage 'iamreel_guide_paid' = '1'. Override counts with window.IAMREEL_GUIDE_ROUNDS = { free: 4, paid: 6 }. */
+  var MAX_ANSWER = 255;
+  var IAMREEL_GUIDE_ROUNDS = Object.assign({ free: 4, paid: 6 }, window.IAMREEL_GUIDE_ROUNDS || {});
+  var LIMIT_NOTE = 'Your dream vision is ready. Save it to your Sanctuary, or start over to dream again.';
+  function isPaid() { try { return window.IAMREEL_GUIDE_PAID === true || localStorage.getItem('iamreel_guide_paid') === '1'; } catch (e) { return window.IAMREEL_GUIDE_PAID === true; } }
+  function maxRounds() { return Math.max(1, Math.min(isPaid() ? IAMREEL_GUIDE_ROUNDS.paid : IAMREEL_GUIDE_ROUNDS.free, 6)); }
+  function roundsUsed() { return (typeof state !== 'undefined' && state && state.rounds) || 0; }
+  function roundsLeft() { return Math.max(0, maxRounds() - roundsUsed()); }
+  function limitReached() { return roundsLeft() <= 0; }
+  function roundsText() { var n = roundsLeft(); return n === maxRounds() ? 'You have ' + n + ' answers to paint your dream.' : n + (n === 1 ? ' answer' : ' answers') + ' left to paint your dream.'; }
+
   /* ---------------- Questions (one at a time) ---------------- */
   var QUESTIONS = [
     { key: 'dream', label: 'Your dream', ask: 'Let’s begin with one dream. What would you love to see yourself living? Just type it the way you’d tell a close friend.', placeholder: 'For example: travel the world with the love of my life…' },
     { key: 'moment', label: 'Specific moment', ask: 'Now picture that dream as already real. What’s one specific moment you’d love to see yourself in? (Like “walking hand in hand along a sunrise beach” or “opening the door to my new home.”)', placeholder: 'The moment I see myself in…' },
-    { key: 'setting', label: 'People, pets & place', ask: 'Where are you, and who or what is with you? Describe the people, pets and place. Anyone besides you will be AI-generated, not a real photo, so simply describe them, like “a handsome man with dark hair and a beard,” “my golden retriever” or “a crowd applauding.”', placeholder: 'Where I am and who is with me…' },
+    { key: 'setting', label: 'People, pets & place', ask: 'Where are you, and who or what is with you? Describe the place and any people or pets. Anyone besides you will be AI-generated, not a real photo, so simply describe them, like “a handsome man with dark hair and a beard,” “my golden retriever” or “a crowd applauding.”', placeholder: 'Where I am and who is with me…' },
     { key: 'feeling', label: 'Desired feeling', ask: 'How do you want to feel in that moment? Name the feelings: peaceful, adored, free, proud, abundant… whatever is true for you.', placeholder: 'I want to feel…' }
   ];
   var SAMPLE = {
@@ -51,11 +65,11 @@
     { cat: 'explicit', re: /\b(porn\w*|nudes?|naked|nudity|topless|bottomless|xxx|nsfw|erotic\w*|fetish\w*|sex|sexual\w*|intercourse|orgasm\w*|genital\w*|boobs?|tits|penis|vagina|lingerie|stripper|strip ?club|striptease|onlyfans|horny)\b/,
       msg: 'Let’s keep your vision beautiful and tasteful. Romance and closeness are welcome, but we don’t create explicit or sexual content. Could you describe the feeling of the moment instead, like being adored, close and safe?' },
     { cat: 'profanity', re: /\b(fuck\w*|f\*+k\w*|shit\w*|bullshit|bitch\w*|cunt\w*|asshole\w*|motherf\w*|dickhead\w*|bastard\w*|whore\w*|slut\w*|pissed)\b/,
-      msg: 'I can feel the passion in that! Let’s say it in words that raise your vibration. Could you rephrase it without the strong language?' },
+      msg: 'There’s so much passion in that! Let’s keep your vision beautiful. Could you say it again without the strong language?' },
     { cat: 'violence', re: /\b(kill(?!\s+it\b)|kills|killing(?!\s+it\b)|murder\w*|stab\w*|behead\w*|massacre\w*|tortur\w*|gore|gory|bomb(s|ing)?|terroris\w*|rape\w*|raping|assault\w*|revenge|weapons?|guns?|rifles?|shoot (him|her|them|people)|hurt (him|her|them)|destroy (him|her|them)|nazi\w*|kkk|white power|heil|genocide|ethnic cleansing|hate (all|those|every))\b/,
-      msg: 'Your vision is a place of peace and possibility, so we don’t create violent or hateful imagery. What would it look like if that energy became something you’re building or celebrating?' },
+      msg: 'Your vision is a place of peace and possibility, so we don’t create violent or hateful imagery. What would it look like if that fire became something you’re building or celebrating?' },
     { cat: 'celebrity', re: /\b(celebrit(y|ies)|famous (person|people|actor|actress|singer|rapper|athlete)|public figure|movie star|taylor swift|beyonc[eé]|oprah|elon musk|donald trump|trump|joe biden|biden|barack obama|obama|kamala harris|kim kardashian|kardashians?|brad pitt|angelina jolie|tom cruise|tom hanks|leonardo dicaprio|dicaprio|rihanna|drake|kanye|lady gaga|ariana grande|justin bieber|selena gomez|jennifer aniston|jennifer lopez|j\.?lo|george clooney|dwayne johnson|keanu reeves|ryan reynolds|ryan gosling|chris hemsworth|zendaya|harry styles|ed sheeran|adele|lebron( james)?|michael jordan|tom brady|cristiano ronaldo|ronaldo|lionel messi|messi|serena williams|king charles|prince harry|prince william|meghan markle|kate middleton|the pope|prime minister|the president)\b/,
-      msg: 'This dream is all about you, so we don’t include celebrities or public figures. You can describe the kind of person or energy instead, like “a legendary musician joining me on stage” or “a crowd of thousands applauding.”' },
+      msg: 'This dream is all about you, so we don’t include celebrities or public figures. You can describe the kind of person instead, like “a legendary musician joining me on stage” or “a crowd of thousands applauding.”' },
     { cat: 'realperson', re: /(\b(photo|picture|pic|image|face|likeness)s?\s+of\s+(my|his|her|their|a real|real)\b|\b(my|his|her)\s+\w+['’]s\s+(face|photo|picture)\b|\blooks?\s+(exactly\s+)?like\s+(my|a real|the real|the actor|the actress|the singer)\b|\breal (person|people)\b|\buse (a |the )?(photo|picture|pic)s? of\b)/,
       msg: 'Only you appear as yourself. Everyone else in your images is AI-generated, so we don’t recreate real people from photos or likenesses. Describe how you’d love them to look instead, like “a handsome man with dark hair and a beard.”' },
     { cat: 'minor', imageryOnly: true, re: /(\b(kids?|kiddos?|child|children|babies|baby|toddlers?|infants?|newborns?|teens?|teenagers?|preteens?|minors?|schoolgirls?|schoolboys?|grandkids?|grandchild(ren)?|grandbab(y|ies)|little (girl|boy)s?|young (girl|boy)s?)\b|\b(1[0-7]|[1-9])[- ]?(year|yr)s?[- ]?old\b)/,
@@ -126,6 +140,203 @@
   function short(t, n) { t = clean(t); n = n || 90; return t.length > n ? t.slice(0, n).replace(/\s+\S*$/, '') + '…' : t; }
   var PEOPLE_RE = /\b(man|woman|men|women|partner|husband|wife|boyfriend|girlfriend|fianc[eé]e?|friend|friends|family|mom|mother|dad|father|sister|brother|crowd|people|team|audience|guests|someone|lover|spouse)\b/i;
   var PET_RE = /\b(dog|dogs|puppy|cat|cats|kitten|horse|horses|pet|pets|retriever|parrot|bird)\b/i;
+  /* ---------------- Imagery engine (rule-based "dream painter") ----------------
+     Detects settings and details in the visitor's own words and paints them back as a
+     short, sensory, second-person present-tense scene. Phrase banks are varied and the
+     chat never repeats a line it has already used. The guide never claims to feel anything. */
+  var THEMES = [
+    { id: 'beach', place: true, prep: 'on', label: 'the beach', re: /\b(beach(es)?|ocean|sea ?side|seashore|shore|island|tropical|surf(ing)?|waves?|lagoon|coast(line)?|bahamas|hawaii|maldives|caribbean|bali|tahiti|fiji|cabo|cancun)\b/i,
+      noun: /\b(beach|island|shore|ocean|coast|lagoon)\b/i,
+      lines: ['Warm sand gives softly beneath you, and the water glows turquoise all the way to the horizon.',
+        'Palm fronds sway overhead, scattering lacy shadows across your skin while the waves roll in, slow and unhurried.',
+        'The breeze tastes faintly of salt and coconut, and the sun rests like a warm hand on your shoulders.',
+        'Out past the reef the sea sparkles silver, and each wave sighs onto the shore and slips back again.',
+        'Your toes sink into sun-warmed sand, and the only sound is the hush of the tide.'] },
+    { id: 'stage', place: true, prep: 'on', label: 'that stage', re: /\b(stage|audience|awards?|applause|applaud\w*|concert|perform\w*|spotlight|microphone|mic|keynote|standing ovation|trophy|oscar|grammy|emmy|podium|ceremony|crowd|sold[- ]out|arena)\b/i,
+      noun: /\b(stage|arena|ceremony|concert|podium)\b/i,
+      lines: ['Warm stage lights pour over you, and beyond them a sea of faces rises to its feet.',
+        'The applause rolls toward you like a wave, and the award is cool, solid and real in your hands.',
+        'Your heart is steady and full as you step to the microphone, and the whole room leans in to listen.',
+        'Golden light, the rustle of a thousand people standing, and a cheer that seems to go on and on.',
+        'You look out at the glowing room and smile, because every step of the journey led you right here.'] },
+    { id: 'home', place: true, prep: 'in', label: 'your home', re: /\b(house|home|kitchen|living room|porch|backyard|patio|front door|keys to|bedroom|villa|estate|farmhouse|mansion|cottage|condo|apartment)\b/i,
+      noun: /\b(home|house|kitchen|living room|porch|backyard|patio|villa|estate|farmhouse|mansion|cottage|condo|apartment)\b/i,
+      lines: ['Sunlight pours through tall windows and spills across warm wooden floors.',
+        'The rooms are bright and peaceful, and the air smells of fresh coffee and something sweet baking in the oven.',
+        'Every corner is just as you imagined it: soft linens, open space, and a view that makes you exhale.',
+        'A breeze drifts through an open door, carrying the scent of flowers from the garden.',
+        'You run your hand along the smooth countertop and smile, because this place is truly yours.'] },
+    { id: 'mountain', place: true, prep: 'in', label: 'the mountains', re: /\b(mountains?|cabin|alps|peaks?|summit|ridge|chalet|hik(e|es|ing)|trail|canyon|valley)\b/i,
+      noun: /\b(mountains?|cabin|alps|summit|chalet|canyon|valley)\b/i,
+      lines: ['Crisp, pine-scented air fills your lungs, and the peaks glow rose and gold around you.',
+        'The valley spreads out below like a quilt of green and gold, and the sky feels close enough to touch.',
+        'The quiet up here is vast and kind; you can hear the wind moving through the trees.',
+        'A fire crackles nearby, and the first stars are appearing above the ridgeline.'] },
+    { id: 'city', place: true, prep: 'in', label: 'the city', re: /\b(city|penthouse|skyline|downtown|rooftop|new york|manhattan|loft|high[- ]rise|london|tokyo|chicago|dubai|los angeles|miami)\b/i,
+      noun: /\b(city|penthouse|skyline|rooftop|new york|manhattan|loft|london|tokyo|chicago|dubai|los angeles|miami)\b/i,
+      lines: ['Floor-to-ceiling windows frame the skyline, and the city lights shimmer like a field of stars.',
+        'Far below, the streets hum with life, and up here everything is calm, polished and yours.',
+        'The evening air on the rooftop is soft and warm, and the whole city seems to glitter just for you.',
+        'Your heels click across a gleaming floor as the skyline turns pink and gold at dusk.'] },
+    { id: 'travel', place: true, prep: 'in', label: 'this place', re: /\b(travel\w*|plane|flight|first class|jet|paris|france|italy|rome|venice|tuscany|amalfi|greece|santorini|europe|abroad|around the world|passport|yacht|cruise|sail(ing)?|vacation|safari|japan|spain|barcelona|portugal|iceland|switzerland)\b/i,
+      noun: /\b(paris|italy|rome|venice|tuscany|amalfi|greece|santorini|europe|japan|spain|barcelona|portugal|iceland|switzerland|yacht|first class)\b/i,
+      lines: ['Your passport is worn soft from adventure, and a new horizon is waiting just outside the window.',
+        'Cobblestone streets glow in the late-afternoon light, and the air smells of fresh bread and espresso.',
+        'The world opens in front of you, one breathtaking view after another, and you are free to wander every one.',
+        'A warm breeze carries the sound of church bells, laughter at café tables, and a language you are falling in love with.'] },
+    { id: 'nature', place: true, prep: 'by', label: 'the water', re: /\b(forest|woods|lake|river|meadow|waterfall|garden|flowers|wildflowers|field|countryside|vineyard|ranch|farm)\b/i,
+      noun: /\b(forest|woods|lake|river|meadow|waterfall|garden|vineyard|ranch|farm|countryside)\b/i,
+      lines: ['Tall trees whisper overhead, and sunlight filters down in soft golden beams.',
+        'The water lies still as glass, mirroring the sky, and the air smells of moss and wildflowers.',
+        'Birdsong drifts through the green, and the grass is cool and soft beneath your feet.',
+        'Wildflowers nod in the breeze, and the whole world seems to be breathing slowly with you.'] },
+    { id: 'snow', place: false, re: /\b(snow\w*|ski(ing)?|winter|christmas|holidays?|fireplace)\b/i,
+      lines: ['Snow drifts down in slow, silent flakes, and your breath clouds in the crisp air.',
+        'Inside, a fire crackles and a mug warms your hands while the world outside glitters white.'] },
+    { id: 'work', place: false, re: /\b(office|business|laptop|clients?|company|ceo|entrepreneur|startup|desk|typing|my brand|launch\w*|sales|customers?|bestsell\w*|my book|author|career|promotion|team)\b/i,
+      lines: ['Your laptop glows with good news: another client, another yes, your business humming along beautifully.',
+        'Each soft click of the keys builds something that is entirely yours.',
+        'Messages of thanks arrive from people you have helped, and your calendar is full of work you love.',
+        'You glance at the numbers and smile; what you built is thriving and still growing.'] },
+    { id: 'car', place: false, re: /\b(car|convertible|tesla|porsche|ferrari|mercedes|bmw|range rover|jeep|road trip|driv(e|ing))\b/i,
+      lines: ['The leather is smooth and warm under your hands, and the engine purrs as the open road unrolls ahead.',
+        'Sunlight flashes off the polished hood, and the wind plays through your hair.'] },
+    { id: 'wedding', place: false, re: /\b(wedding|bride|groom|marry(ing)?|married|vows?|engaged|proposal|propose[sd]?)\b/i,
+      lines: ['Flowers, soft music and the glow of candles surround you as you say yes to forever.',
+        'Every face around you is shining, and the one you love is looking at you as if you are the whole world.'] },
+    { id: 'love', place: false, re: /\b(partner|husband|wife|boyfriend|girlfriend|fianc[eé]e?|soul ?mate|love of my life|romance|romantic|hand in hand|lover|spouse|handsome|beautiful (man|woman))\b/i,
+      lines: ['Someone who adores you is right beside you, their hand warm in yours.',
+        'You catch each other’s eyes and laugh at nothing at all, completely at ease.',
+        'There is a gentleness between the two of you that makes the whole world slow down.'] },
+    { id: 'family', place: false, re: /\b(family|mom|mother|dad|father|sisters?|brothers?|parents|cousins|aunt|uncle|loved ones)\b/i,
+      lines: ['The people you love most gather around a long table, passing plates and laughing until their cheeks hurt.',
+        'Hugs linger a little longer here, and the room is full of warmth and easy laughter.'] },
+    { id: 'friends', place: false, re: /\b(friends?|besties|girls trip|guys trip|my people|tribe)\b/i,
+      lines: ['Your favorite people are all around you, glasses raised, the laughter loud and easy.'] },
+    { id: 'dog', place: false, pet: true, re: /\b(dogs?|pupp(y|ies)|retriever|lab|labrador|poodle|doodle|shepherd|corgi|husky)\b/i,
+      lines: ['Your dog bounds happily through the scene, tail wagging, then flops down at your feet with a contented sigh.',
+        'A wet nose nudges your hand, and your dog’s whole body wiggles with joy.'] },
+    { id: 'cat', place: false, pet: true, re: /\b(cats?|kittens?|kitty)\b/i,
+      lines: ['A cat curls up in a patch of sunlight nearby, purring softly.'] },
+    { id: 'horse', place: false, pet: true, re: /\b(horses?|pony|ponies|mare|stallion)\b/i,
+      lines: ['A beautiful horse nuzzles your shoulder, its coat warm and gleaming in the sun.'] },
+    { id: 'money', place: false, re: /\b(money|abundan\w*|wealth\w*|rich|millionaire|debt[- ]free|financial\w*|income|savings|paid off|mortgage|investments?|retire\w*)\b/i,
+      lines: ['Every bill is paid, your savings keep growing, and there is more than enough to share.',
+        'You check your accounts and simply smile; money comes to you easily and stays.',
+        'You say yes to what you love without a second thought, because there is plenty.'] },
+    { id: 'health', place: false, re: /\b(health\w*|run(ning)?|runner|marathon|fit|fitness|strong|gym|weight|lean|toned|heal(ed|ing)?|athlet\w*|swim(ming)?)\b/i,
+      lines: ['Your body is strong and light, and every breath is deep and easy.',
+        'You move with a lightness you have not known in years, your muscles strong and your skin glowing.',
+        'Your heart beats strong and steady, and you finish with a smile, ready for more.'] },
+    { id: 'yoga', place: false, re: /\b(yoga|meditat\w*|pilates|stretch\w*)\b/i,
+      lines: ['Your mat is warm beneath your palms as you flow from pose to pose, calm and strong.'] }
+  ];
+  var TIME_LINES = [
+    { re: /\bsunset|dusk|golden hour|evening\b/i, line: 'The sun sinks low and paints everything in honey and rose.' },
+    { re: /\bsunrise|dawn|morning\b/i, line: 'The first light of morning spills across everything in soft peach and gold.' },
+    { re: /\bnight|stars|starry|moon\w*\b/i, line: 'Overhead, the sky is scattered with stars, and the night air is soft and warm.' }
+  ];
+  var GENERIC_LINES = ['The light around you is soft and golden, and every color is a little brighter than you remember.',
+    'Your shoulders are loose, your breath is slow, and a quiet smile will not leave your face.',
+    'The air is warm, the world feels wide open, and you are exactly where you are meant to be.',
+    'Everything about this moment tells you that you belong here, and that you always did.',
+    'There is no rush and nowhere else to be, only this moment, unfolding beautifully around you.'];
+  var FEELING_LINES = [
+    { re: /peace\w*|calm|serene|relaxed|at ease|still/i, line: 'Your breath slows, your shoulders soften, and there is nowhere else you need to be.' },
+    { re: /\bfree\b|freedom|light|unbound/i, line: 'There is so much space around you and inside you, like a window thrown wide open on a summer day.' },
+    { re: /lov(ed|ing)|adored|cherished|desired|seen|wanted/i, line: 'You are wrapped in tenderness, completely seen and completely cherished.' },
+    { re: /proud|accomplished|successful|powerful|confident|unstoppable|strong/i, line: 'You stand a little taller, chin lifted, knowing in your bones that you earned every bit of this.' },
+    { re: /abundan|wealthy|prosperous|rich|secure|safe/i, line: 'There is a deep, quiet security in you now, the knowing that you have more than enough.' },
+    { re: /joy\w*|happy|happiness|delight\w*|excited|alive|ecstatic|giddy/i, line: 'Joy bubbles up and spills over into laughter you could not hold back if you tried.' },
+    { re: /grateful|thankful|blessed/i, line: 'Gratitude fills your chest like warm sunlight, soft and steady.' },
+    { re: /connected|belong\w*|whole|complete|fulfilled|content/i, line: 'Everything feels whole and connected, as if every piece of your life has clicked gently into place.' },
+    { re: /hope\w*|inspired|purpose\w*|meaning\w*/i, line: 'A bright sense of purpose glows in you, steady as a candle flame.' }
+  ];
+  var DRINK_RE = /\b((?:frozen|iced|cold|chilled|hot|fresh|tall)\s+)?(daiquiris?|margaritas?|pi[nñ]a coladas?|mojitos?|cocktails?|champagne|prosecco|wine|ros[eé]|lemonade|coconut water|coconut|smoothie|coffee|latte|cappuccino|espresso|tea|mai tai|sangria)\b/i;
+  var HOT_DRINK_RE = /^(hot|coffee|latte|cappuccino|espresso|tea)/i;
+  var OPENERS = {
+    moment: ['Oh, stay right there for a moment.', 'Let’s step right into it.', 'What a moment to live in.', 'Mmm, picture it with me.', 'Beautiful. Let’s slow it down and look closer.'],
+    setting: ['Now the whole scene is coming alive.', 'I can picture it so clearly now.', 'Oh, that makes it even more beautiful.', 'Lovely. Let’s fill in the scene.'],
+    feeling: ['Let that settle in for a moment.', 'Breathe that in.', 'Yes. Hold that feeling close.'],
+    more: ['Ooh, I love that detail.', 'Even more beautiful.', 'That brings it into focus.']
+  };
+
+  function hashStr(s) { var h = 2166136261; s = String(s || ''); for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function seededRng(seed) { var x = seed || 1; return function () { x ^= x << 13; x ^= x >>> 17; x ^= x << 5; return ((x >>> 0) % 100000) / 100000; }; }
+  function detectThemes(text) {
+    var t = String(text || '');
+    return THEMES.filter(function (th) { return th.re.test(t); });
+  }
+  /* The place in their own words: "a tropical beach", "my dream home", "Paris". */
+  function placeFor(text) {
+    var t = String(text || '');
+    for (var i = 0; i < THEMES.length; i++) {
+      var th = THEMES[i]; if (!th.place || !th.re.test(t)) continue;
+      var nounRe = th.noun || th.re, m = t.match(nounRe), phrase = th.label;
+      if (m) {
+        var before = t.slice(0, m.index).split(/\s+/).filter(Boolean).slice(-3), words = [];
+        for (var j = before.length - 1; j >= 0; j--) { var w = before[j].replace(/[^\w’'-]/g, ''); if (!w) break; words.unshift(w); if (/^(a|an|the|my|our)$/i.test(w)) break; if (words.length >= 3 || /^(on|in|at|to|by|from|of|with|and|while|is|am|are)$/i.test(w)) { words.shift(); break; } }
+        var det = words.length && /^(a|an|the|my|our)$/i.test(words[0]);
+        phrase = det ? words.concat([m[0]]).join(' ').toLowerCase().replace(/^our\b/, 'my') : (/^[A-Z]/.test(m[0]) || /^(paris|italy|rome|venice|tuscany|greece|santorini|europe|japan|spain|barcelona|portugal|iceland|switzerland|new york|manhattan|london|tokyo|chicago|dubai|los angeles|miami|hawaii|bali|fiji)$/i.test(m[0]) ? cap(m[0]) : 'the ' + m[0].toLowerCase());
+        if (/^(the|a|an) (mountain|peak)$/i.test(phrase)) phrase = 'the mountains';
+      }
+      return { id: th.id, prep: /^(the|a|an|my) (yacht|stage|podium|beach|shore|island|coast|lagoon)/i.test(phrase) ? 'on' : /^(the|a|an|my) (lake|river|ocean|waterfall)/i.test(phrase) ? 'by' : /^(the|a|an|my) (home|house)/i.test(phrase) ? 'in' : (/^[A-Z]/.test(phrase) ? 'in' : th.prep), phrase: phrase };
+    }
+    return null;
+  }
+  function hasPeople(text) { return PEOPLE_RE.test(text || '') || /\b(crowd|audience|applause|applauding|guests)\b/i.test(text || ''); }
+  function hasPets(text) { return PET_RE.test(text || ''); }
+  function justMe(text) { return /^\s*(just me|only me|me alone|alone|by myself|no one|nobody|myself|just myself|solo|it'?s just me|it’s just me)\b/i.test(text || ''); }
+  function explicitFeeling(text) {
+    var m = String(text || '').match(/\b(?:i\s+(?:want\s+to\s+|would\s+love\s+to\s+|’d\s+love\s+to\s+|'d\s+love\s+to\s+)?feel|feeling)\s+(?:so\s+|completely\s+|totally\s+|truly\s+)?((?:peace\w*|calm|serene|free|loved|adored|cherished|proud|confident|powerful|joyful|happy|abundant|wealthy|secure|safe|grateful|blessed|connected|fulfilled|content|alive|excited|relaxed|whole|hopeful|inspired|successful|beautiful|radiant)(?:[\s,]+(?:and\s+)?(?:peace\w*|calm|serene|free|loved|adored|cherished|proud|confident|powerful|joyful|happy|abundant|wealthy|secure|safe|grateful|blessed|connected|fulfilled|content|alive|excited|relaxed|whole|hopeful|inspired|successful|beautiful|radiant))*)/i);
+    return m ? m[1].replace(/\s+/g, ' ').trim() : '';
+  }
+  function drinkLine(text, pick) {
+    var m = String(text || '').match(DRINK_RE); if (!m) return '';
+    var d = (m[0]).toLowerCase().replace(/s$/, '').replace(/^pina/, 'piña');
+    if (HOT_DRINK_RE.test(d)) return pick(['Your ' + d + ' steams gently beside you, rich and comforting.', 'You wrap your hands around a warm ' + d + ' and breathe in its rich aroma.']);
+    return pick(['The ' + d + ' is cold and sweet in your hand, beads of water sliding down the glass.', 'You take a slow sip of your ' + d + ', icy and sweet against the warmth of the day.']);
+  }
+  /* Picks up to `max` sensory lines for a piece of text, never reusing a line in `used`. */
+  function sceneLines(text, ctx, opts) {
+    opts = opts || {};
+    var rng = opts.rng || Math.random, used = opts.used || [], max = opts.max || 2, out = [];
+    var pickFrom = function (arr) {
+      var fresh = arr.filter(function (l) { return used.indexOf(l) < 0 && out.indexOf(l) < 0; });
+      if (!fresh.length) return '';
+      var l = fresh[Math.floor(rng() * fresh.length)]; return l;
+    };
+    var push = function (l) { if (l && out.length < max && out.indexOf(l) < 0) { out.push(l); used.push(l); } };
+    var all = String(text || ''), context = String(ctx || '');
+    var themes = detectThemes(all);
+    var placeThemes = themes.filter(function (t) { return t.place; }), detailThemes = themes.filter(function (t) { return !t.place; });
+    var ctxPlace = placeThemes[0] || detectThemes(context).filter(function (t) { return t.place; })[0];
+    /* Combinations that make a scene feel specific. */
+    if (/\b(laptop|typing|business|clients?)\b/i.test(all) && ctxPlace && /beach|travel|nature|mountain/.test(ctxPlace.id))
+      push(pickFrom(['The soft click of your keys mixes with the sound of the waves as your business runs beautifully from paradise.'.replace('the waves', ctxPlace.id === 'beach' ? 'the waves' : ctxPlace.id === 'mountain' ? 'the wind in the pines' : 'the world around you'),
+        'Your laptop screen glows with good news while ' + (ctxPlace.id === 'beach' ? 'the ocean shimmers' : 'the view stretches out') + ' just beyond it; this is what freedom looks like.']));
+    push(drinkLine(all, function (a) { return pickFrom(a); }));
+    if (placeThemes[0]) push(pickFrom(placeThemes[0].lines));
+    detailThemes.forEach(function (t) { if (out.length < max) push(pickFrom(t.lines)); });
+    TIME_LINES.forEach(function (t) { if (out.length < max && t.re.test(all)) push(pickFrom([t.line])); });
+    if (out.length < max && ctxPlace && !placeThemes[0]) push(pickFrom(ctxPlace.lines));
+    while (out.length < Math.min(max, opts.min || 1)) { var g = pickFrom(GENERIC_LINES); if (!g) break; push(g); }
+    return out;
+  }
+  function echoSentence(key, text) {
+    var c = presentClause(text);
+    if (c) return cap(toYou(c)) + '.';
+    var n = toYou(nounPhrase(text));
+    if (!n) return '';
+    if (key === 'dream') return 'You are living your dream: ' + n + '.';
+    if (key === 'setting') return cap(n) + '.';
+    return 'Here you are: ' + n + '.';
+  }
+  function pickOne(arr, used) {
+    var fresh = arr.filter(function (l) { return !used || used.indexOf(l) < 0; });
+    var l = (fresh.length ? fresh : arr)[Math.floor(Math.random() * (fresh.length ? fresh : arr).length)];
+    if (used) used.push(l); return l;
+  }
 
   /* ---------------- Affirmations ---------------- */
   function affirmationsFor(key, value) {
@@ -141,50 +352,110 @@
       out.push('I am exactly where I belong: ' + nounPhrase(value) + '.');
       if (PEOPLE_RE.test(value) || PET_RE.test(value)) out.push('I am surrounded by love, and I give love freely.');
     } else if (key === 'feeling') {
-      out.push('I feel ' + feelingList(value) + '. This is my natural frequency.');
-      out.push('Every day I raise my vibration and step deeper into my best life.');
+      out.push('I feel ' + feelingList(value) + '. This is who I am becoming.');
+      out.push('Every day I step deeper into my best life.');
     }
     return out.map(function (s) { return cap(s.replace(/\s+/g, ' ').replace(/\.\.+$/, '.').replace(/([.!?])\.$/, '$1')); });
   }
-  function mirrorFor(key, value) {
-    var c;
-    if (key === 'dream') return '“' + short(value) + '.” What a beautiful dream to hold. I can already feel the energy in it, and I’ve started your Vision Blueprint.';
-    if (key === 'moment') { c = presentClause(value); return 'Oh, I love that moment. ' + (c ? cap(toYou(c)) + '.' : 'I can see it: ' + toYou(nounPhrase(value)) + '.') + ' It’s in your blueprint now.'; }
+  var OPENING_LINE = 'What a beautiful dream to hold. Tell me more, and we’ll create a vision blueprint that will help make it feel real to you.';
+  var PEOPLE_NOTE = 'Anyone with you will be AI-generated from your description, never a real photo of anyone but you.';
+  /* Paints the visitor's answer back as a short sensory scene (rule-based fallback for the AI guide). */
+  function mirrorFor(key, value, used, answers) {
+    used = used || []; answers = answers || {};
+    var ctx = [answers.dream, answers.moment, answers.setting].filter(Boolean).join(' . ');
+    var echo = echoSentence(key, value), lines;
+    if (key === 'dream') {
+      lines = sceneLines(value, ctx, { used: used, max: 2, min: 1 });
+      return OPENING_LINE + ' Picture it with me: ' + [echo].concat(lines).filter(Boolean).join(' ');
+    }
+    if (key === 'moment' || key === 'more') {
+      lines = sceneLines(value, ctx, { used: used, max: 2, min: 2 });
+      return [pickOne(OPENERS[key], used), echo].concat(lines).filter(Boolean).join(' ');
+    }
     if (key === 'setting') {
-      var s = 'Beautiful. I can see the whole scene: ' + toYou(nounPhrase(value)) + '.';
-      if (PEOPLE_RE.test(value)) s += ' Anyone with you will be AI-generated from your description, never a real photo of anyone but you, so feel free to add how you’d love them to look.';
+      lines = sceneLines(value + ' . ' + ctx, ctx, { used: used, max: 2, min: 1 });
+      var s = [pickOne(OPENERS.setting, used)].concat(lines).filter(Boolean).join(' ');
+      if (hasPeople(value) && !/AI-generated/.test(s)) s += ' ' + PEOPLE_NOTE;
       return s;
     }
-    if (key === 'feeling') return cap(toYou(feelingList(value))) + '. Yes. That’s the frequency we’ll build everything around.';
+    if (key === 'feeling') {
+      var f = feelingList(value), fl = '';
+      FEELING_LINES.forEach(function (x) { if (!fl && x.re.test(f) && used.indexOf(x.line) < 0) fl = x.line; });
+      if (fl) used.push(fl);
+      lines = sceneLines(ctx, ctx, { used: used, max: 1, min: 1 });
+      return [cap(toYou(f)) + '.', pickOne(OPENERS.feeling, used), fl].concat(lines).filter(Boolean).join(' ');
+    }
     return '';
   }
 
   /* ---------------- Dream vision paragraphs (second person) ---------------- */
   function visionParagraphs(a, kept) {
+    if (state.aiVision && state.aiVision.sig === answersSig(a) && state.aiVision.paras && state.aiVision.paras.length) {
+      var ap = state.aiVision.paras.slice(0, 2);
+      return ap.map(function (p, i) { return i === ap.length - 1 ? p.replace(/\s*Ready to make your dream reel\?\s*$/i, '') : p; });
+    }
+    var rng = seededRng(hashStr(answersSig(a))), used = [];
+    var all = [a.dream, a.moment, a.setting].filter(Boolean).join(' . ');
     var dream = presentClause(a.dream), moment = presentClause(a.moment);
+    var scene = sceneLines(all, all, { rng: rng, used: used, max: 3, min: 2 });
     var p1 = 'Close your eyes and let it be real. ' +
-      (dream ? cap(toYou(dream)) + ', and today it shows in everything around you. ' : 'You are living your dream of ' + toYou(nounPhrase(a.dream)) + ', and today it shows in everything around you. ') +
+      (dream ? cap(toYou(dream)) + '. ' : (a.dream ? 'You are living your dream: ' + toYou(nounPhrase(a.dream)) + '. ' : '')) +
       (moment ? cap(toYou(moment)) + '. ' : (a.moment ? 'This is your moment: ' + toYou(nounPhrase(a.moment)) + '. ' : '')) +
-      (a.setting ? 'All around you is ' + toYou(nounPhrase(a.setting)) + '. ' : '') +
-      'The light is soft and golden, every color a little brighter than you remember, and every breath tells you that you belong here.';
-    var aff = (kept && kept[0]) ? ' Your words hum quietly beneath it all: “' + kept[0] + '”' : '';
-    var p2 = (a.feeling ? 'You feel ' + toYou(feelingList(a.feeling)) + ', not as a wish but as the frequency you are living at.' : 'You feel it in your whole body, not as a wish but as the frequency you are living at.') +
-      aff + ' This is your best life, already unfolding, and each time you see it, you rise to meet it.';
-    return [p1.replace(/\s+/g, ' '), p2.replace(/\s+/g, ' ')];
+      (a.setting && !hasPeople(a.moment || '') ? 'All around you: ' + toYou(nounPhrase(a.setting)) + '. ' : '') +
+      scene.join(' ');
+    var f = a.feeling ? toYou(feelingList(a.feeling)) : '', fl = '';
+    FEELING_LINES.forEach(function (x) { if (!fl && x.re.test(f)) fl = x.line; });
+    var aff = (kept && kept[0]) ? ' Your own words hum quietly beneath it all: “' + kept[0] + '”' : '';
+    var p2 = (f ? 'You feel ' + f + ', not as a wish but as the simple truth of your life. ' : 'You feel it everywhere, not as a wish but as the simple truth of your life. ') +
+      (fl || sceneLines(all, all, { rng: rng, used: used, max: 1, min: 1 }).join(' ')) + aff +
+      ' This is your best life, already unfolding, and each time you see it, you step a little further into it.';
+    return [p1.replace(/\s+/g, ' ').trim(), p2.replace(/\s+/g, ' ').trim()];
   }
+  function answersSig(a) { a = a || {}; return [a.dream, a.moment, a.setting, a.feeling].map(function (x) { return String(x || '').trim(); }).join('|'); }
 
   /* ---------------- State ---------------- */
-  function fresh() { return { v: 1, step: 'welcome', q: 0, answers: {}, affirmations: [], messages: [], approved: false, product: null, sample: false, startedAt: null, updatedAt: null }; }
+  var inlineHost = document.querySelector('[data-vision-guide-inline]');
+  /* Sanctuary mode: the same guide mounted inside sanctuary.html, restored from the saved vision. */
+  var SANCTUARY = !!(inlineHost && inlineHost.getAttribute('data-vg-mode') === 'sanctuary');
+  function fresh() { return { v: 1, step: 'welcome', q: 0, pending: 'dream', rounds: 0, answers: {}, slots: {}, affirmations: [], messages: [], used: [], aiVision: null, approved: false, product: null, sample: false, startedAt: null, updatedAt: null }; }
+  function readSaved() { try { return JSON.parse(localStorage.getItem(SAVED_KEY) || 'null'); } catch (e) { return null; } }
+  function stateFromSaved(sv) {
+    if (!sv) return null;
+    if (sv.state && sv.state.v === 1) return Object.assign(fresh(), sv.state);
+    var bp = sv.blueprint; if (!bp) return null;
+    var st = fresh(); st.step = 'chat';
+    if (bp.dream) st.answers.dream = bp.dream; if (bp.moment) st.answers.moment = bp.moment;
+    if (bp.people_pets_place) st.answers.setting = bp.people_pets_place; if (bp.feeling) st.answers.feeling = bp.feeling;
+    st.affirmations = (bp.affirmation_choices || (bp.affirmations || []).map(function (t) { return { statement: t, keep: true }; })).map(function (x) { return { text: x.statement, keep: x.keep !== false, from: x.from || 'dream' }; });
+    st.messages = (bp.transcript || sv.messages || []).map(function (m) { return { role: m.role === 'assistant' ? 'guide' : m.role, text: m.text || m.content || '' }; });
+    st.approved = !!bp.approved; st.product = bp.chosen_product || null; st.pending = undefined;
+    st.rounds = st.messages.filter(function (m) { return m.role === 'user'; }).length;
+    var gs = bp.guide_state; if (gs) { if (typeof gs.rounds === 'number') st.rounds = gs.rounds; st.slots = gs.slots || {}; st.aiVision = gs.ai_vision || null; st.pending = gs.pending || null; if (!st.messages.length) st.pending = 'dream'; }
+    return st;
+  }
   var state = fresh();
-  try { var stored = JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); if (stored && stored.v === 1) state = Object.assign(fresh(), stored); } catch (e) { /* ignore */ }
+  try {
+    var stored = SANCTUARY ? stateFromSaved(readSaved()) : null;
+    if (!stored) { stored = JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); }
+    if (stored && stored.v === 1) state = Object.assign(fresh(), stored);
+  } catch (e) { /* ignore */ }
+  if (!state.answers) state.answers = {};
+  if (!state.slots) state.slots = {};
+  if (!state.used) state.used = [];
+  if (typeof state.rounds !== 'number') state.rounds = state.messages.filter(function (m) { return m.role === 'user'; }).length;
   var saveTimer = null;
   function persist() {
     state.updatedAt = new Date().toISOString();
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(function () { try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch (e) { /* storage full or blocked */ } }, 120);
+    saveTimer = setTimeout(function () {
+      try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch (e) { /* storage full or blocked */ }
+      if (SANCTUARY && hasDream()) { saveLocal(); try { window.dispatchEvent(new CustomEvent('iamreel:vision-updated')); } catch (e) { /* ignore */ } }
+    }, 120);
   }
   function keptAffirmations() { return state.affirmations.filter(function (x) { return x.keep; }).map(function (x) { return x.text; }); }
+  function transcript() { return state.messages.map(function (m) { return { role: m.role, text: m.text }; }); }
   /* Blueprint export — compatible with visions.blueprint (jsonb) for the paid guide to continue from. */
+  function withEnding(ps) { ps = ps.slice(); if (ps.length) ps[ps.length - 1] = ps[ps.length - 1] + ' Ready to make your dream reel?'; return ps; }
   function exportBlueprint() {
     var a = state.answers;
     return {
@@ -192,9 +463,11 @@
       dream: a.dream || '', moment: a.moment || '', people_pets_place: a.setting || '', feeling: a.feeling || '',
       affirmations: keptAffirmations(),
       affirmation_choices: state.affirmations.map(function (x) { return { statement: x.text, keep: x.keep, from: x.from }; }),
-      dream_vision: state.approved ? visionParagraphs(a, keptAffirmations()) : [],
+      dream_vision: state.approved ? withEnding(visionParagraphs(a, keptAffirmations())) : [],
       chosen_product: state.product || null,
       approved: !!state.approved,
+      transcript: transcript(),
+      guide_state: { rounds: roundsUsed(), max_rounds: maxRounds(), pending: state.pending === undefined ? null : state.pending, slots: state.slots || {}, ai_vision: state.aiVision || null },
       created_at: state.startedAt, updated_at: state.updatedAt
     };
   }
@@ -204,12 +477,11 @@
   }
 
   /* ---------------- Shell ---------------- */
-  var inlineHost = document.querySelector('[data-vision-guide-inline]');
   var root = document.createElement('div');
   root.id = 'vg-guide';
   if (inlineHost) { root.className = 'vg-inline'; inlineHost.appendChild(root); } else document.body.appendChild(root);
   if (!document.querySelector('link[data-vg-css]')) {
-    var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = new URL('guide.css?v=20261031b', base).href; css.setAttribute('data-vg-css', '');
+    var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = new URL('guide.css?v=20261031c', base).href; css.setAttribute('data-vg-css', '');
     document.head.appendChild(css);
   }
   var icon = asset('assets/vision-guide/vision-icon.png');
@@ -263,22 +535,22 @@
       '<div class="vg-kaleido"><img src="' + kaleidoImg + '" alt=""><p><strong>Every video, including your Dream Reel, opens and closes with a hypnotic kaleidoscope.</strong> It quiets the mind into a calm, receptive state, so your mind and feelings can accept your dream as reel.</p></div>' +
       '<div class="vg-products">' + cards + '</div>' +
       '<div class="vg-wallpaper"><img src="' + esc(asset('assets/ev-collection/phone-wallpaper.webp')) + '" alt="" loading="lazy"><div><span class="vg-eyebrow">OUR GIFT TO YOU</span><h4>Your FREE personalized Vision Wallpaper</h4>' +
-      '<p>Imagine the first thing you see every time you unlock your phone: you, already living your dream. Your Vision Wallpaper turns dozens of everyday glances into quiet moments that raise your vibration and keep your dream in front of you.</p>' +
+      '<p>Imagine the first thing you see every time you unlock your phone: you, already living your dream. Your Vision Wallpaper turns dozens of everyday glances into quiet moments that lift your spirit and keep your dream in front of you.</p>' +
       '<p>It’s included free with every personalized product. After you purchase, you’ll upload your photo in your private Sanctuary and we’ll personalize your wallpaper so it’s unmistakably you, for your phone or desktop.</p></div></div>';
   }
 
   /* ---------------- Views ---------------- */
   function composeHtml(placeholder) {
     return '<div class="vg-compose"><form class="vg-compose-row" data-compose><label class="vg-sr" for="vg-input" hidden>Your answer</label>' +
-      '<textarea id="vg-input" rows="1" maxlength="600" placeholder="' + esc(placeholder || 'Type your answer…') + '" aria-label="Type your answer, then press Enter to send"></textarea>' +
-      '<button type="submit" class="vg-button vg-primary" aria-label="Send">Send ➤</button></form>' +
-      '<p class="vg-hint">Press Enter to send · Shift + Enter for a new line</p>' +
+      '<textarea id="vg-input" rows="1" maxlength="' + MAX_ANSWER + '" placeholder="' + esc(limitReached() ? LIMIT_NOTE : (placeholder || 'Type your answer…')) + '" aria-label="Type your answer, then press Enter to send"' + (limitReached() ? ' disabled' : '') + '></textarea>' +
+      '<button type="submit" class="vg-button vg-primary" aria-label="Send"' + (limitReached() ? ' disabled' : '') + '>Send ➤</button></form>' +
+      (limitReached() ? '<p class="vg-limit-note" role="status">' + esc(LIMIT_NOTE) + '</p>' : '<p class="vg-hint"><span>Press Enter to send · Shift + Enter for a new line</span><span class="vg-count" aria-live="off">0/' + MAX_ANSWER + '</span></p><p class="vg-rounds vg-small vg-muted">' + roundsText() + '</p>') +
       '<details class="vg-guidelines"' + (window.innerWidth > 640 ? ' open' : '') + '><summary>Content guidelines</summary>' + GUIDELINES + '</details><div class="vg-compose-warn" aria-live="polite"></div></div>';
   }
   function welcomeHtml() {
     return '<span class="vg-eyebrow">A BRIGHTER FUTURE, MADE PERSONAL</span>' +
       '<h3>What would you love to see?</h3>' +
-      '<p>I’m your Vision Guide. Together we’ll shape one dream into a Vision Blueprint, write affirmations that raise your vibration, and see how you’d love to bring your dream to life.</p>' +
+      '<p>I’m your Vision Guide. Together we’ll shape one dream into a Vision Blueprint, write affirmations that help you step into your best life, and see how you’d love to bring your dream to life.</p>' +
       '<div class="vg-actions">' + btn('Start my vision', 'start') + btn('Try a sample vision', 'sample', 'secondary') + '</div>' +
       '<p class="vg-small vg-muted">Or simply tell me your dream right here:</p>' + composeHtml('Tell me your dream…') +
       '<div class="vg-faq"><h4>How does it work?</h4><p>Share your dream first, one question at a time, in your own words. As you answer, I build your Vision Blueprint and affirmations for you to review. When it feels like your future, choose how you’d love to see it. After purchase, you’ll securely upload your photos so your personalized images look like you, followed by production and a loving human review.</p>' +
@@ -308,15 +580,15 @@
   function visionHtml() {
     var paras = visionParagraphs(state.answers, keptAffirmations());
     return '<span class="vg-eyebrow">3 / YOUR DREAM VISION</span><h3>Here is your dream, alive.</h3>' +
-      '<div class="vg-vision">' + paras.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') +
-      '<p class="vg-ready">Ready to make your dream reel?</p></div>';
+      '<div class="vg-vision">' + paras.map(function (p, i) { return '<p>' + esc(p) + (i === paras.length - 1 ? ' <strong class="vg-ready">Ready to make your dream reel?</strong>' : '') + '</p>'; }).join('') + '</div>';
   }
 
   function renderConversation() {
-    var done = state.q >= QUESTIONS.length;
-    var current = QUESTIONS[Math.min(state.q, QUESTIONS.length - 1)];
+    if (state.pending === undefined) state.pending = nextKey();
+    var done = !state.pending;
+    var current = QUESTIONS.filter(function (q) { return q.key === state.pending; })[0] || QUESTIONS[0];
     main.innerHTML =
-      '<span class="vg-eyebrow">1 / YOUR DREAM' + (done ? '' : ' · QUESTION ' + (state.q + 1) + ' OF ' + QUESTIONS.length) + '</span>' +
+      '<span class="vg-eyebrow">' + qLabel() + '</span>' +
       '<div class="vg-chat" data-chat role="log" aria-live="polite"></div>' +
       composeHtml(done ? 'Add anything else, or type “yes” when it feels right…' : current.placeholder) +
       '<section class="vg-section" data-review' + (Object.keys(state.answers).length ? '' : ' hidden') + '>' + reviewHtml() + '</section>' +
@@ -373,15 +645,102 @@
   }
 
   /* ---------------- Conversation engine ---------------- */
-  var busy = false;
-  function typing(cb) {
-    var chat = main.querySelector('[data-chat]'); busy = true;
-    var t = document.createElement('div'); t.className = 'vg-typing'; t.textContent = 'Your Vision Guide is writing…';
-    if (chat) chat.appendChild(t);
-    setTimeout(function () { t.remove(); busy = false; cb(); }, 650);
+  var busy = false, typingEl = null, typingAt = 0;
+  var YES_RE = /^(yes|yep|yeah|ready|approve|approved|looks? (good|great|perfect)|perfect|i love it|love it|it does|it feels right)\b/i;
+  function showTyping() {
+    var chat = main.querySelector('[data-chat]'); busy = true; typingAt = Date.now();
+    typingEl = document.createElement('div'); typingEl.className = 'vg-typing'; typingEl.setAttribute('aria-hidden', 'true');
+    typingEl.innerHTML = '<span class="vg-dots"><i></i><i></i><i></i></span> Your Vision Guide is writing…';
+    if (chat) { chat.appendChild(typingEl); typingEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
   }
+  function hideTyping(cb) {
+    var wait = Math.max(0, 650 - (Date.now() - typingAt));
+    setTimeout(function () { if (typingEl) typingEl.remove(); typingEl = null; busy = false; cb(); }, wait);
+  }
+  function typing(cb) { showTyping(); hideTyping(cb); }
+  function answeredCount() { return QUESTIONS.filter(function (q) { return state.answers[q.key]; }).length; }
+  function qLabel() { return '1 / YOUR DREAM' + (state.pending && !limitReached() ? ' · ANSWER ' + Math.min(roundsUsed() + 1, maxRounds()) + ' OF ' + maxRounds() : ''); }
+  function ctxText() { var a = state.answers; return [a.dream, a.moment, a.setting].filter(Boolean).join(' . '); }
+  function autoFill(key, value) { setField(key, value); addAffirmations(key, value); }
+  /* Slot tracking: the next question is the first slot we genuinely don't know yet. */
+  function nextKey() {
+    var a = state.answers;
+    for (var i = 0; i < QUESTIONS.length; i++) {
+      var k = QUESTIONS[i].key; if (a[k]) continue;
+      if (k === 'setting') {
+        var src = [a.dream, a.moment].filter(Boolean);
+        var placeSrc = src.filter(function (t) { return placeFor(t); })[0];
+        var whoSrc = src.filter(function (t) { return hasPeople(t) || hasPets(t); })[0];
+        if (placeSrc && whoSrc) { autoFill('setting', placeSrc === whoSrc ? cap(clean(placeSrc)) : cap(clean(whoSrc)) + ' · ' + cap(clean(placeSrc))); continue; }
+      }
+      if (k === 'feeling') { var ef = explicitFeeling([a.dream, a.moment, a.setting].filter(Boolean).join(' . ')); if (ef) { autoFill('feeling', cap(ef)); continue; } }
+      return k;
+    }
+    return null;
+  }
+  function askFor(key) {
+    var q = QUESTIONS.filter(function (x) { return x.key === key; })[0]; if (!q) return '';
+    var ctx = ctxText(), pl = placeFor(ctx), where = pl ? ' ' + pl.prep + ' ' + toYou(pl.phrase) : '';
+    var who = hasPeople(ctx) || hasPets(ctx);
+    if (key === 'moment' && pl) return 'Now let’s step into one specific moment' + where + '. What are you doing in the moment you’d most love to see yourself in? (Like “raising a glass as the light turns gold” or “laughing with someone I love.”)';
+    if (key === 'setting' && pl && !who) return 'There' + where + ', who or what is with you? Anyone besides you will be AI-generated from your description, never a real photo, so simply describe them, like “a handsome man with dark hair and a beard,” “my golden retriever” or “a crowd applauding.” Or tell me it’s just you.';
+    if (key === 'setting' && !pl && who) return 'And where does this moment happen? Describe the place: the setting, the light, the season, what’s all around you.';
+    if (key === 'feeling' && pl) return 'There' + where + ', how do you want to feel? Name the feelings: peaceful, adored, free, proud, abundant… whatever is true for you.';
+    return q.ask;
+  }
+  function missingKeys() { nextKey(); return QUESTIONS.map(function (q) { return q.key; }).filter(function (k) { return !state.answers[k]; }); }
+  /* With fewer answers left than open questions, gently combine them so the vision is always finished in time. */
+  function planQuestion() {
+    var miss = missingKeys(), left = roundsLeft();
+    if (!miss.length) { state.combo = null; return ''; }
+    if (left >= miss.length || left <= 0 || miss.length === 1) { state.combo = null; return askFor(miss[0]); }
+    var take = left === 1 ? miss.length : miss.length - left + 1;
+    state.combo = miss.slice(0, take);
+    return askCombined(state.combo, left === 1);
+  }
+  function askCombined(keys, last) {
+    var ctx = ctxText(), pl = placeFor(ctx), who = hasPeople(ctx) || hasPets(ctx);
+    var parts = keys.map(function (k) {
+      if (k === 'dream') return 'the one dream you’d love to see yourself living';
+      if (k === 'moment') return 'one specific moment you’d love to see yourself in';
+      if (k === 'setting') return pl && !who ? 'who or what is with you there (anyone besides you is AI-generated from your description, like “my golden retriever,” or it can be just you)'
+        : (!pl && who ? 'where it happens' : 'where you are and who or what is with you (anyone besides you is AI-generated from your description, like “a handsome man with dark hair and a beard”)');
+      return 'how you want to feel';
+    });
+    var list = parts.length > 1 ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1] : parts[0];
+    return (last ? 'In this last answer, tell me ' : 'Let’s bring a few pieces together. Tell me ') + list + '.';
+  }
+  function fillDefaults() {
+    var a = state.answers, all = [a.dream, a.moment, a.setting, a.feeling].filter(Boolean).join(' . ');
+    if (!a.moment && a.dream) autoFill('moment', cap(clean(a.dream)));
+    if (!a.setting) {
+      var pl = placeFor(all), who = [a.dream, a.moment].filter(function (t) { return t && (hasPeople(t) || hasPets(t)); })[0];
+      autoFill('setting', pl ? (who ? cap(clean(who)) + ' · ' + pl.prep + ' ' + pl.phrase : 'Just me, ' + pl.prep + ' ' + pl.phrase) : (who ? cap(clean(who)) : 'Just me, somewhere beautiful that feels like home'));
+    }
+    if (!a.feeling) autoFill('feeling', cap(explicitFeeling(all) || 'Joyful, free and at peace'));
+  }
+  function updateRoundsUi() { var r = main.querySelector('.vg-rounds'); if (r) r.textContent = roundsText(); var label = main.querySelector('.vg-eyebrow'); if (label) label.textContent = qLabel(); }
+  function lockInput() {
+    var input = main.querySelector('#vg-input'), send = main.querySelector('[data-compose] button[type="submit"]');
+    if (input) { input.disabled = true; input.value = ''; input.placeholder = LIMIT_NOTE; }
+    if (send) send.disabled = true;
+    var hint = main.querySelector('.vg-hint'); if (hint) { hint.outerHTML = '<p class="vg-limit-note" role="status">' + esc(LIMIT_NOTE) + '</p>'; }
+    var r = main.querySelector('.vg-rounds'); if (r) r.remove();
+  }
+  /* Last round: no more questions. Fill anything still open gently, then show the dream vision. */
+  function finalize(reply) {
+    fillDefaults(); state.pending = null; state.combo = null;
+    persist(); renderBlueprint(); showReviewSection(); refreshApprove();
+    if (reply) addMsg('guide', reply);
+    addMsg('guide', 'Here is your dream, alive. Edit any words in your blueprint below and your vision updates with them. 💛');
+    approve(); lockInput(); updateRoundsUi();
+  }
+  function placeholderFor(key) { var q = QUESTIONS.filter(function (x) { return x.key === key; })[0]; return q ? q.placeholder : 'Add anything else, or type “yes” when it feels right…'; }
+  var READY_MSG = 'Your Vision Blueprint is ready. Look it over below: edit any words so they feel exactly right, and uncheck any affirmation that doesn’t feel true for you. When it feels like your future, type “yes” or tap “See my dream vision.”';
+
   function startConversation(firstAnswer) {
     state.step = 'chat'; state.startedAt = state.startedAt || new Date().toISOString();
+    if (state.pending === undefined) state.pending = nextKey();
     if (!state.messages.length) state.messages.push({ role: 'guide', text: 'Welcome. This is your space to dream out loud. ' + QUESTIONS[0].ask });
     persist(); render();
     if (firstAnswer) handleAnswer(firstAnswer);
@@ -389,44 +748,132 @@
   }
   function focusInput() { var i = main.querySelector('#vg-input'); if (i) i.focus({ preventScroll: true }); }
   function warnCompose(msg) { var w = main.querySelector('.vg-compose-warn'); if (w) w.innerHTML = msg ? '<span class="vg-warn" role="alert">' + esc(msg) + '</span>' : ''; }
-  function handleAnswer(text) {
-    text = String(text || '').trim(); if (!text || busy) return;
-    if (state.step === 'welcome') { startConversation(text); return; }
-    var q = QUESTIONS[state.q];
-    var check = checkContent(text, q ? q.key : 'moment');
-    addMsg('user', text);
-    warnCompose('');
-    if (!check.ok) { typing(function () { addMsg('note', check.message + (q ? ' ' + 'Whenever you’re ready, tell me again in a new way.' : '')); }); return; }
-    if (!q) { // all four answered: approve or add detail
-      if (/^(yes|yep|yeah|ready|approve|approved|looks? (good|great|perfect)|perfect|i love it|love it|it does|it feels right)\b/i.test(text)) { typing(function () { addMsg('guide', 'Wonderful. Here is your dream, alive. 💛'); approve(); }); return; }
-      setField('moment', clean(state.answers.moment) + '. ' + cap(clean(text)));
-      addAffirmations('moment', state.answers.moment);
+
+  /* ---------- Real AI (Grok via /api/guide), with a seamless rule-based fallback ---------- */
+  var AI_URL = new URL('../../api/guide', base).href;
+  var BANNED_RE = /\b(vibrat\w*|frequenc\w*|manifest\w*|goals?|high(er|est) self)\b|\bI (can )?(feel|sense) (the|your|this) energy\b|\bI can feel\b/i;
+  function aiEnabled() { return window.IAMREEL_GUIDE_AI !== false && !state.sample && /^https?:/.test(location.protocol); }
+  function aiTurn(key) {
+    if (!aiEnabled() || !window.fetch) return Promise.resolve(null);
+    var a = state.answers, sl = state.slots || {};
+    var body = {
+      stage: key || 'refine', roundsLeft: roundsLeft(), maxRounds: maxRounds(),
+      slots: { dream: a.dream || '', moment: a.moment || '', place: sl.place || '', people: sl.people || '', setting: a.setting || '', feeling: a.feeling || '' },
+      messages: state.messages.filter(function (m) { return m.role === 'user' || m.role === 'guide'; }).slice(-16).map(function (m) { return { role: m.role === 'guide' ? 'assistant' : 'user', content: String(m.text).slice(0, 1200) }; })
+    };
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 16000);
+    return Promise.race([
+      fetch(AI_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl ? ctrl.signal : undefined })
+        .then(function (r) { if (!r.ok) throw new Error('ai ' + r.status); return r.json(); }),
+      new Promise(function (_, rej) { setTimeout(function () { rej(new Error('timeout')); }, 16500); })
+    ]).then(function (r) {
+      clearTimeout(timer);
+      if (!r || typeof r.reply !== 'string' || !r.reply.trim() || BANNED_RE.test(r.reply)) return null;
+      return r;
+    }).catch(function () { clearTimeout(timer); return null; });
+  }
+  function applyAi(r, key, check) {
+    var a = state.answers, sl = r.slots || {}, before = JSON.stringify(a), changed = [];
+    var may = function (k) { return !key || k === key || !a[k]; };
+    ['dream', 'moment', 'feeling'].forEach(function (k) {
+      var v = clean(sl[k] || ''); if (!v || v === a[k] || !may(k)) return;
+      if (checkContent(v, k).ok) { setField(k, v); changed.push(k); }
+    });
+    var place = clean(sl.place || ''), people = clean(sl.people || '');
+    if (place) state.slots.place = place; if (people) state.slots.people = people;
+    if ((place || people) && may('setting')) {
+      var P = state.slots.place || '', W = state.slots.people || '';
+      var setting = P && W ? (justMe(W) ? cap(P) + ' · just me' : cap(P) + ' · with ' + lowerFirst(W)) : cap(P || W);
+      if (setting && setting !== a.setting && checkContent(setting, 'setting').ok) { setField('setting', setting); changed.push('setting'); }
+    }
+    var aff = (r.affirmations || []).filter(function (t) { return typeof t === 'string' && t.trim() && !BANNED_RE.test(t) && checkContent(t, 'feeling').ok; }).slice(0, 4);
+    if (aff.length) {
+      aff.forEach(function (t) { t = t.trim(); if (!state.affirmations.some(function (x) { return x.text.toLowerCase() === t.toLowerCase(); })) state.affirmations.push({ text: t, keep: true, from: 'ai' }); });
+      refreshAffirms();
+    } else changed.forEach(function (k) { addAffirmations(k, a[k]); });
+    /* Completeness: setting needs both a place and who's there (or "just me"). */
+    var missing = QUESTIONS.map(function (q) { return q.key; }).filter(function (k) {
+      if (k === 'setting') return !a.setting || (state.slots.place && !state.slots.people && !hasPeople(a.setting) && !hasPets(a.setting) && !/just me/i.test(a.setting));
+      return !a[k];
+    });
+    state.pending = missing.length ? missing[0] : null;
+    if (!state.pending && Array.isArray(r.dream_vision) && r.dream_vision.length && !r.dream_vision.some(function (p) { return BANNED_RE.test(p); })) {
+      state.aiVision = { sig: answersSig(a), paras: r.dream_vision.slice(0, 2).map(String) };
+    }
+    if (JSON.stringify(a) !== before && state.approved) refreshVision();
+    var reply = r.reply.trim(); if (check.soft) reply += ' ' + check.message;
+    if (limitReached()) { if (!state.aiVision || state.aiVision.sig !== answersSig(a)) { fillDefaults(); } finalize(reply); return; }
+    afterAnswer(reply, true);
+  }
+  function afterAnswer(reply, aiAsked) {
+    persist(); renderBlueprint(); showReviewSection(); refreshApprove();
+    updateRoundsUi();
+    var input = main.querySelector('#vg-input');
+    addMsg('guide', reply);
+    if (state.pending) {
+      if (!aiAsked) addMsg('guide', planQuestion());
+      if (input) input.placeholder = placeholderFor(state.pending);
+    } else {
+      if (!aiAsked) addMsg('guide', READY_MSG);
+      if (input) input.placeholder = 'Add anything else, or type “yes” when it feels right…';
+    }
+  }
+  function ruleTurn(key, text, check) {
+    var a = state.answers;
+    if (!key) { // all four answered: add detail
+      setField('moment', clean(a.moment) + '. ' + cap(clean(text)));
+      addAffirmations('moment', a.moment);
       persist(); renderBlueprint(); if (state.approved) refreshVision();
-      typing(function () { addMsg('guide', 'Lovely. I’ve woven that into your moment. You can fine-tune any words below. When it feels right, type “yes” or tap “See my dream vision.”'); });
+      if (limitReached()) { addMsg('guide', mirrorFor('more', text, state.used, a) + ' I’ve woven that into your moment.'); approve(); lockInput(); updateRoundsUi(); return; }
+      addMsg('guide', mirrorFor('more', text, state.used, a) + ' I’ve woven that into your moment. You can fine-tune any words below. When it feels right, type “yes” or tap “See my dream vision.”');
+      updateRoundsUi();
       return;
     }
-    setField(q.key, text);
-    addAffirmations(q.key, text);
-    state.q += 1; persist(); renderBlueprint(); showReviewSection(); refreshApprove();
-    var label = main.querySelector('.vg-eyebrow');
-    if (label) label.textContent = '1 / YOUR DREAM' + (state.q < QUESTIONS.length ? ' · QUESTION ' + (state.q + 1) + ' OF ' + QUESTIONS.length : '');
-    typing(function () {
-      var reply = mirrorFor(q.key, text);
-      if (check.soft) reply += ' ' + check.message;
-      addMsg('guide', reply);
-      var next = QUESTIONS[state.q];
-      var input = main.querySelector('#vg-input');
-      if (next) { addMsg('guide', next.ask); if (input) input.placeholder = next.placeholder; }
-      else {
-        addMsg('guide', 'Your Vision Blueprint is ready. Look it over below: edit any words so they feel exactly right, and uncheck any affirmation that doesn’t feel true for you. When it feels like your future, type “yes” or tap “See my dream vision.”');
-        if (input) input.placeholder = 'Add anything else, or type “yes” when it feels right…';
-      }
+    var combo = state.combo && state.combo.length > 1 ? state.combo.slice(1) : [];
+    state.combo = null;
+    combo.forEach(function (k) {
+      if (k === 'setting' && (placeFor(text) || hasPeople(text) || hasPets(text) || justMe(text))) autoFill('setting', cap(clean(text)));
+      if (k === 'feeling') { var ef = explicitFeeling(text); if (ef) autoFill('feeling', cap(ef)); }
+      if (k === 'moment' && key === 'dream') autoFill('moment', cap(clean(text)));
+    });
+    var value = text;
+    if (key === 'setting') {
+      var pl = placeFor(ctxText());
+      if (pl && !placeFor(text)) value = justMe(text) ? 'Just me, ' + pl.prep + ' ' + pl.phrase : cap(clean(text)) + ', ' + pl.prep + ' ' + pl.phrase;
+    }
+    setField(key, value);
+    addAffirmations(key, value);
+    var reply = mirrorFor(key, text, state.used, a);
+    if (check.soft) reply += ' ' + check.message;
+    if (limitReached()) { finalize(reply); return; }
+    state.pending = nextKey();
+    afterAnswer(reply, false);
+  }
+  function handleAnswer(text) {
+    text = String(text || '').trim().slice(0, MAX_ANSWER).trim(); if (!text || busy) return;
+    if (state.step === 'welcome') { startConversation(text); return; }
+    if (limitReached()) { lockInput(); return; }
+    if (state.pending === undefined) state.pending = nextKey();
+    var key = state.pending;
+    var check = checkContent(text, key || 'moment');
+    addMsg('user', text);
+    warnCompose('');
+    if (!check.ok) { typing(function () { addMsg('note', check.message + ' Whenever you’re ready, tell me again in a new way.'); }); return; }
+    state.rounds = roundsUsed() + 1; persist();
+    if (!key && YES_RE.test(text)) { typing(function () { addMsg('guide', 'Wonderful. Here is your dream, alive. 💛'); approve(); if (limitReached()) lockInput(); updateRoundsUi(); }); return; }
+    showTyping();
+    aiTurn(key).then(function (r) {
+      hideTyping(function () {
+        try { if (r) { applyAi(r, key, check); return; } } catch (e) { /* fall through to the rule-based guide */ }
+        ruleTurn(key, text, check);
+      });
     });
   }
   function approve() {
     var missing = QUESTIONS.filter(function (q) { return !state.answers[q.key]; });
     if (missing.length) return;
-    state.approved = true; persist(); renderBlueprint(); refreshApprove(); refreshVision();
+    state.approved = true; state.pending = null; persist(); renderBlueprint(); refreshApprove(); refreshVision();
     var v = main.querySelector('[data-vision]'); if (v) v.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   function runSample() {
@@ -435,11 +882,11 @@
     QUESTIONS.forEach(function (q) {
       state.messages.push({ role: 'guide', text: q.ask });
       state.messages.push({ role: 'user', text: SAMPLE[q.key] });
-      state.messages.push({ role: 'guide', text: mirrorFor(q.key, SAMPLE[q.key]) });
       state.answers[q.key] = SAMPLE[q.key];
+      state.messages.push({ role: 'guide', text: mirrorFor(q.key, SAMPLE[q.key], state.used, state.answers) });
       affirmationsFor(q.key, SAMPLE[q.key]).forEach(function (t) { if (!state.affirmations.some(function (x) { return x.text === t; })) state.affirmations.push({ text: t, keep: true, from: q.key }); });
     });
-    state.q = QUESTIONS.length; persist(); render();
+    state.q = QUESTIONS.length; state.pending = null; persist(); render();
     var r = main.querySelector('[data-review]'); if (r) r.scrollIntoView({ block: 'start' });
   }
   function startOver() {
@@ -451,7 +898,9 @@
     var form = main.querySelector('[data-compose]'), input = main.querySelector('#vg-input');
     if (!form || !input) return;
     var grow = function () { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 160) + 'px'; };
-    input.addEventListener('input', function () { grow(); warnCompose(''); });
+    var counter = main.querySelector('.vg-count');
+    var count = function () { if (counter) { counter.textContent = input.value.length + '/' + MAX_ANSWER; counter.classList.toggle('vg-count-full', input.value.length >= MAX_ANSWER); } };
+    input.addEventListener('input', function () { grow(); count(); warnCompose(''); });
     input.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable: true })); }
     });
@@ -459,7 +908,7 @@
       e.preventDefault(); if (busy) return;
       var v = input.value.trim(); if (!v) { focusInput(); return; }
       if (state.step === 'welcome') { var c = checkContent(v, 'dream'); if (!c.ok) { warnCompose(c.message); return; } }
-      input.value = ''; grow();
+      input.value = ''; grow(); count();
       handleAnswer(v);
       setTimeout(focusInput, 0);
     });
@@ -537,22 +986,29 @@
     });
   }
   function saveLocal(extra) {
-    var snap = Object.assign({ blueprint: exportBlueprint(), summary: conversationSummary(), messages: state.messages, savedAt: new Date().toISOString(), cloud: { pending: true } }, extra || {});
+    var prev = readSaved() || {}, prevCloud = prev.cloud || {};
+    var snap = Object.assign({ blueprint: exportBlueprint(), summary: conversationSummary(), messages: state.messages, state: JSON.parse(JSON.stringify(state)), savedAt: new Date().toISOString(), cloud: { pending: true, visionId: prevCloud.visionId || null } }, extra || {});
     try { localStorage.setItem(SAVED_KEY, JSON.stringify(snap)); localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
     return snap;
   }
   function cloudSave(client, session) {
-    var bp = exportBlueprint();
-    return client.from('visions').insert({
-      user_id: session.user.id, title: short(bp.dream || 'My Dream Future', 60), path: 'standard',
-      status: bp.approved ? 'blueprint_ready' : 'draft', blueprint: bp, conversation_summary: conversationSummary()
-    }).select().single().then(function (res) {
+    var bp = exportBlueprint(), prev = readSaved() || {}, existingId = prev.cloud && prev.cloud.visionId;
+    var row = { title: short(bp.dream || 'My Dream Future', 60), path: 'standard', status: bp.approved ? 'blueprint_ready' : 'draft', blueprint: bp, conversation_summary: conversationSummary() };
+    var write = existingId
+      ? client.from('visions').update(row).eq('id', existingId).select().single().then(function (res) {
+          if (res.error || !res.data) return client.from('visions').insert(Object.assign({ user_id: session.user.id }, row)).select().single();
+          return res;
+        })
+      : client.from('visions').insert(Object.assign({ user_id: session.user.id }, row)).select().single();
+    return write.then(function (res) {
       if (res.error) throw res.error;
-      var vision = res.data, tasks = [];
+      var vision = res.data, tasks = [], isUpdate = existingId && vision.id === existingId;
       var kept = keptAffirmations();
-      if (kept.length) tasks.push(client.from('affirmations').insert(kept.map(function (s, i) { return { user_id: session.user.id, vision_id: vision.id, statement: s, sort_order: i }; })).then(function (r) { if (r.error) console.warn('[Vision Guide] affirmations not saved:', r.error.message); }));
+      var clearAff = isUpdate ? client.from('affirmations').delete().eq('vision_id', vision.id).then(function () {}, function () {}) : Promise.resolve();
+      var clearMsg = isUpdate ? client.from('vision_messages').delete().eq('vision_id', vision.id).then(function () {}, function () {}) : Promise.resolve();
+      if (kept.length) tasks.push(clearAff.then(function () { return client.from('affirmations').insert(kept.map(function (s, i) { return { user_id: session.user.id, vision_id: vision.id, statement: s, sort_order: i }; })); }).then(function (r) { if (r && r.error) console.warn('[Vision Guide] affirmations not saved:', r.error.message); }));
       var msgs = state.messages.filter(function (m) { return m.role !== 'note'; }).map(function (m) { return { vision_id: vision.id, role: m.role === 'guide' ? 'assistant' : 'user', content: m.text }; });
-      if (msgs.length) tasks.push(client.from('vision_messages').insert(msgs).then(function (r) { if (r.error) console.warn('[Vision Guide] messages not saved:', r.error.message); }));
+      if (msgs.length) tasks.push(clearMsg.then(function () { return client.from('vision_messages').insert(msgs); }).then(function (r) { if (r && r.error) console.warn('[Vision Guide] messages not saved:', r.error.message); }));
       return Promise.all(tasks).then(function () { saveLocal({ cloud: { pending: false, visionId: vision.id, syncedAt: new Date().toISOString() } }); return vision; });
     });
   }
@@ -589,6 +1045,10 @@
   function closeSave() { savePane.hidden = true; savePane.innerHTML = ''; }
   function setStatus(t) { var s = savePane.querySelector('.vg-status'); if (s) s.textContent = t; }
   function goToSanctuary(note) {
+    if (SANCTUARY) { /* Already in the Sanctuary: refresh the saved panel and close the save card. */
+      try { window.dispatchEvent(new CustomEvent('iamreel:vision-saved')); } catch (e) { /* ignore */ }
+      setTimeout(closeSave, note ? 2600 : 1200); return;
+    }
     var url = 'sanctuary.html?saved=1' + (saveIntent === 'checkout' && state.product ? '&checkout=' + encodeURIComponent(state.product) : '');
     // TODO(sanctuary): sanctuary.html shows the saved dream and syncs it after sign-in; the
     // checkout/payment step for the chosen product still needs to be built there.

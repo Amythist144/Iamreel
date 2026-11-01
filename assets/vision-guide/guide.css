@@ -137,3 +137,15 @@
   #vg-guide .vg-wallpaper img{width:80px;height:140px}
   #vg-guide .vg-compose{bottom:0}
 }
+#vg-guide .vg-dots{display:inline-flex;gap:3px;margin-right:6px;vertical-align:middle}
+#vg-guide .vg-dots i{width:5px;height:5px;border-radius:50%;background:#e6c56f;opacity:.35;animation:vgdot 1.2s infinite ease-in-out}
+#vg-guide .vg-dots i:nth-child(2){animation-delay:.18s}#vg-guide .vg-dots i:nth-child(3){animation-delay:.36s}
+@keyframes vgdot{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){#vg-guide .vg-dots i{animation:none;opacity:.7}}
+#vg-guide .vg-hint{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+#vg-guide .vg-count{color:#a9b7d2;font-variant-numeric:tabular-nums}
+#vg-guide .vg-count.vg-count-full{color:#e6c56f}
+#vg-guide .vg-rounds{margin:4px 0 0}
+#vg-guide .vg-limit-note{margin:8px 0 0;color:#e6c56f;font-size:14px}
+#vg-guide #vg-input:disabled{opacity:.6;cursor:not-allowed}
+#vg-guide .vg-vision strong.vg-ready,[data-vision-guide-inline] .vg-vision strong.vg-ready{display:inline;font-size:1.12em;margin:0;white-space:nowrap}
