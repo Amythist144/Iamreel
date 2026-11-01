@@ -50,7 +50,7 @@
   };
   var PRODUCT_ORDER = ['cinematic_reel', 'dream_portrait', 'dream_scenes_3', 'vision_board_8', 'video_meditation'];
   var PRODUCT_COPY = {
-    cinematic_reel: 'Your dream, filmed. A cinematic reel of you living the moment you described, set to music and woven with your affirmations. It opens and closes with a hypnotic kaleidoscope that quiets your mind, so you receive your dream as reel.',
+    cinematic_reel: 'Your dream, filmed. A cinematic reel of you living the moment you described, set to an original soundtrack with soothing meditation tones (no voices) and woven with your affirmations. It opens and closes with a hypnotic kaleidoscope that quiets your mind, so you receive your dream as reel.',
     dream_portrait: 'One stunning personalized image of you inside your dream, a single vivid reminder of who you’re becoming.',
     dream_scenes_3: 'Three personalized scenes that tell your dream like a story: the moment, the place and the feeling, all with you in them.',
     vision_board_8: 'A personalized Vision Board with 6 images from your dream, framed by your affirmations, designed as one beautiful board for your wall, desk or screen.',
