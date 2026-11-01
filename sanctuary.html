@@ -23,7 +23,7 @@ body.sanctuary-page{min-height:100vh;background:radial-gradient(circle at 20% 10
 <p id="saved-dream-choice" class="iam-note" hidden></p>
 <p id="saved-dream-sync" class="iam-note"></p>
 </section>
-<div id="sanctuary-auth" class="iam-panel"><p class="eyebrow">PRIVATE MEMBER SPACE</p><h2>Sign in to My Sanctuary</h2><p>Your Sanctuary is connected to your I AM REEL account.</p><div class="iam-auth-grid"><label class="iam-field">Email<input id="sanctuary-email" type="email" autocomplete="email"></label><label class="iam-field">Password<input id="sanctuary-password" type="password" autocomplete="current-password"></label></div><button id="sanctuary-signin" class="iam-btn gold" type="button">Sign in</button></div>
+<div id="sanctuary-auth" class="iam-panel iam-hidden"><p class="eyebrow">PRIVATE MEMBER SPACE</p><h2>Sign in to My Sanctuary</h2><p>Your Sanctuary is connected to your I AM REEL account.</p><div class="iam-auth-grid"><label class="iam-field">Email<input id="sanctuary-email" type="email" autocomplete="email"></label><label class="iam-field">Password<input id="sanctuary-password" type="password" autocomplete="current-password"></label></div><button id="sanctuary-signin" class="iam-btn gold" type="button">Sign in</button></div>
 <div id="sanctuary-member" class="sanctuary-grid iam-hidden">
 <section class="iam-panel"><p class="eyebrow">YOUR FREE MEMBER GIFT</p><h2>Dream Future Wallpaper</h2><p>When your Vision Blueprint is ready, your complimentary phone or desktop wallpaper will appear here.</p><div id="sanctuary-wallpaper" class="sanctuary-empty">Your wallpaper is not ready yet.</div></section>
 <section class="iam-panel"><p class="eyebrow">MY AFFIRMATIONS</p><h2>Words for your future</h2><div id="iam-affirms" class="sanctuary-empty">Your personalized affirmations will appear here.</div></section>
@@ -48,10 +48,11 @@ if(affirms.data?.length)$('#iam-affirms').innerHTML=affirms.data.map(x=>'<span c
 if(orders.data?.length)$('#iam-orders').innerHTML=orders.data.map(x=>'<span class="iam-pill">'+esc(x.product_code.replaceAll('_',' '))+' · $'+(x.amount_cents/100).toFixed(2)+' · '+esc(x.status)+'</span>').join('');
 const wallpaper=assets.data?.find(x=>x.kind==='free_wallpaper');if(wallpaper)$('#sanctuary-wallpaper').textContent='Your Dream Future Wallpaper is ready in your Sanctuary.';
 }
-async function init(){if(!window.supabase||!window.IAMREEL_SUPABASE_KEY){status('Account service is still loading.');return}sb=window.supabase.createClient(U,window.IAMREEL_SUPABASE_KEY);const {data}=await sb.auth.getSession();if(data.session)await loadMember(data.session);
+function showSignIn(){$('#sanctuary-member').classList.add('iam-hidden');$('#sanctuary-auth').classList.remove('iam-hidden')}
+async function init(){if(!window.supabase||!window.IAMREEL_SUPABASE_KEY){showSignIn();status('Account service is still loading.');return}sb=window.supabase.createClient(U,window.IAMREEL_SUPABASE_KEY);let session=null;try{session=(await sb.auth.getSession()).data.session}catch(e){}if(session)await loadMember(session);else showSignIn();
 $('#sanctuary-signin').onclick=async()=>{status('Signing in…');const {data,error}=await sb.auth.signInWithPassword({email:$('#sanctuary-email').value.trim(),password:$('#sanctuary-password').value});if(error){status(error.message);return}status('');await loadMember(data.session)};
 $('#sanctuary-signout').onclick=async()=>{await sb.auth.signOut();location.href='index.html'};
-sb.auth.onAuthStateChange((_e,s)=>{if(s)loadMember(s)});
+sb.auth.onAuthStateChange((e,s)=>{if(s)loadMember(s);else if(e==='SIGNED_OUT')showSignIn()});
 }
 document.addEventListener('DOMContentLoaded',init);
 })();
@@ -73,7 +74,7 @@ const code=new URLSearchParams(location.search).get('checkout')||cart[0]||bp.cho
 if(code&&cat[code]){const p=cat[code];$('saved-dream-choice').hidden=false;$('saved-dream-choice').textContent='Your selection is saved: '+p.name+(p.price==null?'':' · $'+(p.price%1?Number(p.price).toFixed(2):p.price))+'. Secure checkout continues here after you sign in.';}
 /* TODO(checkout): start the real payment for `code` here once a provider (PayPal) is wired; then create the orders row server-side. */
 const syncNote=t=>{$('saved-dream-sync').textContent=t||''};
-if(!saved.cloud||saved.cloud.pending)syncNote('Saved privately on this device. Sign in below and it moves into your Sanctuary.');
+if(!saved.cloud||saved.cloud.pending)syncNote('Saved privately on this device. Sign in and it moves into your Sanctuary.');
 if(!window.supabase||!window.IAMREEL_SUPABASE_KEY)return;
 const sb=window.supabase.createClient(U,window.IAMREEL_SUPABASE_KEY);
 let syncing=false;const sync=async session=>{if(!session||syncing)return;if(saved.cloud&&saved.cloud.pending===false){syncNote('');return}syncing=true;
