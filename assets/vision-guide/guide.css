@@ -149,3 +149,7 @@
 #vg-guide .vg-limit-note{margin:8px 0 0;color:#e6c56f;font-size:14px}
 #vg-guide #vg-input:disabled{opacity:.6;cursor:not-allowed}
 #vg-guide .vg-vision strong.vg-ready,[data-vision-guide-inline] .vg-vision strong.vg-ready{display:inline;font-size:1.12em;margin:0;white-space:nowrap}
+/* Sample vision tag + welcome sample row */
+.vg-sample-tag{display:inline-block;margin:0 0 8px;padding:3px 10px;border:1px solid #ffd77a;border-radius:999px;background:rgba(255,215,122,.12);color:#ffd77a;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.vg-sample-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.vg-sample-head .vg-sample-tag{margin:0}
+.vg-sample-row{gap:12px;margin:14px 0 4px}

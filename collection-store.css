@@ -200,3 +200,4 @@
   html body #vg-guide .vg-launch{transition:opacity .25s,transform .25s}
   html body #vg-guide .vg-launch :is(span,strong){position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 }
+.cs-plan-note{margin:18px 0 0;padding:12px 16px;border:1px solid rgba(255,215,122,.45);border-radius:14px;background:rgba(255,215,122,.08);color:#ffe6a6;font-size:.98rem;line-height:1.45}
