@@ -560,8 +560,7 @@
     return '<span class="vg-eyebrow">A BRIGHTER FUTURE, MADE PERSONAL</span>' +
       '<h3>What would you love to see?</h3>' +
       '<p>I’m your Vision Guide. Together we’ll shape one dream into a Vision Blueprint, write affirmations that help you step into your best life, and see how you’d love to bring your dream to life.</p>' +
-      '<div class="vg-actions">' + btn('Start my vision', 'start') + btn('Try a sample vision', 'sample', 'secondary') + '</div>' +
-      '<p class="vg-small vg-muted">Or simply tell me your dream right here:</p>' + composeHtml('Tell me your dream…') +
+      '<p class="vg-small vg-muted">Tell me your dream right here:</p>' + composeHtml('Tell me your dream…') +
       '<div class="vg-faq"><h4>How does it work?</h4><p>Share your dream first, one question at a time, in your own words. As you answer, I build your Vision Blueprint and affirmations for you to review. When it feels like your future, choose how you’d love to see it. After purchase, you’ll securely upload your photos so your personalized images look like you, followed by production and a loving human review.</p>' +
       btn('Help me choose a product', 'browse', 'secondary') + '</div>';
   }
@@ -613,7 +612,7 @@
     renderBlueprint();
     if (state.step === 'welcome') { main.innerHTML = welcomeHtml(); bindCompose(); }
     else if (state.step === 'browse') {
-      main.innerHTML = '<section data-products>' + productsHtml('Here’s everything we create. Share your dream first and every piece is made around it, then come back and choose.') + '</section><div class="vg-actions">' + btn('Start my vision', 'start') + '</div>';
+      main.innerHTML = '<section data-products>' + productsHtml('Here’s everything we create. Share your dream first and every piece is made around it, then come back and choose.') + '</section><div class="vg-actions">' + btn('Back to my dream', 'start') + '</div>';
     }
     else renderConversation();
   }
