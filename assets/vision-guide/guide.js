@@ -53,11 +53,11 @@
     cinematic_reel: 'Your dream, filmed. A cinematic reel of you living the moment you described, set to music and woven with your affirmations. It opens and closes with a hypnotic kaleidoscope that quiets your mind, so you receive your dream as reel.',
     dream_portrait: 'One stunning personalized image of you inside your dream, a single vivid reminder of who you’re becoming.',
     dream_scenes_3: 'Three personalized scenes that tell your dream like a story: the moment, the place and the feeling, all with you in them.',
-    vision_board_8: 'A personalized Vision Board with up to 8 images from your dream, designed as one beautiful board for your wall, desk or screen.',
+    vision_board_8: 'A personalized Vision Board with 6 images from your dream, framed by your affirmations, designed as one beautiful board for your wall, desk or screen.',
     video_meditation: 'A guided meditation video built from 3 personalized images of you living your dream, paired with your own affirmations. It opens and closes with a hypnotic kaleidoscope to settle you before and after.'
   };
   /* Codes the existing Vision Collection checkout already knows (collection.html names map). */
-  var COLLECTION_CODES = ['dream_portrait', 'audio_meditation', 'video_meditation', 'cinematic_reel'];
+  var COLLECTION_CODES = ['cinematic_reel', 'dream_portrait', 'dream_scenes_3', 'vision_board_8', 'video_meditation'];
 
   /* ---------------- Content guidelines ---------------- */
   var GUIDELINES = 'A loving note: keep your vision uplifting and personal. We don’t create explicit or sexual content, strong language, violence or hate, celebrities or public figures, real people other than you, or children in personalized images. Anyone else in your scenes is AI-generated from your description.';
@@ -442,6 +442,15 @@
   if (!state.answers) state.answers = {};
   if (!state.slots) state.slots = {};
   if (!state.used) state.used = [];
+  /* ?product=<code> (e.g. from collection.html) preselects that product for the final cards and the Choose flow. */
+  try {
+    var qp = new URLSearchParams(location.search).get('product');
+    if (qp && PRODUCT_ORDER.indexOf(qp) !== -1) {
+      state.product = qp;
+      localStorage.setItem('iamreel_vision_cart', JSON.stringify([qp]));
+      sessionStorage.setItem('iamreel_checkout_cart', JSON.stringify([qp]));
+    }
+  } catch (e) { /* ignore */ }
   if (typeof state.rounds !== 'number') state.rounds = state.messages.filter(function (m) { return m.role === 'user'; }).length;
   var saveTimer = null;
   function persist() {

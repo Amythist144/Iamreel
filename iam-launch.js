@@ -129,7 +129,7 @@ async function signIn() {
   const inlineProducts = [...document.querySelectorAll("#iam-inline-store input[type=checkbox]")];
   const inlineCheckout = $("#iam-inline-checkout");
   const inlineSummary = $("#iam-cart-summary");
-  const inlinePrices = { dream_portrait: 1499, audio_meditation: 4900, video_meditation: 4900, cinematic_reel: 19900 };
+  const inlinePrices = { dream_portrait: 1499, video_meditation: 4900, cinematic_reel: 19900 };
   const updateInlineCart = () => {
     const selected = inlineProducts.filter(x => x.checked);
     inlineProducts.forEach(x => {
@@ -159,7 +159,7 @@ async function signIn() {
     $("#iam-wallpaper-choices")?.classList.remove("iam-hidden");
     const note = $("#iam-requirements-note");
     if (note) {
-      note.textContent = "To add your photo to the images, purchase one of the products below. Free wallpaper and Audio Meditation do not need a photo.";
+      note.textContent = "To add your photo to the images, purchase one of the products below. Your free wallpaper uses the photo from your personal dream vision.";
       note.classList.remove("iam-hidden");
     }
     $("#iam-wallpaper-choices")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -718,7 +718,7 @@ async function initializeIamReel() {
     $("#iam-wallpaper-choices")?.classList.remove("iam-hidden");
     const note = $("#iam-requirements-note");
     if (note) {
-      note.textContent = "To add your photo to the images, purchase one of the products below. Free wallpaper and Audio Meditation do not need a photo.";
+      note.textContent = "To add your photo to the images, purchase one of the products below. Your free wallpaper uses the photo from your personal dream vision.";
       note.classList.remove("iam-hidden");
     }
     $("#iam-wallpaper-choices")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
