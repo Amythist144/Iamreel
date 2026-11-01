@@ -1,0 +1,191 @@
+/* I AM REEL — Vision Collection store (collection.html only) */
+.cs{--navy:#07122b;--navy2:#0c1b3f;--gold:#f2c14e;--gold2:#ffe39a;--ink:#eef3ff;--soft:#c9d6f2;
+  position:relative;color:var(--ink);font-family:Inter,system-ui,sans-serif;
+  background:radial-gradient(1200px 600px at 50% -10%,rgba(96,140,255,.18),transparent 60%),
+    radial-gradient(900px 500px at 90% 40%,rgba(155,110,255,.12),transparent 60%),
+    radial-gradient(800px 500px at 0% 75%,rgba(64,200,224,.10),transparent 60%),var(--navy);
+  padding:84px 0 40px;overflow:hidden}
+.cs::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.75;
+  background-image:radial-gradient(1.4px 1.4px at 12% 18%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 28% 62%,#fff 50%,transparent 51%),
+  radial-gradient(1.2px 1.2px at 47% 9%,#ffe7a8 50%,transparent 51%),radial-gradient(1px 1px at 63% 44%,#fff 50%,transparent 51%),
+  radial-gradient(1.5px 1.5px at 81% 22%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 92% 71%,#cfe0ff 50%,transparent 51%),
+  radial-gradient(1.2px 1.2px at 6% 88%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 38% 93%,#ffe7a8 50%,transparent 51%),
+  radial-gradient(1px 1px at 72% 86%,#fff 50%,transparent 51%),radial-gradient(1.3px 1.3px at 55% 70%,#fff 50%,transparent 51%);
+  background-size:620px 620px}
+.cs>*{position:relative}
+.cs-wrap{width:min(1180px,calc(100% - 40px));margin:0 auto}
+.cs-eyebrow{display:inline-block;font-size:.74rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.cs h2,.cs h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;color:#fff;letter-spacing:-.01em;margin:0}
+.cs h2 em,.cs h3 em{font-style:italic;font-weight:500;color:var(--gold2)}
+.cs p{color:var(--soft);line-height:1.65;margin:0}
+.cs-intro{text-align:center;max-width:920px;margin:0 auto 46px}
+.cs-intro h2{font-size:clamp(2.4rem,5vw,3.9rem);line-height:1.05;margin:.35em 0 .35em}
+.cs-intro p{font-size:1.08rem;max-width:720px;margin:0 auto}
+.cs-steps{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 26px;margin:22px 0 0;padding:0;list-style:none;font-size:.9rem;color:#dfe8ff}
+.cs-steps li{display:flex;align-items:center;gap:9px}
+.cs-steps b{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid rgba(242,193,78,.7);color:var(--gold2);font-weight:600;font-size:.8rem}
+
+/* Buttons sit on buttons.css (.button = blue pill, .button.gold = gold pill) */
+.cs .button{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 26px;font-size:1rem;line-height:1.1;white-space:nowrap}
+.cs .button.cs-lg{padding:17px 34px;font-size:1.08rem}
+.cs-price{font-family:"Cormorant Garamond",Georgia,serif;font-size:2.1rem;font-weight:600;color:#fff;line-height:1}
+.cs-price small{font-family:Inter,sans-serif;font-size:.78rem;font-weight:500;color:var(--soft);margin-left:6px;letter-spacing:.02em}
+.cs-buy{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:auto;padding-top:20px}
+
+/* ---------- Kaleidoscope (soft, slowly turning mandala) ---------- */
+.kal{position:relative;border-radius:50%;overflow:hidden;aspect-ratio:1;isolation:isolate;background:radial-gradient(circle,#1a1450 0,#07122b 70%)}
+.kal i{position:absolute;inset:0;border-radius:50%;animation:kalspin 30s linear infinite}
+.kal i:nth-child(1){background:repeating-conic-gradient(from 0deg,#ffd76a 0deg,#ff86c8 7.5deg,#8a6bff 15deg,#46d6ee 22.5deg,#ffd76a 30deg);
+  -webkit-mask:radial-gradient(circle,#000 0 10%,rgba(0,0,0,.25) 16%,#000 26%,rgba(0,0,0,.2) 38%,#000 50%,rgba(0,0,0,.3) 60%,#000 66%,transparent 74%);mask:radial-gradient(circle,#000 0 10%,rgba(0,0,0,.25) 16%,#000 26%,rgba(0,0,0,.2) 38%,#000 50%,rgba(0,0,0,.3) 60%,#000 66%,transparent 74%)}
+.kal i:nth-child(2){background:repeating-conic-gradient(from 15deg,rgba(255,255,255,0) 0deg,rgba(255,244,214,.9) 15deg,rgba(255,255,255,0) 30deg);animation-direction:reverse;animation-duration:22s;mix-blend-mode:soft-light;
+  -webkit-mask:repeating-radial-gradient(circle,#000 0 6%,transparent 12%);mask:repeating-radial-gradient(circle,#000 0 6%,transparent 12%)}
+.kal i:nth-child(3){background:repeating-conic-gradient(from 7.5deg,rgba(20,10,60,0) 0deg,rgba(20,10,60,.55) 7.5deg,rgba(20,10,60,0) 15deg);animation-duration:46s;
+  -webkit-mask:radial-gradient(circle,transparent 0 14%,#000 30% 70%,transparent 74%);mask:radial-gradient(circle,transparent 0 14%,#000 30% 70%,transparent 74%)}
+.kal::before{content:"";position:absolute;inset:0;z-index:2;border-radius:50%;background:radial-gradient(circle,rgba(255,250,230,.95) 0 4%,rgba(255,220,140,.35) 9%,transparent 22%)}
+.kal::after{content:"";position:absolute;inset:0;z-index:3;border-radius:50%;background:radial-gradient(circle,transparent 56%,rgba(7,18,43,.55) 66%,#07122b 73%)}
+@keyframes kalspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.kal i{animation:none}}
+
+/* ---------- Flagship ---------- */
+.cs-flag{display:grid;grid-template-columns:1.12fr 1fr;gap:0;border-radius:30px;overflow:hidden;
+  background:linear-gradient(140deg,rgba(28,46,98,.92),rgba(12,22,52,.96) 55%,rgba(40,24,78,.92));
+  border:1px solid rgba(242,193,78,.55);box-shadow:0 0 0 1px rgba(255,255,255,.04) inset,0 30px 90px rgba(0,0,0,.45),0 0 70px rgba(242,193,78,.12)}
+.cs-flag-visual{position:relative;padding:34px 30px 30px;background:radial-gradient(circle at 50% 40%,rgba(91,140,255,.25),transparent 65%),#060d22;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.cs-screen{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:16/9;box-shadow:0 22px 60px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.12)}
+.cs-screen img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.04);animation:kenburns 16s ease-in-out infinite alternate}
+@keyframes kenburns{to{transform:scale(1.12) translate(-2%,-1%)}}
+@media (prefers-reduced-motion:reduce){.cs-screen img{animation:none}}
+.cs-screen::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),transparent 30%,transparent 62%,rgba(4,8,24,.85))}
+.cs-screen .kal{position:absolute;width:34%;right:-7%;top:-14%;opacity:.9;z-index:1}
+.cs-screen-cap{position:absolute;left:20px;right:20px;bottom:16px;z-index:2}
+.cs-screen-cap q{display:block;font-family:"Great Vibes",cursive;font-size:clamp(1.5rem,2.6vw,2.2rem);color:#fff;quotes:none;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+.cs-screen-bar{height:3px;border-radius:3px;background:rgba(255,255,255,.25);margin-top:10px;overflow:hidden}
+.cs-screen-bar span{display:block;width:38%;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.cs-strip{display:grid;grid-template-columns:1fr 1.3fr 1.3fr 1.3fr 1fr;gap:10px;align-items:center}
+.cs-strip figure{margin:0;text-align:center}
+.cs-strip img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:9px;display:block;box-shadow:0 0 0 1px rgba(255,255,255,.14)}
+.cs-strip .kal{width:92%;margin:0 auto;box-shadow:0 0 22px rgba(160,120,255,.45)}
+.cs-strip-note{text-align:center;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:1.1rem;color:#d9c9ff!important;margin-top:4px!important}
+.cs-strip figcaption{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#aebfe6;margin-top:7px}
+.cs-badge{position:absolute;top:18px;left:18px;z-index:3;display:inline-flex;align-items:center;gap:7px;padding:8px 15px;border-radius:999px;
+  background:linear-gradient(135deg,#ffe39a,#f2c14e 55%,#d79a1c);color:#2a1a00;font-weight:800;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 6px 24px rgba(242,193,78,.45)}
+.cs-flag-copy{padding:46px 46px 40px;display:flex;flex-direction:column}
+.cs-flag-copy h3{font-size:clamp(2.3rem,4vw,3.4rem);line-height:1.02;margin:.25em 0 .2em}
+.cs-flag-copy .cs-tag{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:1.45rem;color:var(--gold2);margin-bottom:14px}
+.cs-flag-copy p{font-size:1.03rem}
+.cs-list{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:11px}
+.cs-list li{position:relative;padding-left:30px;color:#e6edff;line-height:1.45}
+.cs-list li::before{content:"✦";position:absolute;left:4px;top:0;color:var(--gold)}
+.cs-flag .cs-price{font-size:2.9rem}
+
+/* ---------- Section heading ---------- */
+.cs-sub{text-align:center;margin:86px auto 34px;max-width:680px}
+.cs-sub h2{font-size:clamp(2rem,4vw,3rem);margin:.3em 0 .3em}
+
+/* ---------- Vision Board feature ---------- */
+.cs-board{display:grid;grid-template-columns:1.25fr 1fr;gap:44px;align-items:center;padding:38px;border-radius:28px;
+  background:linear-gradient(150deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 70px rgba(0,0,0,.35)}
+.vb{position:relative;padding:22px;border-radius:18px;background:
+  radial-gradient(circle at 30% 20%,rgba(255,227,154,.16),transparent 55%),linear-gradient(160deg,#fbf6ea,#f3e9d2);
+  box-shadow:0 0 0 1px rgba(242,193,78,.8),0 0 0 7px #0d1a3c,0 0 0 8px rgba(242,193,78,.55),0 26px 60px rgba(0,0,0,.5)}
+.cs .vb .vb-title{text-align:center;font-family:"Great Vibes",cursive;font-size:clamp(1.6rem,2.8vw,2.3rem);color:#8a5a00;line-height:1;margin:0 0 12px}
+.vb-title::before,.vb-title::after{content:"";display:inline-block;width:44px;height:1px;background:linear-gradient(90deg,transparent,#c9962c);vertical-align:middle;margin:0 12px}
+.vb-title::after{transform:scaleX(-1)}
+.vb-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:10px}
+.vb-grid img{width:100%;aspect-ratio:1;object-fit:cover;display:block;border-radius:6px;box-shadow:0 0 0 3px #fff,0 6px 18px rgba(60,40,0,.25)}
+.vb-aff{position:absolute;z-index:2;padding:7px 14px;border-radius:4px;background:rgba(255,252,243,.96);font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:600;
+  font-size:clamp(.78rem,1.15vw,.98rem);color:#5a3b00;white-space:nowrap;box-shadow:0 0 0 1px rgba(201,150,44,.65),0 8px 20px rgba(40,25,0,.3)}
+.vb-aff::before,.vb-aff::after{content:"✦";color:#c9962c;font-style:normal;font-size:.7em;margin:0 6px;vertical-align:.12em}
+.vb-a1{left:3%;top:31%;transform:rotate(-3deg)}
+.vb-a2{right:3%;top:76%;transform:rotate(2.5deg)}
+.vb-a3{left:4%;bottom:3%;transform:rotate(-1.5deg)}
+.vb-a4{right:3%;top:46%;transform:rotate(3deg)}
+.vb-center{position:absolute;z-index:3;left:50%;top:55%;transform:translate(-50%,-50%);width:25%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;text-align:center;
+  background:radial-gradient(circle,#fffaf0 0 62%,#f6e7c3 63%);box-shadow:0 0 0 2px #c9962c,0 0 0 6px rgba(255,250,240,.9),0 0 0 7px #c9962c,0 14px 34px rgba(40,25,0,.4)}
+.vb-center span{font-family:"Great Vibes",cursive;font-size:clamp(1.05rem,2vw,1.7rem);line-height:1.05;color:#7a4c00;padding:0 10%}
+.cs-board-copy h3{font-size:clamp(2rem,3.4vw,2.8rem);line-height:1.05;margin:.3em 0 .4em}
+
+/* ---------- Product cards ---------- */
+.cs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:26px}
+.cs-card{display:flex;flex-direction:column;border-radius:24px;overflow:hidden;background:linear-gradient(165deg,rgba(255,255,255,.07),rgba(255,255,255,.025));
+  border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 50px rgba(0,0,0,.32);transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.cs-card:hover{transform:translateY(-4px);border-color:rgba(242,193,78,.5);box-shadow:0 26px 60px rgba(0,0,0,.4),0 0 40px rgba(242,193,78,.12)}
+.cs-card.is-chosen,.cs-flag.is-chosen,.cs-board.is-chosen{border-color:#fff;box-shadow:0 0 0 2px #fff,0 0 30px 6px rgba(255,255,255,.35)}
+.cs-art{position:relative;height:270px;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 35%,rgba(110,150,255,.28),transparent 70%),#081330}
+.cs-body{padding:24px 24px 24px;display:flex;flex-direction:column;flex:1}
+.cs-body h3{font-size:1.9rem;line-height:1.05;margin:.3em 0 .35em}
+.cs-body p{font-size:.97rem}
+.cs-body .cs-buy{padding-top:22px}
+.cs-body .cs-price{font-size:1.9rem}
+
+/* portrait art */
+.art-portrait figure{margin:0;width:56%;padding:9px 9px 34px;background:#fffdf7;border-radius:3px;transform:rotate(-2.5deg);
+  box-shadow:0 0 0 1px rgba(242,193,78,.6),0 20px 40px rgba(0,0,0,.55)}
+.art-portrait img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
+.art-portrait figcaption{font-family:"Great Vibes",cursive;font-size:1.25rem;color:#7a4c00;text-align:center;margin-top:5px;line-height:1}
+/* trio art */
+.art-trio{display:flex !important;align-items:center;justify-content:center;gap:0}
+.art-trio figure{margin:0 -10px;width:36%;padding:6px 6px 24px;background:#fffdf7;border-radius:3px;box-shadow:0 18px 34px rgba(0,0,0,.5)}
+.art-trio figure:nth-child(1){transform:rotate(-8deg) translateY(10px)}
+.art-trio figure:nth-child(2){transform:translateY(-10px);z-index:2}
+.art-trio figure:nth-child(3){transform:rotate(8deg) translateY(10px)}
+.art-trio img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+.art-trio figcaption{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:600;font-size:.92rem;color:#6b4600;text-align:center;margin-top:3px}
+/* meditation art */
+.art-med>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
+.art-med .kal{position:relative;width:52%;z-index:1;box-shadow:0 0 50px rgba(150,130,255,.55)}
+.art-med .med-dots{position:absolute;z-index:2;bottom:16px;left:0;right:0;display:flex;justify-content:center;gap:10px}
+.art-med .med-dots img{width:54px;height:54px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px var(--gold),0 6px 16px rgba(0,0,0,.5)}
+.art-med .med-aff{position:absolute;z-index:2;top:16px;left:0;right:0;text-align:center;font-family:"Great Vibes",cursive;font-size:1.45rem;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+
+/* ---------- Free wallpaper gift ---------- */
+.cs-gift{display:flex;align-items:center;gap:24px;max-width:780px;margin:64px auto 0;padding:18px 28px 18px 20px;border-radius:22px;
+  background:linear-gradient(120deg,rgba(242,193,78,.16),rgba(150,120,255,.12) 60%,rgba(64,212,232,.12));border:1px solid rgba(242,193,78,.5)}
+.cs-gift-art{flex:none;display:flex;align-items:flex-end;gap:8px}
+.cs-phone{width:54px;aspect-ratio:9/19;border-radius:11px;padding:3px;background:#0b0f1d;box-shadow:0 0 0 1px rgba(255,255,255,.35),0 10px 22px rgba(0,0,0,.5)}
+.cs-phone img,.cs-desk img{width:100%;height:100%;object-fit:cover;display:block;border-radius:8px}
+.cs-desk{width:104px;aspect-ratio:16/10;border-radius:6px;padding:3px;background:#0b0f1d;box-shadow:0 0 0 1px rgba(255,255,255,.35),0 10px 22px rgba(0,0,0,.5);position:relative;margin-bottom:10px}
+.cs-desk img{border-radius:3px}
+.cs-desk::after{content:"";position:absolute;left:38%;right:38%;bottom:-10px;height:8px;background:#5b6585;border-radius:0 0 4px 4px}
+.cs-gift .cs-eyebrow{font-size:.68rem}
+.cs-gift h3{font-size:1.55rem;margin:.15em 0 .2em}
+.cs .cs-gift p{font-size:.92rem;line-height:1.55}
+
+/* ---------- Closing ---------- */
+.cs-close{text-align:center;margin:84px auto 30px;max-width:700px}
+.cs-close .kal{width:150px;box-shadow:0 0 50px rgba(150,130,255,.45);margin:0 auto 18px}
+.cs-close h2{font-size:clamp(2rem,4vw,3rem);margin:0 0 .3em}
+.cs-close p{margin-bottom:24px}
+.cs-close .button+.button{margin-left:10px}
+
+/* ---------- Responsive ---------- */
+@media (max-width:980px){
+  .cs-flag{grid-template-columns:1fr}
+  .cs-flag-copy{padding:34px 28px 32px}
+  .cs-board{grid-template-columns:1fr;padding:26px;gap:28px}
+  .cs-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:640px){
+  .cs{padding-top:60px}
+  .cs-wrap{width:calc(100% - 28px)}
+  .cs-flag-visual{padding:58px 14px 18px}
+  .cs-strip{gap:6px}
+  .cs-strip-note{text-align:center;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:1.1rem;color:#d9c9ff!important;margin-top:4px!important}
+.cs-strip figcaption{font-size:.56rem;letter-spacing:.08em}
+  .cs-flag .cs-price{font-size:2.4rem}
+  .cs-grid{grid-template-columns:1fr}
+  .cs-board{padding:16px}
+  .vb{padding:14px 12px}
+  .vb-grid{gap:6px}
+  .vb-aff{padding:4px 8px;font-size:.66rem}
+  .vb-aff::before,.vb-aff::after{margin:0 3px}
+  .vb-title::before,.vb-title::after{width:22px;margin:0 6px}
+  .vb-a4{right:1%;top:47%}
+  .vb-center{width:23%}
+  .cs-gift{flex-direction:column;text-align:center;padding:20px}
+  .cs-buy{justify-content:center;text-align:center}
+  .cs-buy .button{width:100%}
+  .cs-close .button{width:100%}
+  .cs-close .button+.button{margin:12px 0 0}
+  .cs-steps{flex-direction:column;align-items:center}
+}
