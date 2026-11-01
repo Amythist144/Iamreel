@@ -6,7 +6,7 @@
 /* Launcher tab (right side, like the original guide tab) */
 #vg-guide .vg-launch{position:fixed;z-index:9999;right:0;top:50%;transform:translateY(-50%);width:272px;display:grid;grid-template-columns:auto 1fr;gap:3px 12px;align-items:center;text-align:left;padding:14px 16px;border:1px solid rgba(255,255,255,.3);border-right:0;border-radius:999px 0 0 999px;background:#102b50;color:#fff;cursor:pointer;box-shadow:0 12px 35px rgba(0,0,0,.35);transition:box-shadow .2s}
 #vg-guide .vg-launch:is(:hover,:focus-visible){box-shadow:var(--vg-glow);outline:none}
-#vg-guide .vg-launch img{grid-row:1 / span 3;width:44px;height:44px;border-radius:50%;object-fit:cover;box-shadow:0 0 14px rgba(255,214,120,.55)}
+#vg-guide .vg-launch img{grid-row:1 / span 3;width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(255,214,120,.45))}
 #vg-guide .vg-launch .vg-eyebrow{font-size:10px}
 #vg-guide .vg-launch strong{font-size:17px;line-height:1.2}
 #vg-guide .vg-launch span:last-child{font-size:13px;color:#dce6f5}
@@ -16,7 +16,7 @@
 #vg-guide .vg-shell{display:flex;flex-direction:column;height:min(820px,90dvh)}
 #vg-guide .vg-header{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 22px;position:static;top:auto;min-height:0;height:auto;z-index:auto;backdrop-filter:none;flex-wrap:nowrap;background:#162641;border-bottom:1px solid #314360}
 #vg-guide .vg-brand{display:flex;align-items:center;gap:13px;min-width:0}
-#vg-guide .vg-logo{width:48px;height:48px;border-radius:50%;object-fit:cover;flex:none;box-shadow:0 0 16px rgba(255,214,120,.5)}
+#vg-guide .vg-logo{width:52px;height:52px;object-fit:contain;flex:none;filter:drop-shadow(0 0 8px rgba(255,214,120,.45))}
 #vg-guide .vg-header-actions{display:flex;align-items:center;gap:6px}
 #vg-guide h2{font-size:24px;margin:2px 0;font-weight:600;color:#fff;line-height:1.2}
 #vg-guide h3{font-size:26px;line-height:1.25;margin:10px 0 16px;color:#f1efff}

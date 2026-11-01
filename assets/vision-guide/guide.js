@@ -209,14 +209,16 @@
   root.id = 'vg-guide';
   if (inlineHost) { root.className = 'vg-inline'; inlineHost.appendChild(root); } else document.body.appendChild(root);
   if (!document.querySelector('link[data-vg-css]')) {
-    var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = new URL('guide.css?v=20261031', base).href; css.setAttribute('data-vg-css', '');
+    var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = new URL('guide.css?v=20261031b', base).href; css.setAttribute('data-vg-css', '');
     document.head.appendChild(css);
   }
-  var icon = asset('assets/vision-guide-icon-dark.jpg');
+  var icon = asset('assets/vision-guide/vision-icon.png');
+  var icon2x = asset('assets/vision-guide/vision-icon@2x.png');
+  var kaleidoImg = asset('assets/vision-guide-icon-dark.jpg');
   root.innerHTML =
-    '<button class="vg-launch" type="button" aria-haspopup="dialog" aria-controls="vg-dialog"><img src="' + icon + '" alt="" width="44" height="44"><span class="vg-eyebrow">I AM REEL</span><strong>Your Vision Guide</strong><span>What is your dream?</span></button>' +
+    '<button class="vg-launch" type="button" aria-haspopup="dialog" aria-controls="vg-dialog"><img src="' + icon + '" srcset="' + icon + ' 1x, ' + icon2x + ' 2x" alt="" width="44" height="44"><span class="vg-eyebrow">I AM REEL</span><strong>Your Vision Guide</strong><span>What is your dream?</span></button>' +
     '<dialog id="vg-dialog" aria-labelledby="vg-title"><div class="vg-shell">' +
-    '<header class="vg-header"><div class="vg-brand"><img class="vg-logo" src="' + icon + '" alt="Vision Guide logo" width="48" height="48"><div><span class="vg-eyebrow">I AM REEL</span><h2 id="vg-title">Your Vision Guide</h2></div></div>' +
+    '<header class="vg-header"><div class="vg-brand"><img class="vg-logo" src="' + icon + '" srcset="' + icon + ' 1x, ' + icon2x + ' 2x" alt="Vision Guide logo" width="48" height="48"><div><span class="vg-eyebrow">I AM REEL</span><h2 id="vg-title">Your Vision Guide</h2></div></div>' +
     '<div class="vg-header-actions"><button class="vg-button vg-secondary vg-small-btn vg-startover" type="button">Start over</button><button class="vg-close" type="button" aria-label="Close Vision Guide">×</button></div></header>' +
     '<div class="vg-layout"><main class="vg-main" tabindex="-1"></main><aside class="vg-blueprint" aria-label="Your Vision Blueprint" aria-live="polite"></aside></div>' +
     '<footer class="vg-footer"><span>One dream. A future that feels like you.</span><button class="vg-button vg-primary vg-save-open" type="button">♡ Save this dream vision</button></footer>' +
@@ -258,7 +260,7 @@
     }).join('');
     return '<span class="vg-eyebrow">4 / CHOOSE YOUR DREAM IMAGES</span><h3 id="vg-products-title">Choose your dream images</h3>' +
       '<p>' + (intro || 'Turn the vision you just created into images and film you can see every day.') + '</p>' +
-      '<div class="vg-kaleido"><img src="' + icon + '" alt=""><p><strong>Every video, including your Dream Reel, opens and closes with a hypnotic kaleidoscope.</strong> It quiets the mind into a calm, receptive state, so your mind and feelings can accept your dream as reel.</p></div>' +
+      '<div class="vg-kaleido"><img src="' + kaleidoImg + '" alt=""><p><strong>Every video, including your Dream Reel, opens and closes with a hypnotic kaleidoscope.</strong> It quiets the mind into a calm, receptive state, so your mind and feelings can accept your dream as reel.</p></div>' +
       '<div class="vg-products">' + cards + '</div>' +
       '<div class="vg-wallpaper"><img src="' + esc(asset('assets/ev-collection/phone-wallpaper.webp')) + '" alt="" loading="lazy"><div><span class="vg-eyebrow">OUR GIFT TO YOU</span><h4>Your FREE personalized Vision Wallpaper</h4>' +
       '<p>Imagine the first thing you see every time you unlock your phone: you, already living your dream. Your Vision Wallpaper turns dozens of everyday glances into quiet moments that raise your vibration and keep your dream in front of you.</p>' +
