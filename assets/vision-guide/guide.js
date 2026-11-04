@@ -75,7 +75,7 @@
   var SAMPLE_TAG = '<span class="vg-sample-tag">Sample vision</span>';
   var PRODUCT_ORDER = ['cinematic_reel', 'dream_portrait', 'dream_scenes_3', 'vision_board_8', 'video_meditation'];
   var PRODUCT_COPY = {
-    cinematic_reel: 'Your dream, filmed. Up to 10 cinematic clips, up to 100 seconds: about 8 or 9 ten-second scenes of you living several moments of your dream, woven with your affirmations and set to an original soundtrack with specific frequencies that help raise your vibration to match the dream (no voices). It opens and closes with a hypnotic kaleidoscope that quiets your mind, so you receive your dream as reel. After you choose your reel, you’ll plan up to 9 scenes in your Sanctuary.',
+    cinematic_reel: 'Your dream, filmed. Up to 6 cinematic clips, up to about 70 seconds: up to 6 ten-second scenes of you living several moments of your dream, woven with your affirmations and set to an original soundtrack with specific frequencies that help raise your vibration to match the dream (no voices). It opens and closes with a hypnotic kaleidoscope that quiets your mind, so you receive your dream as reel. After you choose your reel, you’ll plan up to 6 scenes in your Sanctuary. Delivered in both Widescreen 16:9 and Mobile 9:16, in 720p HD.',
     dream_portrait: 'One stunning personalized image of you inside your dream, a single vivid reminder of who you’re becoming.',
     dream_scenes_3: 'Three personalized scenes that tell your dream like a story: the moment, the place and the feeling, all with you in them.',
     vision_board_8: 'A personalized Vision Board with 6 images from your dream, framed by your affirmations, designed as one beautiful board for your wall, desk or screen.',

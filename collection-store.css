@@ -201,3 +201,10 @@
   html body #vg-guide .vg-launch :is(span,strong){position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 }
 .cs-plan-note{margin:18px 0 0;padding:12px 16px;border:1px solid rgba(255,215,122,.45);border-radius:14px;background:rgba(255,215,122,.08);color:#ffe6a6;font-size:.98rem;line-height:1.45}
+.cs-formats{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:14px 0 6px}
+.cs-fmt{display:inline-flex;align-items:center;gap:9px;padding:8px 14px;border:1px solid rgba(255,215,122,.45);border-radius:999px;background:rgba(255,215,122,.07);color:#e6edff;font-size:.86rem;line-height:1.2}
+.cs-fmt b{color:#ffe6a6;font-weight:700}
+.cs-fmt i{display:inline-block;border:1.5px solid #ffd77a;border-radius:3px;flex:none}
+.cs-fmt-wide{width:22px;height:13px}.cs-fmt-tall{width:11px;height:19px}
+.cs-fine{text-align:center;font-size:.74rem!important;color:#9fb0d6!important;letter-spacing:.02em;margin-top:4px!important}
+@media(max-width:600px){.cs-fmt{font-size:.8rem;padding:7px 12px}}
