@@ -31,6 +31,7 @@ html body main .iam-panel:not(#iam-x) .rp-warn{color:#7a2e0b}
 .rp-prefill{margin:0;padding:10px 14px;border-radius:12px;background:#fff8e1;border:1px solid #f3d27a}
 .rp-actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px}.rp-save{font-size:1.05rem;padding:14px 30px}
 .rp-locked{display:none}
+#rp-dream{min-height:220px;line-height:1.6}.rp-hint{font-weight:400;font-size:.85rem;margin:0}.rp-check{display:flex;align-items:center;gap:10px;font-weight:600;margin-top:10px;cursor:pointer}.rp-check input{width:20px;height:20px;accent-color:#f7b500}.iam-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
 .rp.is-locked .rp-locked{display:grid;justify-items:center;text-align:center;gap:8px;position:absolute;z-index:5;left:50%;top:230px;transform:translateX(-50%);width:min(560px,calc(100% - 40px));padding:26px 24px;border-radius:22px;background:#fffffff2;border:1px solid #f3d27a;box-shadow:0 20px 50px #1a0b4a40}
 .rp.is-locked .rp-locked h3{margin:0;font:600 1.7rem "Cormorant Garamond",serif;color:#061f3a}.rp.is-locked .rp-locked p{margin:0 0 6px;line-height:1.55}.rp-lock-icon{font-size:1.8rem}
 .rp.is-locked .rp-form{filter:blur(3px) saturate(.8);opacity:.55;pointer-events:none;user-select:none;max-height:640px;overflow:hidden}
@@ -55,26 +56,16 @@ html body main .iam-panel:not(#iam-x) .rp-warn{color:#7a2e0b}
 <div id="saved-dream-guide" hidden style="margin:0 0 22px"><div data-vision-guide-inline data-vg-mode="sanctuary"></div></div>
 <section id="reel-planner" class="iam-panel rp" aria-labelledby="rp-title">
 <div class="rp-head"><p class="eyebrow">CINEMATIC DREAM REEL · REEL PLANNER</p><h2 id="rp-title">Plan your Dream Reel</h2>
-<p>Your reel holds up to 6 cinematic clips and runs up to about 70 seconds: up to 6 ten-second dream scenes of you, opened and closed by a 5-second hypnotic kaleidoscope. Describe the moments you’d love to live, the world around you and how you look, and we’ll film your dream.</p></div>
-<div id="rp-locked" class="rp-locked" role="note"><span class="rp-lock-icon" aria-hidden="true">🔒</span><h3>Unlocks when you choose your Cinematic Dream Reel</h3><p>Once your reel is yours, you’ll plan up to 6 scenes right here: where you live, what you own, where you travel, the people you love and how you look.</p><a class="button gold" href="collection.html#p-reel">See the Cinematic Dream Reel</a></div>
+<p>Your reel holds up to 6 cinematic clips and runs up to about 70 seconds, opened and closed by a 5-second hypnotic kaleidoscope. Tell us about the life you’re stepping into, and we’ll film your dream with you at the heart of it.</p></div>
+<div id="rp-locked" class="rp-locked" role="note"><span class="rp-lock-icon" aria-hidden="true">🔒</span><h3>Unlocks when you choose your Cinematic Dream Reel</h3><p>Once your reel is yours, you’ll describe your dream life right here: where you live, where you travel, who you’re with and how you love to look.</p><a class="button gold" href="collection.html#p-reel">See the Cinematic Dream Reel</a></div>
 <form id="rp-form" class="rp-form" novalidate>
-<div class="rp-summary" aria-live="polite"><div class="rp-summary-text"><strong id="rp-sum-main">6 scenes × 10s + 5s intro &amp; 5s outro ≈ 70 seconds</strong><span id="rp-sum-sub">0 of 6 scenes planned · up to 6 clips</span></div><div class="rp-meter" aria-hidden="true"><i id="rp-meter-fill"></i></div></div>
-<p id="rp-prefill" class="iam-note rp-prefill" hidden>✦ We started a few answers from your saved dream vision. Change anything so it feels exactly right.</p>
-<fieldset class="rp-step"><legend><span>1</span>Your dream scenes</legend><p class="iam-note">Each scene is about 10 seconds. Describe one moment you’d love to live in each card. Plan up to 6; fewer is lovely too.</p><div id="rp-scenes" class="rp-scenes"></div><p class="iam-note rp-formats">✦ You’ll receive both formats, no choice needed: Widescreen 16:9 for YouTube and TV, and Mobile 9:16 for your phone, both in 720p HD.</p></fieldset>
-<fieldset class="rp-step"><legend><span>2</span>Your world</legend><p class="iam-note">The details that make your dream unmistakably yours.</p><div class="rp-grid">
-<label class="rp-field">Where you live<textarea data-rp="world.home" rows="2" maxlength="255" placeholder="A white villa on the coast with an infinity pool"></textarea><small class="rp-count">0/255</small><span class="rp-warn" aria-live="polite"></span></label>
-<label class="rp-field">What you own<textarea data-rp="world.own" rows="2" maxlength="255" placeholder="A cream convertible, a sailboat, a sunlit studio"></textarea><small class="rp-count">0/255</small><span class="rp-warn" aria-live="polite"></span></label>
-<label class="rp-field">Where you travel<textarea data-rp="world.travel" rows="2" maxlength="255" placeholder="Bali, the Amalfi Coast, Paris in spring"></textarea><small class="rp-count">0/255</small><span class="rp-warn" aria-live="polite"></span></label>
-<label class="rp-field">Recreation you love<textarea data-rp="world.recreation" rows="2" maxlength="255" placeholder="Sailing, yoga at sunrise, tennis, dancing"></textarea><small class="rp-count">0/255</small><span class="rp-warn" aria-live="polite"></span></label>
-<label class="rp-field">Favorite locations<textarea data-rp="world.locations" rows="2" maxlength="255" placeholder="A rooftop terrace, a quiet beach, a mountain lodge"></textarea><small class="rp-count">0/255</small><span class="rp-warn" aria-live="polite"></span></label>
-<label class="rp-field">Favorite experiences<textarea data-rp="world.experiences" rows="2" maxlength="255" placeholder="Champagne at sunset, a standing ovation, a long dinner with friends"></textarea><small class="rp-count">0/255</small><span class="rp-warn" aria-live="polite"></span></label>
-<label class="rp-field rp-wide">Favorite colors<textarea data-rp="world.colors" rows="1" maxlength="255" placeholder="Ocean blue, soft gold, warm white"></textarea><small class="rp-count">0/255</small><span class="rp-warn" aria-live="polite"></span></label>
-</div></fieldset>
-<fieldset class="rp-step"><legend><span>3</span>How you look</legend><p class="iam-note">You appear as yourself, created from your own photos. Tell us how you’d love to look in your reel.</p><div class="rp-grid">
-<label class="rp-field">Outfits &amp; style<textarea data-rp="look.outfits" rows="2" maxlength="255" placeholder="A flowing white linen dress, a tailored navy suit, resort wear"></textarea><small class="rp-count">0/255</small><span class="rp-warn" aria-live="polite"></span></label>
-<label class="rp-field">Body type &amp; build<textarea data-rp="look.body" rows="2" maxlength="255" placeholder="Strong and toned, healthy and glowing"></textarea><small class="rp-count">0/255</small><span class="rp-warn" aria-live="polite"></span></label>
-</div><p class="iam-note rp-look-note">Your Future Self choices (how you appear and build from your photos) are part of this plan too, and you can change them in <a href="#future-self">Create your Future Self</a>.</p></fieldset>
-<fieldset class="rp-step"><legend><span>4</span>People &amp; pets</legend><p class="iam-note rp-ai-note">✦ Only you appear as yourself. Anyone else is AI-generated from your description, never a real photo, so simply describe them, like “a handsome man with dark hair and a beard,” “my golden retriever” or “a crowd applauding.” No celebrities, public figures or children, please.</p>
+<p id="rp-prefill" class="iam-note rp-prefill" hidden>✦ We started your dream life from your saved dream vision. Change anything so it feels exactly right.</p>
+<fieldset class="rp-step"><legend><span>1</span>Your dream life</legend><p class="iam-note">Describe in detail the life you’re calling in, everything you’d love to see yourself doing in your reel. Your home and where you live, your work, the things you own, the places you travel, the recreation and experiences you love, who you spend time with and the freedom you feel. Tell us how you look and feel there too: your body type, the clothing you love to wear and your favorite colors.</p>
+<label class="rp-field rp-wide"><span class="iam-sr">Your dream life</span><textarea id="rp-dream" data-rp="dream" rows="10" maxlength="2000" placeholder="I wake up in my sunlit white villa above the ocean… I spend my mornings building the business I love, then sail with my husband at sunset. I travel to Bali and Paris in spring. I’m strong, toned and glowing, wearing flowing linen in soft gold and ocean blue…"></textarea><small class="rp-count">0/2000</small><span class="rp-hint iam-note">Aim for 100+ words for richer scenes.</span><span class="rp-warn" aria-live="polite"></span></label>
+<p class="iam-note rp-formats">✦ Up to 6 cinematic clips, and you’ll receive both formats, no choice needed: Widescreen 16:9 for YouTube and TV, and Mobile 9:16 for your phone, both in 720p HD.</p></fieldset>
+<fieldset class="rp-step"><legend><span>2</span>Youthing</legend><p class="iam-note rp-youth-note">✦ Our program includes a special Youthing feature that gently smooths wrinkles, thickens hair and evens out your complexion, so you see yourself glowing and radiant in your best life.</p>
+<label class="rp-check"><input type="checkbox" id="rp-noyouth" data-rp-check="noYouthing"> Do not make me appear younger</label></fieldset>
+<fieldset class="rp-step"><legend><span>3</span>People &amp; pets</legend><p class="iam-note rp-ai-note">✦ Only you appear as yourself. Anyone else is AI-generated from your description, never a real photo, so simply describe them, like “a handsome man with dark hair and a beard,” “my golden retriever” or “a crowd applauding.” No celebrities, public figures or children, please.</p>
 <label class="rp-field rp-wide">Who shares your scenes?<textarea data-rp="people" rows="2" maxlength="255" placeholder="My husband, a handsome man with dark hair and a beard, and my golden retriever"></textarea><small class="rp-count">0/255</small><span class="rp-warn" aria-live="polite"></span></label></fieldset>
 <div class="rp-actions"><button id="rp-save" class="button gold rp-save" type="submit">Save my reel plan</button><span id="rp-status" class="iam-note" role="status" aria-live="polite"></span></div>
 </form>
@@ -83,7 +74,7 @@ html body main .iam-panel:not(#iam-x) .rp-warn{color:#7a2e0b}
 <div id="sanctuary-member" class="sanctuary-grid iam-hidden">
 <section class="iam-panel"><p class="eyebrow">YOUR FREE MEMBER GIFT</p><h2>Dream Future Wallpaper</h2><p>When your Vision Blueprint is ready, your complimentary phone or desktop wallpaper will appear here.</p><div id="sanctuary-wallpaper" class="sanctuary-empty">Your wallpaper is not ready yet.</div></section>
 <section class="iam-panel"><p class="eyebrow">MY AFFIRMATIONS</p><h2>Words for your future</h2><div id="iam-affirms" class="sanctuary-empty">Your personalized affirmations will appear here.</div></section>
-<section id="future-self" class="iam-panel sanctuary-wide"><p class="eyebrow">CREATION GUIDE</p><h2>Create your Future Self</h2><p>After you purchase a visual product, upload 1–5 photos of yourself that you love. They can be recent or from any time in your life—even a high-school photo. Choose images where you feel most like yourself and love the way you look.</p><div class="iam-creation-grid"><label class="iam-field">How should your Future Self appear?<select id="future-age"><option>As I look in my favorite photo</option><option>As I look now</option><option>A little younger</option><option>More youthful</option><option>My ideal future self</option></select></label><label class="iam-field">Preferred build<select id="future-build"><option>Use my full-body photo</option><option>Slim</option><option>Athletic</option><option>Medium</option><option>Fuller</option></select></label><label class="iam-field">What would you love to be wearing?<input id="future-clothing" type="text" placeholder="Elegant, business, resort, casual, athletic…"></label><label class="iam-field">Favorite clothing colors<input id="future-colors" type="text" placeholder="Blue, green, neutrals, gold…"></label></div><p class="iam-note rp-fs-note" hidden>Your outfits and favorite colors are part of your Reel Planner above, so everything about how you look stays in one place.</p><p class="iam-note">Photo upload and your three Future Self approval choices will unlock here with a purchased visual product.</p></section>
+<section id="future-self" class="iam-panel sanctuary-wide"><p class="eyebrow">CREATION GUIDE</p><h2>Create your Future Self</h2><p>After you purchase a visual product, upload 1–5 photos of yourself that you love. They can be recent or from any time in your life—even a high-school photo. Choose images where you feel most like yourself and love the way you look.</p><p class="iam-note">Photo upload and your three Future Self approval choices will unlock here with a purchased visual product.</p></section>
 <section class="iam-panel sanctuary-wide"><p class="eyebrow">MY ORDERS &amp; CREATIONS</p><h2>Everything you’re creating</h2><div id="iam-orders" class="sanctuary-empty">Your purchases and finished creations will appear here.</div></section>
 <section class="iam-panel sanctuary-wide"><div class="iam-topline"><div><p class="eyebrow">ACCOUNT</p><span id="sanctuary-user" class="iam-note"></span></div><button id="sanctuary-signout" class="iam-btn ghost" type="button">Sign out</button></div></section>
 </div><div id="sanctuary-status" class="iam-status" role="status" aria-live="polite"></div>
@@ -117,7 +108,7 @@ document.addEventListener('DOMContentLoaded',init);
    Shows the copy saved on this device and, once signed in, syncs it to Supabase
    (visions + affirmations), updating the same vision row when it already exists.
    "Continue this dream" mounts the Vision Guide inline here with the full chat restored. */
-(()=>{const KEY='iamreel_saved_vision_v1',U='https://jtlqvxcmbgqtcpdhldbm.supabase.co',GV='20261104a';
+(()=>{const KEY='iamreel_saved_vision_v1',U='https://jtlqvxcmbgqtcpdhldbm.supabase.co',GV='20261104b';
 const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const load=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}};
@@ -171,55 +162,44 @@ sb.auth.getSession().then(r=>onSession(r.data&&r.data.session));sb.auth.onAuthSt
 })();
 </script>
 <script src="assets/vision-guide/content-check.js?v=20261031a"></script><script>
-/* Reel Planner: plan up to 9 ten-second scenes for the Cinematic Dream Reel.
+/* Reel Planner: one "Your dream life" box (up to 2,000 chars), a Youthing opt-out and People & pets.
    Unlocks with localStorage iamreel_reel_purchased = '1' or ?reel=1 (TODO(checkout): set the flag after a paid reel order).
-   Saves to localStorage (iamreel_reel_plan_v1) and, when signed in, into the existing visions row's blueprint JSON (blueprint.reel_plan). No schema changes.
-   Merged with the Future Self fields: future-age/future-build are stored as look.age/look.build, future-clothing = look.outfits, future-colors = world.colors. */
-(()=>{const PKEY='iamreel_reel_plan_v1',VKEY='iamreel_saved_vision_v1',U='https://jtlqvxcmbgqtcpdhldbm.supabase.co',MAX=255,SCENES=6;
+   Saves to localStorage (iamreel_reel_plan_v1, v:2) and, when signed in, into the visions row's blueprint JSON (blueprint.reel_plan).
+   Older v1 plans (scenes/world/look) are folded into the dream text once. */
+(()=>{const PKEY='iamreel_reel_plan_v1',VKEY='iamreel_saved_vision_v1',U='https://jtlqvxcmbgqtcpdhldbm.supabase.co',LIM={dream:2000,people:255};
 const $=id=>document.getElementById(id),root=$('reel-planner');if(!root)return;
-const form=$('rp-form'),scenesEl=$('rp-scenes'),statusEl=$('rp-status');
-const EX=['Walking into my dream home and dropping the keys in a crystal bowl','Signing a big contract as my team cheers','Settling into a first-class seat to Bali with a glass of champagne','Dinner with loved ones on a candlelit terrace','Sailing at sunset with the wind in my hair','Crossing a finish line with my arms raised','Opening my laptop to record sales on a sunny balcony','Dancing barefoot at a garden party under string lights','Diving into the turquoise sea from a private yacht'];
+const form=$('rp-form'),statusEl=$('rp-status'),noY=$('rp-noyouth');
 let unlocked=false;try{unlocked=localStorage.getItem('iamreel_reel_purchased')==='1'}catch(e){}
 if(/[?&]reel=1\b/.test(location.search))unlocked=true;
 root.classList.toggle('is-locked',!unlocked);form.toggleAttribute('inert',!unlocked);form.setAttribute('aria-hidden',unlocked?'false':'true');
-const blank=()=>({v:1,scenes:Array(SCENES).fill(''),world:{home:'',own:'',travel:'',recreation:'',locations:'',experiences:'',colors:''},look:{age:'',build:'',outfits:'',body:''},people:'',prefilled:false,updatedAt:null});
+const blank=()=>({v:2,dream:'',noYouthing:false,people:'',prefilled:false,updatedAt:null});
 const loadJ=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
-let plan=Object.assign(blank(),loadJ(PKEY)||{});plan.scenes=(plan.scenes||[]).concat(Array(SCENES).fill('')).slice(0,SCENES);plan.world=Object.assign(blank().world,plan.world);plan.look=Object.assign(blank().look,plan.look);
-const get=p=>p.split('.').reduce((o,k)=>o==null?'':o[k],plan)||'';
-const set=(p,v)=>{const ks=p.split('.');let o=plan;while(ks.length>1)o=o[ks.shift()];o[ks[0]]=v};
-/* Scene cards */
-scenesEl.innerHTML=Array.from({length:SCENES},(_,i)=>'<div class="rp-scene" data-scene="'+i+'"><div class="rp-scene-top"><b>Scene '+(i+1)+'</b><em>~10s'+(i===5?' · optional':'')+'</em></div><label for="rp-s'+i+'">Describe one moment you’d love to live</label><textarea id="rp-s'+i+'" data-rp="scenes.'+i+'" rows="3" maxlength="'+MAX+'" placeholder="'+EX[i%EX.length]+'"></textarea><small class="rp-count">0/'+MAX+'</small><span class="rp-warn" aria-live="polite"></span></div>').join('');
+function migrate(o){o=(o&&typeof o==='object')?o:{};const p=blank();
+ p.dream=typeof o.dream==='string'?o.dream:'';p.people=typeof o.people==='string'?o.people:'';p.noYouthing=!!o.noYouthing;p.prefilled=!!o.prefilled;p.prefilledNote=!!o.prefilledNote;p.updatedAt=o.updatedAt||null;
+ if(!p.dream&&(o.scenes||o.world||o.look)){const w=o.world||{},l=o.look||{},bits=[];
+  (Array.isArray(o.scenes)?o.scenes:[]).forEach(x=>{x=String(x||'').trim();if(x)bits.push(x)});
+  [['home','Where I live'],['own','What I own'],['travel','Where I travel'],['recreation','What I love to do'],['locations','Favorite places'],['experiences','Experiences I love'],['colors','Favorite colors']].forEach(([k,t])=>{const v=String(w[k]||'').trim();if(v)bits.push(t+': '+v)});
+  [['outfits','What I love to wear'],['body','My body type']].forEach(([k,t])=>{const v=String(l[k]||'').trim();if(v)bits.push(t+': '+v)});
+  p.dream=bits.join('. ').replace(/\.\./g,'.').slice(0,LIM.dream)}
+ return p}
+let plan=migrate(loadJ(PKEY));
 const fields=[...form.querySelectorAll('[data-rp]')];
+const max=t=>LIM[t.getAttribute('data-rp')]||255;
 /* Prefill once from the saved dream vision. */
 const sv=loadJ(VKEY),bp=sv&&sv.blueprint;let prefilledNow=false;
-if(bp&&!plan.prefilled){const clip=t=>String(t||'').trim().slice(0,MAX);
- const parts=String(bp.people_pets_place||'').split(' · ');const place=parts[0]||'',who=parts.slice(1).join(' · ').replace(/^with\s+/i,'');
- const fill=(p,v)=>{v=clip(v);if(v&&!get(p)){set(p,v);prefilledNow=true}};
- fill('scenes.0',bp.moment);
- if(place&&/home|house|villa|apartment|condo|cabin|estate|penthouse|loft|ranch|cottage|mansion/i.test(place))fill('world.home',place);else fill('world.locations',place);
- fill('people',who);plan.prefilled=true}
+if(bp&&!plan.prefilled){const parts=String(bp.people_pets_place||'').split(' · ');const place=parts[0]||'',who=parts.slice(1).join(' · ').replace(/^with\s+/i,'');
+ if(!plan.dream){const d=[bp.moment,place].map(x=>String(x||'').trim()).filter(Boolean).join('. ').slice(0,LIM.dream);if(d){plan.dream=d;prefilledNow=true}}
+ if(!plan.people&&who){plan.people=who.slice(0,LIM.people);prefilledNow=true}
+ plan.prefilled=true}
 $('rp-prefill').hidden=!prefilledNow&&!(plan.prefilledNote);if(prefilledNow)plan.prefilledNote=true;
-/* Future Self merge */
-const fsMap={'future-age':'look.age','future-build':'look.build','future-clothing':'look.outfits','future-colors':'world.colors'};
-Object.entries(fsMap).forEach(([id,p])=>{const el=$(id);if(!el)return;if(get(p))el.value=get(p);else if(el.tagName==='SELECT'){/* keep default until chosen */}else if(el.value)set(p,el.value);
- el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>{set(p,el.value.slice(0,MAX));const t=form.querySelector('[data-rp="'+p+'"]');if(t&&t.value!==get(p)){t.value=get(p);update(t)}saveLocal()})});
-if(unlocked)['future-clothing','future-colors'].forEach(id=>{const el=$(id);if(el&&el.closest('label'))el.closest('label').hidden=true});
-if(unlocked){const n=document.querySelector('#future-self .rp-fs-note');if(n)n.hidden=false}
-/* Fields: value, counter, content check */
 const check=(v)=>window.IAMREEL_checkContent?window.IAMREEL_checkContent(v,'moment'):{ok:true};
-function update(t){const n=t.value.length,c=t.parentElement.querySelector('.rp-count'),w=t.parentElement.querySelector('.rp-warn');
- if(c){c.textContent=n+'/'+MAX;c.classList.toggle('is-full',n>=MAX)}
- const r=t.value.trim()?check(t.value):{ok:true};if(w)w.textContent=r.ok?'':r.message;t.setAttribute('aria-invalid',r.ok?'false':'true');
- const card=t.closest('.rp-scene');if(card)card.classList.toggle('is-filled',!!t.value.trim()&&r.ok);return r.ok}
-function summary(){const f=plan.scenes.filter(s=>String(s).trim()).length,main=$('rp-sum-main'),sub=$('rp-sum-sub');
- const secs=f?f*10+10:70,ns=f||SCENES;main.textContent=ns+(ns===1?' scene':' scenes')+' × 10s + 5s intro & 5s outro ≈ '+secs+' seconds';
- sub.textContent=f+' of '+SCENES+' scenes planned · up to 6 clips'+(f>=5?' · beautifully full ✓':'');$('rp-meter-fill').style.width=Math.round(f/SCENES*100)+'%'}
-fields.forEach(t=>{t.value=get(t.getAttribute('data-rp'));update(t);
- t.addEventListener('input',()=>{if(t.value.length>MAX)t.value=t.value.slice(0,MAX);set(t.getAttribute('data-rp'),t.value);update(t);summary();statusEl.textContent='';saveLocalSoon();
-  const fs=Object.entries(fsMap).find(([,p])=>p===t.getAttribute('data-rp'));if(fs&&$(fs[0])&&$(fs[0]).tagName!=='SELECT')$(fs[0]).value=t.value})});
-summary();
-/* Rotating example placeholders on empty scene cards */
-if(!matchMedia('(prefers-reduced-motion: reduce)').matches){let tick=0;setInterval(()=>{tick++;scenesEl.querySelectorAll('textarea').forEach((t,i)=>{if(!t.value&&document.activeElement!==t)t.placeholder=EX[(i+tick)%EX.length]})},3800)}
+function update(t){const n=t.value.length,m=max(t),c=t.parentElement.querySelector('.rp-count'),w=t.parentElement.querySelector('.rp-warn');
+ if(c){c.textContent=n.toLocaleString()+'/'+m.toLocaleString()+(t.id==='rp-dream'?' · '+(t.value.trim()?t.value.trim().split(/\s+/).length:0)+' words':'');c.classList.toggle('is-full',n>=m)}
+ const r=t.value.trim()?check(t.value):{ok:true};if(w)w.textContent=r.ok?'':r.message;t.setAttribute('aria-invalid',r.ok?'false':'true');return r.ok}
+const fill=()=>{fields.forEach(t=>{t.value=plan[t.getAttribute('data-rp')]||'';update(t)});noY.checked=!!plan.noYouthing};
+fill();
+fields.forEach(t=>t.addEventListener('input',()=>{const m=max(t);if(t.value.length>m)t.value=t.value.slice(0,m);plan[t.getAttribute('data-rp')]=t.value;update(t);statusEl.textContent='';saveLocalSoon()}));
+noY.addEventListener('change',()=>{plan.noYouthing=noY.checked;statusEl.textContent='';saveLocal()});
 /* Save */
 function saveLocal(){plan.updatedAt=new Date().toISOString();try{localStorage.setItem(PKEY,JSON.stringify(plan));const s=loadJ(VKEY);if(s&&s.blueprint){s.blueprint.reel_plan=plan;localStorage.setItem(VKEY,JSON.stringify(s))}}catch(e){}}
 let lt=null;const saveLocalSoon=()=>{clearTimeout(lt);lt=setTimeout(saveLocal,400)};
@@ -237,8 +217,8 @@ form.addEventListener('submit',async e=>{e.preventDefault();if(!unlocked)return;
  catch(err){console.warn('Reel plan cloud save failed',err&&err.message);statusEl.textContent='Saved on this device. We couldn’t reach your Sanctuary just now; try again in a moment.'}
  finally{b.disabled=false}});
 /* Signed in on a new device: restore the plan from the vision blueprint. */
-(async()=>{if(loadJ(PKEY))return;const c=client();if(!c)return;try{const s=(await c.auth.getSession()).data.session;if(!s)return;const r=await c.from('visions').select('blueprint').order('updated_at',{ascending:false}).limit(1);const rp=r.data&&r.data[0]&&r.data[0].blueprint&&r.data[0].blueprint.reel_plan;if(!rp)return;plan=Object.assign(blank(),rp);fields.forEach(t=>{t.value=get(t.getAttribute('data-rp'));update(t)});summary();saveLocal()}catch(e){}})();
-if(prefilledNow)saveLocal();
+(async()=>{if(loadJ(PKEY))return;const c=client();if(!c)return;try{const s=(await c.auth.getSession()).data.session;if(!s)return;const r=await c.from('visions').select('blueprint').order('updated_at',{ascending:false}).limit(1);const rp=r.data&&r.data[0]&&r.data[0].blueprint&&r.data[0].blueprint.reel_plan;if(!rp)return;plan=migrate(rp);fill();saveLocal()}catch(e){}})();
+if(prefilledNow||(loadJ(PKEY)||{}).v!==2&&loadJ(PKEY))saveLocal();
 })();
 </script>
 </body></html>
