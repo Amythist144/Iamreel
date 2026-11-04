@@ -153,3 +153,4 @@
 .vg-sample-tag{display:inline-block;margin:0 0 8px;padding:3px 10px;border:1px solid #ffd77a;border-radius:999px;background:rgba(255,215,122,.12);color:#ffd77a;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
 .vg-sample-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.vg-sample-head .vg-sample-tag{margin:0}
 .vg-sample-row{gap:12px;margin:14px 0 4px}
+.vg-side-save{margin-top:16px;padding-top:14px;border-top:1px solid rgba(247,181,0,.3)}.vg-side-save .vg-btn,.vg-side-save button{width:100%}.vg-save-note{font-size:.88rem;line-height:1.5;opacity:.85;margin:10px 0 0}

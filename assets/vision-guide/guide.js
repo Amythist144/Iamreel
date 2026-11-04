@@ -22,11 +22,11 @@
   var esc = function (v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); };
 
   /* ---------------- Answer limits ----------------
-     Each answer is at most 255 characters. The free guide allows 4 rounds of answers (the opening dream is round 1);
+     Each answer is at most 255 characters. The free guide allows 2 rounds (round 1: their dream, round 2: confirm or refine);
      paid customers get 6. Paid is a hook for after checkout: set window.IAMREEL_GUIDE_PAID = true before guide.js loads,
-     or localStorage 'iamreel_guide_paid' = '1'. Override counts with window.IAMREEL_GUIDE_ROUNDS = { free: 4, paid: 6 }. */
+     or localStorage 'iamreel_guide_paid' = '1'. Override counts with window.IAMREEL_GUIDE_ROUNDS = { free: 2, paid: 6 }. */
   var MAX_ANSWER = 255;
-  var IAMREEL_GUIDE_ROUNDS = Object.assign({ free: 4, paid: 6 }, window.IAMREEL_GUIDE_ROUNDS || {});
+  var IAMREEL_GUIDE_ROUNDS = Object.assign({ free: 2, paid: 6 }, window.IAMREEL_GUIDE_ROUNDS || {});
   var LIMIT_NOTE = 'Your dream vision is ready. Save it to your Sanctuary, or start over to dream again.';
   function limitNote() { return (typeof state !== 'undefined' && state && state.sample) ? SAMPLE_LIMIT_NOTE : LIMIT_NOTE; }
   function isPaid() { try { return window.IAMREEL_GUIDE_PAID === true || localStorage.getItem('iamreel_guide_paid') === '1'; } catch (e) { return window.IAMREEL_GUIDE_PAID === true; } }
@@ -34,7 +34,7 @@
   function roundsUsed() { return (typeof state !== 'undefined' && state && state.rounds) || 0; }
   function roundsLeft() { return Math.max(0, maxRounds() - roundsUsed()); }
   function limitReached() { return roundsLeft() <= 0; }
-  function roundsText() { var n = roundsLeft(); return n === maxRounds() ? 'You have ' + n + ' answers to paint your dream.' : n + (n === 1 ? ' answer' : ' answers') + ' left to paint your dream.'; }
+  function roundsText() { var n = roundsLeft(); return n === maxRounds() ? 'You have ' + n + ' answers: share your dream, then refine it.' : n + (n === 1 ? ' answer' : ' answers') + ' left to paint your dream.'; }
 
   /* ---------------- Questions (one at a time) ---------------- */
   var QUESTIONS = [
@@ -43,43 +43,33 @@
     { key: 'setting', label: 'People, pets & place', ask: 'Where are you, and who or what is with you? Describe the place and any people or pets. Anyone besides you will be AI-generated, not a real photo, so simply describe them, like “a handsome man with dark hair and a beard,” “my golden retriever” or “a crowd applauding.”', placeholder: 'Where I am and who is with me…' },
     { key: 'feeling', label: 'Desired feeling', ask: 'How do you want to feel in that moment? Name the feelings: peaceful, adored, free, proud, abundant… whatever is true for you.', placeholder: 'I want to feel…' }
   ];
-  /* "Try a sample vision": a hardcoded abundance dream, played turn by turn with a natural typing delay (no API call).
-     Every sample answer is under 255 characters and uses the 4 free rounds, exactly like a real visitor. */
+  /* "Try a sample vision": a hardcoded abundance dream in the same 2 short rounds a visitor gets (no API call). */
   var SAMPLE_TURNS = [
     { user: 'I am successful and abundant',
-      fields: { dream: 'I am successful and abundant' },
-      affirm: ['I am successful and abundant.', 'Money flows to me easily, and there is always more than enough.'],
-      reply: 'What a beautiful dream to hold. Picture it with me: you wake slowly in soft white linen, morning light warm across your skin, and your phone lights up with the little click of another sale. You open your bank balance and it makes you exhale and smile. There is more than enough, and it keeps arriving.',
-      ask: 'Let’s see your success up close. What does your thriving business look like on its very best day? Picture one moment you’d love to live.' },
-    { user: 'My business is thriving. I open my laptop on a sunny terrace to record sales overnight, my calendar is full of clients I adore, and I book a first-class seat to Bali without checking the price.',
-      fields: { moment: 'Opening my laptop on a sunny terrace to record sales overnight, my calendar full of clients I adore, and booking a first-class seat to Bali without checking the price' },
-      affirm: ['My business is thriving, and I love the work I do.', 'I say yes to first class and to the life I love.'],
-      reply: 'Oh, stay right there. The terrace stone is warm under your bare feet, an espresso steams beside you, and your screen fills with new orders, one soft chime after another. A client writes just to say thank you. With two taps you book the window seat in first class to Bali, and you never once glance at the price. This is what ease looks like.',
-      ask: 'Now, who shares this abundant life with you, and where do you call home? Anyone besides you will be AI-generated from your description, never a real photo, so simply describe them, like “a handsome man with dark hair and a beard” or “my golden retriever.”' },
-    { user: 'My loving husband, a handsome man with dark hair and a beard, our golden retriever, and friends who are like family, in my white villa on the coast. I hold the key in my hand.',
-      fields: { setting: 'My white villa on the coast · with my loving husband (a handsome man with dark hair and a beard), our golden retriever and friends who are like family' },
-      affirm: ['I am deeply loved, and my home is full of laughter.', 'I hold the key to my dream home.'],
-      reply: 'Now the whole scene is coming alive. You turn the brass key in your palm, solid and warm, the weight of your dream home real in your hand, and step inside your white villa as sea air drifts through open doors. Your husband pulls you close and kisses your temple, your golden retriever’s tail thumps against the floor, and out on the terrace a long table fills with friends laughing so hard they have to set their glasses down.',
-      ask: 'In this last answer, tell me the happy experiences that fill your days, and how you want to feel living this life.' },
-    { user: 'Champagne at sunset on a yacht, dancing in Paris, giving generously to causes I love. I feel free, proud, deeply loved, grateful and completely at ease with money.',
-      fields: { moment: 'Opening my laptop on a sunny terrace to record sales overnight, booking a first-class seat to Bali without checking the price, champagne at sunset on a yacht and dancing in Paris', feeling: 'Free, proud, deeply loved, grateful and completely at ease with money' },
-      affirm: ['I give generously, and abundance returns to me multiplied.', 'I am free, proud, grateful and at ease with money.', 'Every day I step deeper into my best life.'],
-      reply: 'Breathe that in. Champagne bubbles rise and tickle your nose as the yacht glides into a sunset of honey and rose. In Paris you dance under strings of lights until your cheeks ache from smiling, and back home you send a gift to a cause you love with a steady, happy hand. Free, proud, deeply loved, grateful and at ease: this is simply your life now.' }
+      fields: { dream: 'I am successful and abundant', moment: 'You wake in soft white linen as morning light warms your skin, your phone chimes with another sale, and your bank balance makes you exhale and smile.', feeling: 'Abundant, secure and at ease' },
+      affirm: ['I am successful and abundant.', 'Money flows to me easily, and there is always more than enough.', 'I feel abundant, secure and at ease.'],
+      reply: 'What a beautiful dream to hold. Picture it: you wake slowly in soft white linen, morning light warm across your skin, and your phone lights up with the little chime of another sale. You open your bank balance and it makes you exhale and smile. There is more than enough, and it keeps arriving. Your shoulders soften with a deep, quiet security.\n\nIs this the dream you’d love to see?' },
+    { user: 'Yes! And I’m on the terrace of my white villa on the coast with my golden retriever.',
+      fields: { dream: 'I am successful and abundant, living in my white villa on the coast with my golden retriever', moment: 'On the sunny terrace of your white villa on the coast, your laptop chimes with sales while your golden retriever dozes at your feet and sea air drifts in, warm and salty.', feeling: 'Abundant, free, proud and at ease' },
+      affirm: ['I am successful and abundant.', 'I live in my white villa on the coast, and my life is full of ease.', 'Money flows to me easily, and there is always more than enough.', 'I feel abundant, free, proud and at ease.'],
+      reply: 'Here it is, even brighter. The terrace stone is warm under your bare feet at your white villa on the coast, and sea air drifts in, salty and soft. Your laptop chimes with one sale after another while your golden retriever dozes at your feet, tail thumping when you laugh. You lean back, free and proud, with more than enough.\n\nDoes this feel right? Your dream is ready, with your feelings and affirmations, in Your dream.' }
   ];
   var SAMPLE_VISION = [
-    'Close your eyes and let it be real. You are successful and abundant. Morning light spills across your terrace as you open your laptop to record sales from overnight, each soft chime another yes, and your calendar is full of clients you adore. Your bank balance makes you exhale and smile. With two taps you book a first-class seat to Bali, and you never once check the price. You turn the warm brass key to your white villa on the coast, sea air drifting through open doors, as your husband pulls you close and your golden retriever’s tail thumps against the floor.',
-    'As the sun sinks, a long table on the terrace fills with friends laughing until they have to set their glasses down. Champagne bubbles rise at sunset on the yacht, you dance under the lights of Paris, and you give generously to the causes you love with a steady, happy hand. You feel free, proud, deeply loved, grateful and completely at ease, not as a wish but as the simple truth of your life. This is your best life, already unfolding, and each time you see it, you step a little further into it.'
+    'Close your eyes and let it be real. You are successful and abundant. On the sunny terrace of your white villa on the coast, the stone is warm under your bare feet and sea air drifts in, salty and soft. Your laptop chimes with sale after sale while your golden retriever dozes at your feet, tail thumping each time you laugh. You feel abundant, free, proud and at ease, not as a wish but as the simple truth of your life. This is your best life, already unfolding.'
   ];
   var SAMPLE_NOTE = 'Here’s a sample dream so you can see how your Vision Guide works. Watch it unfold, then tap “Start over” to share your own.';
-  var SAMPLE_LIMIT_NOTE = 'This is a sample vision. Tap “Start over” to share your own dream, or edit any words below to make it yours.';
+  var SAMPLE_LIMIT_NOTE = 'This is a sample vision. Tap “Start over” to share your own dream.';
   var SAMPLE_TAG = '<span class="vg-sample-tag">Sample vision</span>';
+  var KALEIDO = 'Each I AM REEL experience begins and ends with a mesmerizing kaleidoscope visual to quiet the mind, enhance receptivity, and open your imagination to the future you desire.';
+  var SAVE_LABEL = 'Save this dream to my sanctuary';
+  var SAVE_NOTE = 'After you choose a personalized vision, you can modify and enhance it in your private Sanctuary vision guide. That’s where you’ll pick your format, Youthing, people and pets, body type, outfits and favorite colors.';
   var PRODUCT_ORDER = ['cinematic_reel', 'dream_portrait', 'dream_scenes_3', 'vision_board_8', 'video_meditation'];
   var PRODUCT_COPY = {
-    cinematic_reel: 'Your dream, filmed. Up to 6 cinematic clips, up to about 70 seconds: up to 6 ten-second scenes of you living several moments of your dream, woven with your affirmations and set to an original soundtrack with specific frequencies that help raise your vibration to match the dream (no voices). It opens and closes with a hypnotic kaleidoscope that quiets your mind, so you receive your dream as reel. After you choose your reel, you’ll describe your dream life in your Sanctuary. Delivered in both Widescreen 16:9 and Mobile 9:16, in 720p HD.',
+    cinematic_reel: 'Your dream, filmed. Up to 6 cinematic clips, up to about 70 seconds: up to 6 ten-second scenes of you living several moments of your dream, woven with your affirmations and set to an original soundtrack with specific frequencies that help raise your vibration to match the dream (no voices). ' + KALEIDO + ' After you choose your reel, you’ll describe your dream life in your Sanctuary. Choose Widescreen, like YouTube or TV, or Mobile for your phone, in 720p HD.',
     dream_portrait: 'One stunning personalized image of you inside your dream, a single vivid reminder of who you’re becoming.',
     dream_scenes_3: 'Three personalized scenes that tell your dream like a story: the moment, the place and the feeling, all with you in them.',
     vision_board_8: 'A personalized Vision Board with 6 images from your dream, framed by your affirmations, designed as one beautiful board for your wall, desk or screen.',
-    video_meditation: 'A guided meditation video built from 3 personalized images of you living your dream, paired with your own affirmations. It opens and closes with a hypnotic kaleidoscope to settle you before and after.'
+    video_meditation: 'A guided meditation video built from 3 personalized images of you living your dream, paired with your own affirmations. ' + KALEIDO
   };
   /* Codes the existing Vision Collection checkout already knows (collection.html names map). */
   var COLLECTION_CODES = ['cinematic_reel', 'dream_portrait', 'dream_scenes_3', 'vision_board_8', 'video_meditation'];
@@ -416,25 +406,14 @@
   /* ---------------- Dream vision paragraphs (second person) ---------------- */
   function visionParagraphs(a, kept) {
     if (state.aiVision && state.aiVision.sig === answersSig(a) && state.aiVision.paras && state.aiVision.paras.length) {
-      var ap = state.aiVision.paras.slice(0, 2);
-      return ap.map(function (p, i) { return i === ap.length - 1 ? p.replace(/\s*Ready to make your dream reel\?\s*$/i, '') : p; });
+      return state.aiVision.paras.slice(0, 2).map(function (p) { return p.replace(/\s*Ready to make your dream reel\?\s*$/i, ''); });
     }
-    var rng = seededRng(hashStr(answersSig(a))), used = [];
-    var all = [a.dream, a.moment, a.setting].filter(Boolean).join(' . ');
-    var dream = presentClause(a.dream), moment = presentClause(a.moment);
-    var scene = sceneLines(all, all, { rng: rng, used: used, max: 3, min: 2 });
-    var p1 = 'Close your eyes and let it be real. ' +
-      (dream ? cap(toYou(dream)) + '. ' : (a.dream ? 'You are living your dream: ' + toYou(nounPhrase(a.dream)) + '. ' : '')) +
-      (moment ? cap(toYou(moment)) + '. ' : (a.moment ? 'This is your moment: ' + toYou(nounPhrase(a.moment)) + '. ' : '')) +
-      (a.setting && !hasPeople(a.moment || '') ? 'All around you: ' + toYou(nounPhrase(a.setting)) + '. ' : '') +
-      scene.join(' ');
-    var f = a.feeling ? toYou(feelingList(a.feeling)) : '', fl = '';
-    FEELING_LINES.forEach(function (x) { if (!fl && x.re.test(f)) fl = x.line; });
+    var dream = presentClause(a.dream);
+    var f = a.feeling ? toYou(feelingList(a.feeling)) : '';
     var aff = (kept && kept[0]) ? ' Your own words hum quietly beneath it all: “' + kept[0] + '”' : '';
-    var p2 = (f ? 'You feel ' + f + ', not as a wish but as the simple truth of your life. ' : 'You feel it everywhere, not as a wish but as the simple truth of your life. ') +
-      (fl || sceneLines(all, all, { rng: rng, used: used, max: 1, min: 1 }).join(' ')) + aff +
-      ' This is your best life, already unfolding, and each time you see it, you step a little further into it.';
-    return [p1.replace(/\s+/g, ' ').trim(), p2.replace(/\s+/g, ' ').trim()];
+    var p = 'Close your eyes and let it be real. ' + (dream ? cap(toYou(dream)) + '. ' : (a.dream ? 'You are living your dream: ' + toYou(nounPhrase(a.dream)) + '. ' : '')) +
+      (a.moment ? a.moment + ' ' : '') + (f ? 'You feel ' + f + ', not as a wish but as the simple truth of your life.' : '') + aff + ' This is your best life, already unfolding.';
+    return [p.replace(/\s+/g, ' ').trim()];
   }
   function answersSig(a) { a = a || {}; return [a.dream, a.moment, a.setting, a.feeling].map(function (x) { return String(x || '').trim(); }).join('|'); }
 
@@ -442,11 +421,11 @@
   var inlineHost = document.querySelector('[data-vision-guide-inline]');
   /* Sanctuary mode: the same guide mounted inside sanctuary.html, restored from the saved vision. */
   var SANCTUARY = !!(inlineHost && inlineHost.getAttribute('data-vg-mode') === 'sanctuary');
-  function fresh() { return { v: 1, step: 'welcome', q: 0, pending: 'dream', rounds: 0, answers: {}, slots: {}, affirmations: [], messages: [], used: [], aiVision: null, approved: false, product: null, sample: false, sampleDone: false, startedAt: null, updatedAt: null }; }
+  function fresh() { return { v: 2, step: 'welcome', q: 0, pending: 'dream', rounds: 0, answers: {}, slots: {}, affirmations: [], messages: [], used: [], aiVision: null, approved: false, product: null, sample: false, sampleDone: false, startedAt: null, updatedAt: null }; }
   function readSaved() { try { return JSON.parse(localStorage.getItem(SAVED_KEY) || 'null'); } catch (e) { return null; } }
   function stateFromSaved(sv) {
     if (!sv) return null;
-    if (sv.state && sv.state.v === 1) return Object.assign(fresh(), sv.state);
+    if (sv.state && sv.state.v === 2) return Object.assign(fresh(), sv.state);
     var bp = sv.blueprint; if (!bp) return null;
     var st = fresh(); st.step = 'chat';
     if (bp.dream) st.answers.dream = bp.dream; if (bp.moment) st.answers.moment = bp.moment;
@@ -462,7 +441,7 @@
   try {
     var stored = SANCTUARY ? stateFromSaved(readSaved()) : null;
     if (!stored) { stored = JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); }
-    if (stored && stored.v === 1) state = Object.assign(fresh(), stored);
+    if (stored && stored.v === 2) state = Object.assign(fresh(), stored);
   } catch (e) { /* ignore */ }
   if (state.sample && !state.sampleDone) state = fresh();
   if (!state.answers) state.answers = {};
@@ -495,8 +474,8 @@
   function exportBlueprint() {
     var a = state.answers;
     return {
-      source: 'free_vision_guide_v1',
-      dream: a.dream || '', moment: a.moment || '', people_pets_place: a.setting || '', feeling: a.feeling || '',
+      source: 'free_vision_guide_v2',
+      dream: a.dream || '', dream_details: a.details || '', moment: a.moment || '', people_pets_place: a.setting || '', feeling: a.feeling || '',
       affirmations: keptAffirmations(),
       affirmation_choices: state.affirmations.map(function (x) { return { statement: x.text, keep: x.keep, from: x.from }; }),
       dream_vision: state.approved ? withEnding(visionParagraphs(a, keptAffirmations())) : [],
@@ -512,7 +491,7 @@
   function readReelPlan() { try { return JSON.parse(localStorage.getItem('iamreel_reel_plan_v1') || 'null') || undefined; } catch (e) { return undefined; } }
   function conversationSummary() {
     var a = state.answers;
-    return ['Dream: ' + (a.dream || ''), 'Moment: ' + (a.moment || ''), 'People, pets & place: ' + (a.setting || ''), 'Feeling: ' + (a.feeling || '')].join('\n');
+    return ['Dream: ' + (a.dream || '') + (a.details ? ' · ' + a.details : ''), 'Moment: ' + (a.moment || ''), 'Feeling: ' + (a.feeling || '')].join('\n');
   }
 
   /* ---------------- Shell ---------------- */
@@ -520,7 +499,7 @@
   root.id = 'vg-guide';
   if (inlineHost) { root.className = 'vg-inline'; inlineHost.appendChild(root); } else document.body.appendChild(root);
   if (!document.querySelector('link[data-vg-css]')) {
-    var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = new URL('guide.css?v=20261031d', base).href; css.setAttribute('data-vg-css', '');
+    var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = new URL('guide.css?v=20261104c', base).href; css.setAttribute('data-vg-css', '');
     document.head.appendChild(css);
   }
   var icon = asset('assets/vision-guide/vision-icon.png');
@@ -532,25 +511,30 @@
     '<header class="vg-header"><div class="vg-brand"><img class="vg-logo" src="' + icon + '" srcset="' + icon + ' 1x, ' + icon2x + ' 2x" alt="Vision Guide logo" width="48" height="48"><div><span class="vg-eyebrow">I AM REEL</span><h2 id="vg-title">Your Vision Guide</h2></div></div>' +
     '<div class="vg-header-actions"><button class="vg-button vg-secondary vg-small-btn vg-startover" type="button">Start over</button><button class="vg-close" type="button" aria-label="Close Vision Guide">×</button></div></header>' +
     '<div class="vg-layout"><main class="vg-main" tabindex="-1"></main><aside class="vg-blueprint" aria-label="Your Vision Blueprint" aria-live="polite"></aside></div>' +
-    '<footer class="vg-footer"><span>One dream. A future that feels like you.</span><button class="vg-button vg-primary vg-save-open" type="button">♡ Save this dream vision</button></footer>' +
+    '<footer class="vg-footer"><span>One dream. A future that feels like you.</span><button class="vg-button vg-primary vg-save-open" type="button">♡ ' + SAVE_LABEL + '</button></footer>' +
     '<div class="vg-save" hidden></div>' +
     '</div></dialog>';
   var dialog = root.querySelector('dialog'), main = root.querySelector('.vg-main'), side = root.querySelector('.vg-blueprint'), savePane = root.querySelector('.vg-save');
   var returnFocus = null;
   var btn = function (label, action, kind, extra) { return '<button type="button" class="vg-button vg-' + (kind || 'primary') + '" data-action="' + action + '"' + (extra || '') + '>' + label + '</button>'; };
 
-  /* ---------------- Blueprint aside ---------------- */
+  /* ---------------- Blueprint aside: "Your dream" ---------------- */
+  function bpField(label, text) { return '<div class="vg-field"><span>' + esc(label) + '</span><p>' + esc(text) + '</p></div>'; }
   function renderBlueprint() {
-    var a = state.answers, kept = keptAffirmations();
-    var fields = QUESTIONS.filter(function (q) { return a[q.key]; }).map(function (q) {
-      return '<div class="vg-field"><span>' + esc(q.label) + '</span><p>' + esc(a[q.key]) + '</p></div>';
-    }).join('');
-    if (kept.length) fields += '<div class="vg-field"><span>Affirmations</span><ul>' + kept.map(function (k) { return '<li>' + esc(k) + '</li>'; }).join('') + '</ul></div>';
-    if (state.product && products()[state.product]) fields += '<div class="vg-field"><span>Your choice</span><p>' + esc(products()[state.product].name) + '</p></div>';
-    side.innerHTML = (state.sample ? SAMPLE_TAG : '') + '<span class="vg-eyebrow">YOUR VISION BLUEPRINT</span><h3>One dream, made personal.</h3>' +
-      (fields || '<p class="vg-muted">Your answers will build a clear picture here, one question at a time.</p>') +
+    var a = state.answers, f = '';
+    if (a.dream) f += bpField('The dream', a.dream + (a.details ? ' · ' + a.details : ''));
+    if (a.moment) f += bpField('Your moment', a.moment);
+    if (a.feeling) f += bpField('Desired feelings', a.feeling);
+    if (state.affirmations.length) f += '<div class="vg-field"><span>Your affirmations</span><small class="vg-muted vg-small">Keep the ones that feel true (checked) and uncheck any that don’t.</small><ul class="vg-affirms" data-affirms>' + affirmsHtml() + '</ul></div>';
+    if (state.product && products()[state.product]) f += bpField('Your choice', products()[state.product].name);
+    var saveBlock = '';
+    if (state.approved) saveBlock = state.sample
+      ? '<p class="vg-muted vg-small">This sample isn’t saved. Tap “Start over” to share your own dream.</p>'
+      : '<div class="vg-side-save">' + btn('♡ ' + SAVE_LABEL, 'save-open') + '<p class="vg-small vg-save-note">' + SAVE_NOTE + '</p></div>';
+    side.innerHTML = (state.sample ? SAMPLE_TAG : '') + '<span class="vg-eyebrow">YOUR VISION BLUEPRINT</span><h3>Your dream</h3>' +
+      (f || '<p class="vg-muted">Share your dream and it will come alive here: your moment, your feelings and your affirmations.</p>') + saveBlock +
       '<div class="vg-gift">✦ FREE personalized Vision Wallpaper<p>Included with every personalized product: you, living your dream, every time you unlock your phone.</p></div>' +
-      (state.sample ? '<p class="vg-muted vg-small">This sample isn’t saved. Edit any words in the review boxes to make it your own.</p>' : '<p class="vg-muted vg-small">Your dream stays private on this device until you save it to your Sanctuary.</p>');
+      (state.sample ? '' : '<p class="vg-muted vg-small">Your dream stays private on this device until you save it to your Sanctuary.</p>');
   }
 
   /* ---------------- Products ---------------- */
@@ -569,9 +553,9 @@
         '<span class="vg-included">✦ FREE personalized Vision Wallpaper included</span>' +
         btn(state.product === k ? 'Chosen ✓' : 'Choose this product', 'choose', 'primary', ' data-code="' + k + '"' + (state.product === k ? ' aria-pressed="true"' : '')) + '</div></article>';
     }).join('');
-    return '<span class="vg-eyebrow">4 / CHOOSE YOUR DREAM IMAGES</span><h3 id="vg-products-title">Choose your dream images</h3>' +
-      '<p>' + (intro || 'Turn the vision you just created into images and film you can see every day.') + '</p>' +
-      '<div class="vg-kaleido"><img src="' + kaleidoImg + '" alt=""><p><strong>Every video, including your Dream Reel, opens and closes with a hypnotic kaleidoscope.</strong> It quiets the mind into a calm, receptive state, so your mind and feelings can accept your dream as reel.</p></div>' +
+    return '<span class="vg-eyebrow">2 / CHOOSE YOUR DREAM IMAGES</span><h3 id="vg-products-title">Choose your dream images</h3>' +
+      '<p>' + (intro || 'Turn your dream into images and film you can see every day.') + '</p>' +
+      '<div class="vg-kaleido"><img src="' + kaleidoImg + '" alt=""><p><strong>' + KALEIDO + '</strong></p></div>' +
       '<div class="vg-products">' + cards + '</div>' +
       '<div class="vg-wallpaper"><img src="' + esc(asset('assets/ev-collection/phone-wallpaper.webp')) + '" alt="" loading="lazy"><div><span class="vg-eyebrow">OUR GIFT TO YOU</span><h4>Your FREE personalized Vision Wallpaper</h4>' +
       '<p>Imagine the first thing you see every time you unlock your phone: you, already living your dream. Your Vision Wallpaper turns dozens of everyday glances into quiet moments that lift your spirit and keep your dream in front of you.</p>' +
@@ -589,54 +573,28 @@
   function welcomeHtml() {
     return '<span class="vg-eyebrow">A BRIGHTER FUTURE, MADE PERSONAL</span>' +
       '<h3>What would you love to see?</h3>' +
-      '<p>I’m your Vision Guide. Together we’ll shape one dream into a Vision Blueprint, write affirmations that help you step into your best life, and see how you’d love to bring your dream to life.</p>' +
+      '<p>I’m your Vision Guide. Tell me one dream and I’ll bring it to life as a moment you can step into, with affirmations that help you step into your best life, and see how you’d love to bring your dream to life.</p>' +
       '<p class="vg-small vg-muted">Tell me your dream right here:</p>' + composeHtml('Tell me your dream…') +
       '<div class="vg-actions vg-sample-row"><span class="vg-small vg-muted">Curious first? See a dream come alive:</span>' + btn('Try a sample vision', 'sample', 'secondary') + '</div>' +
-      '<div class="vg-faq"><h4>How does it work?</h4><p>Share your dream first, one question at a time, in your own words. As you answer, I build your Vision Blueprint and affirmations for you to review. When it feels like your future, choose how you’d love to see it. After purchase, you’ll securely upload your photos so your personalized images look like you, followed by production and a loving human review.</p>' +
+      '<div class="vg-faq"><h4>How does it work?</h4><p>Type your dream in your own words. I’ll paint it as one vivid moment and ask if it’s the dream you’d love to see. Say yes or refine it once, and your dream, feelings and affirmations fill in on the right. Save it to your Sanctuary, then choose how you’d love to see it. After purchase, you’ll securely upload your photos so your personalized images look like you, followed by production and a loving human review.</p>' +
       btn('Help me choose a product', 'browse', 'secondary') + '</div>';
   }
-  function reviewHtml() {
-    var a = state.answers;
-    var box = function (key, label, help) {
-      return '<label class="vg-label" for="vg-f-' + key + '">' + label + (help ? '<small>' + help + '</small>' : '') + '</label>' +
-        '<textarea id="vg-f-' + key + '" data-field="' + key + '" placeholder="' + esc((QUESTIONS.filter(function (q) { return q.key === key; })[0] || {}).placeholder || '') + '">' + esc(a[key] || '') + '</textarea><div class="vg-field-warn" data-warn="' + key + '" aria-live="polite"></div>';
-    };
-    return '<span class="vg-eyebrow">2 / REVIEW &amp; REFINE</span><h3>Does this feel like your future?</h3>' +
-      '<p>Everything you share appears here. Change any words so they feel exactly right. Your blueprint updates as you type.</p>' +
-      box('dream', 'Your dream') + box('moment', 'Specific moment') +
-      box('setting', 'People, pets &amp; place', 'Only you appear as yourself. Everyone else is AI-generated from your description, never a real photo of anyone else. Describe them freely: “a handsome man with dark hair and a beard,” “a crowd applauding,” “my fluffy white dog.” No celebrities, public figures or children, please.') +
-      box('feeling', 'Desired feeling') +
-      '<div class="vg-label">Your affirmations<small>Written in the present tense as you share. Keep the ones that feel true (checked) and uncheck any that don’t.</small></div>' +
-      '<ul class="vg-affirms" data-affirms></ul>' +
-      '<div class="vg-actions" data-approve-wrap></div>';
-  }
   function affirmsHtml() {
-    if (!state.affirmations.length) return '<li class="vg-muted"><span>Your affirmations will appear here as you answer.</span></li>';
+    if (!state.affirmations.length) return '<li class="vg-muted"><span>Your affirmations will appear here.</span></li>';
     return state.affirmations.map(function (x, i) {
       return '<li class="' + (x.keep ? '' : 'off') + '"><label><input type="checkbox" data-aff="' + i + '"' + (x.keep ? ' checked' : '') + '><span>' + esc(x.text) + '</span></label></li>';
     }).join('');
   }
-  function visionHtml() {
-    var paras = visionParagraphs(state.answers, keptAffirmations());
-    return (state.sample ? SAMPLE_TAG : '') + '<span class="vg-eyebrow">3 / YOUR DREAM VISION</span><h3>' + (state.sample ? 'Here is the sample dream, alive.' : 'Here is your dream, alive.') + '</h3>' +
-      '<div class="vg-vision">' + paras.map(function (p, i) { return '<p>' + esc(p) + (i === paras.length - 1 ? ' <strong class="vg-ready">Ready to make your dream reel?</strong>' : '') + '</p>'; }).join('') + '</div>';
-  }
 
   function renderConversation() {
-    if (state.pending === undefined) state.pending = nextKey();
-    var done = !state.pending;
-    var current = QUESTIONS.filter(function (q) { return q.key === state.pending; })[0] || QUESTIONS[0];
     main.innerHTML =
       (state.sample ? '<div class="vg-sample-head">' + SAMPLE_TAG + '<span class="vg-eyebrow">' + qLabel() + '</span></div>' : '<span class="vg-eyebrow">' + qLabel() + '</span>') +
       '<div class="vg-chat" data-chat role="log" aria-live="polite"></div>' +
-      composeHtml(done ? 'Add anything else, or type “yes” when it feels right…' : current.placeholder) +
-      '<section class="vg-section" data-review' + (Object.keys(state.answers).length ? '' : ' hidden') + '>' + reviewHtml() + '</section>' +
-      '<section class="vg-section" data-vision' + (state.approved ? '' : ' hidden') + '></section>' +
+      composeHtml(state.answers.dream ? REFINE_PH : 'Tell me your dream…') +
       '<section class="vg-section" data-products' + (state.approved ? '' : ' hidden') + '></section>';
     var chat = main.querySelector('[data-chat]');
     state.messages.forEach(function (m) { chat.appendChild(msgEl(m.role, m.text)); });
-    refreshAffirms(); refreshApprove();
-    if (state.approved) refreshVision();
+    if (state.approved) refreshProducts();
     bindCompose();
   }
   function render() {
@@ -654,38 +612,29 @@
     var el = msgEl(role, text); chat.appendChild(el);
     if (role !== 'user') el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
-  function refreshAffirms() { var ul = main.querySelector('[data-affirms]'); if (ul) ul.innerHTML = affirmsHtml(); }
-  function refreshApprove() {
-    var w = main.querySelector('[data-approve-wrap]'); if (!w) return;
-    var done = QUESTIONS.every(function (q) { return state.answers[q.key]; });
-    w.innerHTML = done ? btn(state.approved ? 'Update my dream vision' : 'Yes! See my dream vision', 'approve') : '<p class="vg-small vg-muted">Answer the questions above and your dream vision will appear here.</p>';
-  }
-  function refreshVision() {
-    var v = main.querySelector('[data-vision]'), p = main.querySelector('[data-products]');
-    if (!v || !p) return;
-    v.hidden = false; p.hidden = false;
-    v.innerHTML = visionHtml();
+  function refreshAffirms() { var ul = side.querySelector('[data-affirms]'); if (ul) ul.innerHTML = affirmsHtml(); }
+  function refreshProducts() {
+    var p = main.querySelector('[data-products]'); if (!p) return;
+    p.hidden = false;
     if (!p.innerHTML) p.innerHTML = productsHtml();
   }
-  function showReviewSection() { var r = main.querySelector('[data-review]'); if (r) r.hidden = false; }
-  function setField(key, value) {
-    state.answers[key] = value;
-    var ta = main.querySelector('#vg-f-' + key); if (ta && ta.value !== value) ta.value = value;
-  }
-  function addAffirmations(key, value) {
-    var at = -1;
-    state.affirmations.forEach(function (x, i) { if (at < 0 && x.from === key && !x.edited) at = i; });
-    state.affirmations = state.affirmations.filter(function (x) { return x.from !== key || x.edited; });
-    if (at < 0 || at > state.affirmations.length) at = state.affirmations.length;
-    affirmationsFor(key, value).forEach(function (text) {
-      if (!state.affirmations.some(function (x) { return x.text.toLowerCase() === text.toLowerCase(); })) state.affirmations.splice(at++, 0, { text: text, keep: true, from: key });
-    });
-    refreshAffirms();
+  /* Keeps any affirmation the visitor unchecked switched off when the list is refreshed. */
+  function setAffirmations(list, from) {
+    var off = state.affirmations.filter(function (x) { return !x.keep; }).map(function (x) { return x.text.toLowerCase(); });
+    var seen = {};
+    state.affirmations = list.map(function (t) { return String(t).trim(); }).filter(function (t) { var k = t.toLowerCase(); if (!t || seen[k]) return false; seen[k] = 1; return true; })
+      .slice(0, 5).map(function (t) { return { text: t, keep: off.indexOf(t.toLowerCase()) < 0, from: from }; });
   }
 
-  /* ---------------- Conversation engine ---------------- */
+  /* ---------------- Conversation engine (2 short rounds) ----------------
+     Round 1: they type their dream; the guide paints ONE vivid moment from exactly their words and asks if it's the dream.
+     Round 2: they confirm or refine; the guide revises the moment, asks if it feels right, and the "Your dream" panel is complete. */
   var busy = false, typingEl = null, typingAt = 0;
-  var YES_RE = /^(yes|yep|yeah|ready|approve|approved|looks? (good|great|perfect)|perfect|i love it|love it|it does|it feels right)\b/i;
+  var ASK_LINE = 'Is this the dream you’d love to see?';
+  var CLOSE_LINE = 'Does this feel right? Your dream is ready, with your feelings and affirmations, in Your dream.';
+  var REFINE_PH = 'Say yes, or tell me what to change…';
+  var YES_RE = /^(yes|yep|yeah|ready|approve|approved|looks? (good|great|perfect)|perfect|i love it|love it|it does|it is|it feels right)\b/i;
+  var PURE_YES_RE = /^\s*(yes|yes please|yes!+|yep|yeah|perfect|i love it|love it|it does|it is|it feels right|that'?s it|that’s it|exactly|absolutely)[\s.!💛❤️]*$/i;
   function showTyping() {
     var chat = main.querySelector('[data-chat]'); busy = true; typingAt = Date.now();
     typingEl = document.createElement('div'); typingEl.className = 'vg-typing'; typingEl.setAttribute('aria-hidden', 'true');
@@ -697,67 +646,8 @@
     setTimeout(function () { if (typingEl) typingEl.remove(); typingEl = null; busy = false; cb(); }, wait);
   }
   function typing(cb) { showTyping(); hideTyping(cb); }
-  function answeredCount() { return QUESTIONS.filter(function (q) { return state.answers[q.key]; }).length; }
-  function qLabel() { return '1 / YOUR DREAM' + (state.pending && !limitReached() ? ' · ANSWER ' + Math.min(roundsUsed() + 1, maxRounds()) + ' OF ' + maxRounds() : ''); }
-  function ctxText() { var a = state.answers; return [a.dream, a.moment, a.setting].filter(Boolean).join(' . '); }
-  function autoFill(key, value) { setField(key, value); addAffirmations(key, value); }
-  /* Slot tracking: the next question is the first slot we genuinely don't know yet. */
-  function nextKey() {
-    var a = state.answers;
-    for (var i = 0; i < QUESTIONS.length; i++) {
-      var k = QUESTIONS[i].key; if (a[k]) continue;
-      if (k === 'setting') {
-        var src = [a.dream, a.moment].filter(Boolean);
-        var placeSrc = src.filter(function (t) { return placeFor(t); })[0];
-        var whoSrc = src.filter(function (t) { return hasPeople(t) || hasPets(t); })[0];
-        if (placeSrc && whoSrc) { autoFill('setting', placeSrc === whoSrc ? cap(clean(placeSrc)) : cap(clean(whoSrc)) + ' · ' + cap(clean(placeSrc))); continue; }
-      }
-      if (k === 'feeling') { var ef = explicitFeeling([a.dream, a.moment, a.setting].filter(Boolean).join(' . ')); if (ef) { autoFill('feeling', cap(ef)); continue; } }
-      return k;
-    }
-    return null;
-  }
-  function askFor(key) {
-    var q = QUESTIONS.filter(function (x) { return x.key === key; })[0]; if (!q) return '';
-    var ctx = ctxText(), pl = placeFor(ctx), where = pl ? ' ' + pl.prep + ' ' + toYou(pl.phrase) : '';
-    var who = hasPeople(ctx) || hasPets(ctx);
-    if (key === 'moment' && pl) return 'Now let’s step into one specific moment' + where + '. What are you doing in the moment you’d most love to see yourself in? (Like “raising a glass as the light turns gold” or “laughing with someone I love.”)';
-    if (key === 'setting' && pl && !who) return 'There' + where + ', who or what is with you? Anyone besides you will be AI-generated from your description, never a real photo, so simply describe them, like “a handsome man with dark hair and a beard,” “my golden retriever” or “a crowd applauding.” Or tell me it’s just you.';
-    if (key === 'setting' && !pl && who) return 'And where does this moment happen? Describe the place: the setting, the light, the season, what’s all around you.';
-    if (key === 'feeling' && pl) return 'There' + where + ', how do you want to feel? Name the feelings: peaceful, adored, free, proud, abundant… whatever is true for you.';
-    return q.ask;
-  }
-  function missingKeys() { nextKey(); return QUESTIONS.map(function (q) { return q.key; }).filter(function (k) { return !state.answers[k]; }); }
-  /* With fewer answers left than open questions, gently combine them so the vision is always finished in time. */
-  function planQuestion() {
-    var miss = missingKeys(), left = roundsLeft();
-    if (!miss.length) { state.combo = null; return ''; }
-    if (left >= miss.length || left <= 0 || miss.length === 1) { state.combo = null; return askFor(miss[0]); }
-    var take = left === 1 ? miss.length : miss.length - left + 1;
-    state.combo = miss.slice(0, take);
-    return askCombined(state.combo, left === 1);
-  }
-  function askCombined(keys, last) {
-    var ctx = ctxText(), pl = placeFor(ctx), who = hasPeople(ctx) || hasPets(ctx);
-    var parts = keys.map(function (k) {
-      if (k === 'dream') return 'the one dream you’d love to see yourself living';
-      if (k === 'moment') return 'one specific moment you’d love to see yourself in';
-      if (k === 'setting') return pl && !who ? 'who or what is with you there (anyone besides you is AI-generated from your description, like “my golden retriever,” or it can be just you)'
-        : (!pl && who ? 'where it happens' : 'where you are and who or what is with you (anyone besides you is AI-generated from your description, like “a handsome man with dark hair and a beard”)');
-      return 'how you want to feel';
-    });
-    var list = parts.length > 1 ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1] : parts[0];
-    return (last ? 'In this last answer, tell me ' : 'Let’s bring a few pieces together. Tell me ') + list + '.';
-  }
-  function fillDefaults() {
-    var a = state.answers, all = [a.dream, a.moment, a.setting, a.feeling].filter(Boolean).join(' . ');
-    if (!a.moment && a.dream) autoFill('moment', cap(clean(a.dream)));
-    if (!a.setting) {
-      var pl = placeFor(all), who = [a.dream, a.moment].filter(function (t) { return t && (hasPeople(t) || hasPets(t)); })[0];
-      autoFill('setting', pl ? (who ? cap(clean(who)) + ' · ' + pl.prep + ' ' + pl.phrase : 'Just me, ' + pl.prep + ' ' + pl.phrase) : (who ? cap(clean(who)) : 'Just me, somewhere beautiful that feels like home'));
-    }
-    if (!a.feeling) autoFill('feeling', cap(explicitFeeling(all) || 'Joyful, free and at peace'));
-  }
+  function qLabel() { return '1 / YOUR DREAM' + (state.step !== 'welcome' && !state.approved && !limitReached() ? ' · ANSWER ' + Math.min(roundsUsed() + 1, maxRounds()) + ' OF ' + maxRounds() : ''); }
+  function userTexts() { return state.messages.filter(function (m) { return m.role === 'user'; }).map(function (m) { return m.text; }); }
   function updateRoundsUi() { var r = main.querySelector('.vg-rounds'); if (r) r.textContent = roundsText(); var label = main.querySelector('.vg-eyebrow'); if (label) label.textContent = qLabel(); }
   function lockInput() {
     var input = main.querySelector('#vg-input'), send = main.querySelector('[data-compose] button[type="submit"]');
@@ -766,21 +656,66 @@
     var hint = main.querySelector('.vg-hint'); if (hint) { hint.outerHTML = '<p class="vg-limit-note" role="status">' + esc(limitNote()) + '</p>'; }
     var r = main.querySelector('.vg-rounds'); if (r) r.remove();
   }
-  /* Last round: no more questions. Fill anything still open gently, then show the dream vision. */
-  function finalize(reply) {
-    fillDefaults(); state.pending = null; state.combo = null;
-    persist(); renderBlueprint(); showReviewSection(); refreshApprove();
-    if (reply) addMsg('guide', reply);
-    addMsg('guide', 'Here is your dream, alive. Edit any words in your blueprint below and your vision updates with them. 💛');
-    approve(); lockInput(); updateRoundsUi();
+  /* Rule-based fallback: one sensory moment built only from their own words. */
+  function ruleMoment(text, first) {
+    var all = userTexts().join(' . ');
+    var refineYes = !first && PURE_YES_RE.test(text);
+    var lines = sceneLines(refineYes ? all : text + ' . ' + all, all, { used: state.used, max: 3, min: 2 });
+    var f = explicitFeeling(all), fl = '';
+    FEELING_LINES.forEach(function (x) { if (!fl && x.re.test(f || all) && state.used.indexOf(x.line) < 0) fl = x.line; });
+    if (fl) state.used.push(fl);
+    var touch = String(text).replace(/^\s*(yes|yeah|yep|absolutely|definitely|i love it|love it|perfect)\b[\s,.!-]*(and\s+)?(please\s+)?(add|include|also)?\s*/i, '').trim();
+    var echo = refineYes ? '' : first ? echoSentence('dream', text)
+      : [echoSentence('dream', state.answers.dream || ''), touch ? echoSentence('moment', cap(touch)) : ''].filter(Boolean).join(' ');
+    return { moment: [echo].concat(lines).concat(fl ? [fl] : []).filter(Boolean).join(' ').replace(/\s+/g, ' ').trim(), feeling: cap(f || 'Joyful, free and at peace') };
   }
-  function placeholderFor(key) { var q = QUESTIONS.filter(function (x) { return x.key === key; })[0]; return q ? q.placeholder : 'Add anything else, or type “yes” when it feels right…'; }
-  var READY_MSG = 'Your Vision Blueprint is ready. Look it over below: edit any words so they feel exactly right, and uncheck any affirmation that doesn’t feel true for you. When it feels like your future, type “yes” or tap “See my dream vision.”';
-
+  function finish() {
+    state.approved = true; state.pending = null;
+    persist(); renderBlueprint(); refreshProducts(); lockInput(); updateRoundsUi();
+  }
+  function approve() { if (state.answers.dream && state.answers.moment) finish(); }
+  function deliver(reply) {
+    persist(); renderBlueprint();
+    addMsg('guide', reply);
+    if (limitReached()) { finish(); return; }
+    updateRoundsUi();
+    var input = main.querySelector('#vg-input'); if (input) input.placeholder = REFINE_PH;
+  }
+  function ruleTurn(text, first, check) {
+    var a = state.answers, m = ruleMoment(text, first);
+    if (m.moment) a.moment = m.moment;
+    a.feeling = m.feeling;
+    var affs = affirmationsFor('dream', a.dream);
+    if (!first && !PURE_YES_RE.test(text)) affs = affs.concat(affirmationsFor('moment', text));
+    setAffirmations(affs.concat(affirmationsFor('feeling', a.feeling)), 'dream');
+    var reply = (first ? 'What a beautiful dream to hold. Picture it with me: ' : (PURE_YES_RE.test(text) ? 'Then let’s step all the way in. ' : 'Here it is again, with your new touch. ')) + a.moment;
+    if (check.soft) reply += ' ' + check.message;
+    deliver(reply + '\n\n' + (limitReached() ? CLOSE_LINE : ASK_LINE));
+  }
+  function handleAnswer(text) {
+    text = String(text || '').trim().slice(0, MAX_ANSWER).trim(); if (!text || busy || samplePlaying) return;
+    if (state.step === 'welcome') { startConversation(text); return; }
+    if (limitReached() || state.approved) { lockInput(); return; }
+    var first = !state.answers.dream;
+    var check = checkContent(text, first ? 'dream' : 'moment');
+    addMsg('user', text);
+    warnCompose('');
+    if (!check.ok) { typing(function () { addMsg('note', check.message + ' Whenever you’re ready, tell me again in a new way.'); }); return; }
+    state.rounds = roundsUsed() + 1;
+    if (first) state.answers.dream = cap(clean(text));
+    else if (!PURE_YES_RE.test(text)) state.answers.details = (state.answers.details ? state.answers.details + ' · ' : '') + cap(clean(text));
+    persist(); updateRoundsUi();
+    showTyping();
+    aiTurn(first ? 'dream' : 'refine').then(function (r) {
+      hideTyping(function () {
+        try { if (r && applyAi(r, check)) return; } catch (e) { /* fall through to the rule-based guide */ }
+        ruleTurn(text, first, check);
+      });
+    });
+  }
   function startConversation(firstAnswer) {
     state.step = 'chat'; state.startedAt = state.startedAt || new Date().toISOString();
-    if (state.pending === undefined) state.pending = nextKey();
-    if (!state.messages.length) state.messages.push({ role: 'guide', text: 'Welcome. This is your space to dream out loud. ' + QUESTIONS[0].ask });
+    if (!state.messages.length) state.messages.push({ role: 'guide', text: 'Welcome. This is your space to dream out loud. Tell me your dream, and I’ll bring it to life as one moment you can step into.' });
     persist(); render();
     if (firstAnswer) handleAnswer(firstAnswer);
     else focusInput();
@@ -792,12 +727,12 @@
   var AI_URL = new URL('../../api/guide', base).href;
   var BANNED_RE = /\b(vibrat\w*|frequenc\w*|manifest\w*|goals?|high(er|est) self)\b|\bI (can )?(feel|sense) (the|your|this) energy\b|\bI can feel\b/i;
   function aiEnabled() { return window.IAMREEL_GUIDE_AI !== false && !state.sample && /^https?:/.test(location.protocol); }
-  function aiTurn(key) {
+  function aiTurn(stage) {
     if (!aiEnabled() || !window.fetch) return Promise.resolve(null);
-    var a = state.answers, sl = state.slots || {};
+    var a = state.answers;
     var body = {
-      stage: key || 'refine', roundsLeft: roundsLeft(), maxRounds: maxRounds(),
-      slots: { dream: a.dream || '', moment: a.moment || '', place: sl.place || '', people: sl.people || '', setting: a.setting || '', feeling: a.feeling || '' },
+      stage: stage, roundsLeft: roundsLeft(), maxRounds: maxRounds(),
+      slots: { dream: a.dream || '', moment: a.moment || '', feeling: a.feeling || '' },
       messages: state.messages.filter(function (m) { return m.role === 'user' || m.role === 'guide'; }).slice(-16).map(function (m) { return { role: m.role === 'guide' ? 'assistant' : 'user', content: String(m.text).slice(0, 1200) }; })
     };
     var ctrl = window.AbortController ? new AbortController() : null;
@@ -812,108 +747,19 @@
       return r;
     }).catch(function () { clearTimeout(timer); return null; });
   }
-  function applyAi(r, key, check) {
-    var a = state.answers, sl = r.slots || {}, before = JSON.stringify(a), changed = [];
-    var may = function (k) { return !key || k === key || !a[k]; };
-    ['dream', 'moment', 'feeling'].forEach(function (k) {
-      var v = clean(sl[k] || ''); if (!v || v === a[k] || !may(k)) return;
-      if (checkContent(v, k).ok) { setField(k, v); changed.push(k); }
-    });
-    var place = clean(sl.place || ''), people = clean(sl.people || '');
-    if (place) state.slots.place = place; if (people) state.slots.people = people;
-    if ((place || people) && may('setting')) {
-      var P = state.slots.place || '', W = state.slots.people || '';
-      var setting = P && W ? (justMe(W) ? cap(P) + ' · just me' : cap(P) + ' · with ' + lowerFirst(W)) : cap(P || W);
-      if (setting && setting !== a.setting && checkContent(setting, 'setting').ok) { setField('setting', setting); changed.push('setting'); }
-    }
-    var aff = (r.affirmations || []).filter(function (t) { return typeof t === 'string' && t.trim() && !BANNED_RE.test(t) && checkContent(t, 'feeling').ok; }).slice(0, 4);
-    if (aff.length) {
-      aff.forEach(function (t) { t = t.trim(); if (!state.affirmations.some(function (x) { return x.text.toLowerCase() === t.toLowerCase(); })) state.affirmations.push({ text: t, keep: true, from: 'ai' }); });
-      refreshAffirms();
-    } else changed.forEach(function (k) { addAffirmations(k, a[k]); });
-    /* Completeness: setting needs both a place and who's there (or "just me"). */
-    var missing = QUESTIONS.map(function (q) { return q.key; }).filter(function (k) {
-      if (k === 'setting') return !a.setting || (state.slots.place && !state.slots.people && !hasPeople(a.setting) && !hasPets(a.setting) && !/just me/i.test(a.setting));
-      return !a[k];
-    });
-    state.pending = missing.length ? missing[0] : null;
-    if (!state.pending && Array.isArray(r.dream_vision) && r.dream_vision.length && !r.dream_vision.some(function (p) { return BANNED_RE.test(p); })) {
-      state.aiVision = { sig: answersSig(a), paras: r.dream_vision.slice(0, 2).map(String) };
-    }
-    if (JSON.stringify(a) !== before && state.approved) refreshVision();
+  function applyAi(r, check) {
+    var a = state.answers, sl = r.slots || {};
+    var ok = function (v) { return v && !BANNED_RE.test(v) && checkContent(v, 'moment').ok; };
+    var moment = String(sl.moment || '').trim(); if (!ok(moment)) return false;
+    a.moment = moment;
+    var dream = String(sl.dream || '').trim(); if (ok(dream)) { a.dream = cap(dream); delete a.details; }
+    var feeling = String(sl.feeling || '').trim(); a.feeling = ok(feeling) ? cap(feeling) : (a.feeling || 'Joyful, free and at peace');
+    var aff = (r.affirmations || []).filter(function (t) { return typeof t === 'string' && ok(t.trim()); });
+    setAffirmations(aff.length ? aff : affirmationsFor('dream', a.dream).concat(affirmationsFor('feeling', a.feeling)), 'ai');
+    if (Array.isArray(r.dream_vision) && r.dream_vision.length && !r.dream_vision.some(function (p) { return BANNED_RE.test(p); })) state.aiVision = { sig: answersSig(a), paras: r.dream_vision.slice(0, 2).map(String) };
     var reply = r.reply.trim(); if (check.soft) reply += ' ' + check.message;
-    if (limitReached()) { if (!state.aiVision || state.aiVision.sig !== answersSig(a)) { fillDefaults(); } finalize(reply); return; }
-    afterAnswer(reply, true);
-  }
-  function afterAnswer(reply, aiAsked) {
-    persist(); renderBlueprint(); showReviewSection(); refreshApprove();
-    updateRoundsUi();
-    var input = main.querySelector('#vg-input');
-    addMsg('guide', reply);
-    if (state.pending) {
-      if (!aiAsked) addMsg('guide', planQuestion());
-      if (input) input.placeholder = placeholderFor(state.pending);
-    } else {
-      if (!aiAsked) addMsg('guide', READY_MSG);
-      if (input) input.placeholder = 'Add anything else, or type “yes” when it feels right…';
-    }
-  }
-  function ruleTurn(key, text, check) {
-    var a = state.answers;
-    if (!key) { // all four answered: add detail
-      setField('moment', clean(a.moment) + '. ' + cap(clean(text)));
-      addAffirmations('moment', a.moment);
-      persist(); renderBlueprint(); if (state.approved) refreshVision();
-      if (limitReached()) { addMsg('guide', mirrorFor('more', text, state.used, a) + ' I’ve woven that into your moment.'); approve(); lockInput(); updateRoundsUi(); return; }
-      addMsg('guide', mirrorFor('more', text, state.used, a) + ' I’ve woven that into your moment. You can fine-tune any words below. When it feels right, type “yes” or tap “See my dream vision.”');
-      updateRoundsUi();
-      return;
-    }
-    var combo = state.combo && state.combo.length > 1 ? state.combo.slice(1) : [];
-    state.combo = null;
-    combo.forEach(function (k) {
-      if (k === 'setting' && (placeFor(text) || hasPeople(text) || hasPets(text) || justMe(text))) autoFill('setting', cap(clean(text)));
-      if (k === 'feeling') { var ef = explicitFeeling(text); if (ef) autoFill('feeling', cap(ef)); }
-      if (k === 'moment' && key === 'dream') autoFill('moment', cap(clean(text)));
-    });
-    var value = text;
-    if (key === 'setting') {
-      var pl = placeFor(ctxText());
-      if (pl && !placeFor(text)) value = justMe(text) ? 'Just me, ' + pl.prep + ' ' + pl.phrase : cap(clean(text)) + ', ' + pl.prep + ' ' + pl.phrase;
-    }
-    setField(key, value);
-    addAffirmations(key, value);
-    var reply = mirrorFor(key, text, state.used, a);
-    if (check.soft) reply += ' ' + check.message;
-    if (limitReached()) { finalize(reply); return; }
-    state.pending = nextKey();
-    afterAnswer(reply, false);
-  }
-  function handleAnswer(text) {
-    text = String(text || '').trim().slice(0, MAX_ANSWER).trim(); if (!text || busy || samplePlaying) return;
-    if (state.step === 'welcome') { startConversation(text); return; }
-    if (limitReached()) { lockInput(); return; }
-    if (state.pending === undefined) state.pending = nextKey();
-    var key = state.pending;
-    var check = checkContent(text, key || 'moment');
-    addMsg('user', text);
-    warnCompose('');
-    if (!check.ok) { typing(function () { addMsg('note', check.message + ' Whenever you’re ready, tell me again in a new way.'); }); return; }
-    state.rounds = roundsUsed() + 1; persist();
-    if (!key && YES_RE.test(text)) { typing(function () { addMsg('guide', 'Wonderful. Here is your dream, alive. 💛'); approve(); if (limitReached()) lockInput(); updateRoundsUi(); }); return; }
-    showTyping();
-    aiTurn(key).then(function (r) {
-      hideTyping(function () {
-        try { if (r) { applyAi(r, key, check); return; } } catch (e) { /* fall through to the rule-based guide */ }
-        ruleTurn(key, text, check);
-      });
-    });
-  }
-  function approve() {
-    var missing = QUESTIONS.filter(function (q) { return !state.answers[q.key]; });
-    if (missing.length) return;
-    state.approved = true; state.pending = null; persist(); renderBlueprint(); refreshApprove(); refreshVision();
-    var v = main.querySelector('[data-vision]'); if (v) v.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    deliver(reply);
+    return true;
   }
   var sampleToken = 0, samplePlaying = false;
   function sampleDelay(text) { return Math.min(2600, 900 + String(text).length * 5); }
@@ -922,8 +768,8 @@
     closeSave();
     state = fresh(); state.step = 'chat'; state.sample = true; state.startedAt = new Date().toISOString();
     state.messages.push({ role: 'note', text: SAMPLE_NOTE });
-    state.messages.push({ role: 'guide', text: 'Welcome. This is your space to dream out loud. ' + QUESTIONS[0].ask });
-    state.pending = 'dream'; samplePlaying = true;
+    state.messages.push({ role: 'guide', text: 'Welcome. This is your space to dream out loud. Tell me your dream, and I’ll bring it to life as one moment you can step into.' });
+    samplePlaying = true;
     render();
     var input = main.querySelector('#vg-input'), send = main.querySelector('[data-compose] button[type="submit"]');
     if (input) { input.disabled = true; input.placeholder = 'Watch the sample dream unfold…'; }
@@ -931,44 +777,31 @@
     main.scrollTop = 0;
     var i = 0;
     var alive = function () { return token === sampleToken; };
-    var guideSay = function (text, cb) {
-      showTyping();
-      setTimeout(function () { if (!alive()) return; if (typingEl) typingEl.remove(); typingEl = null; addMsg('guide', text); cb(); }, sampleDelay(text));
-    };
     function step() {
       if (!alive()) return;
       var t = SAMPLE_TURNS[i];
       if (!t) { finishSample(); return; }
       addMsg('user', t.user);
-      state.rounds = i + 1;
-      Object.keys(t.fields).forEach(function (k) { setField(k, t.fields[k]); });
-      t.affirm.forEach(function (text) { if (!state.affirmations.some(function (x) { return x.text === text; })) state.affirmations.push({ text: text, keep: true, from: 'sample' }); });
-      state.pending = i + 1 < SAMPLE_TURNS.length ? QUESTIONS[Math.min(i + 1, QUESTIONS.length - 1)].key : null;
-      renderBlueprint(); showReviewSection(); refreshAffirms(); refreshApprove(); updateRoundsUi();
-      guideSay(t.reply, function () {
-        if (t.ask) guideSay(t.ask, function () { i++; setTimeout(step, 1100); });
-        else { i++; setTimeout(step, 600); }
-      });
+      state.rounds = i + 1; updateRoundsUi();
+      showTyping();
+      setTimeout(function () {
+        if (!alive()) return;
+        if (typingEl) typingEl.remove(); typingEl = null;
+        Object.keys(t.fields).forEach(function (k) { state.answers[k] = t.fields[k]; });
+        setAffirmations(t.affirm, 'sample');
+        renderBlueprint();
+        addMsg('guide', t.reply);
+        i++; setTimeout(step, 1300);
+      }, sampleDelay(t.reply));
     }
     function finishSample() {
       samplePlaying = false; busy = false;
-      state.pending = null; state.combo = null;
       state.aiVision = { sig: answersSig(state.answers), paras: SAMPLE_VISION.slice() };
       state.sampleDone = true;
-      addMsg('guide', 'Here is the sample dream, alive. Tap “Start over” whenever you’re ready to share your own. 💛');
-      approve(); lockInput(); updateRoundsUi(); persist();
+      addMsg('guide', 'That’s how your Vision Guide works. Tap “Start over” whenever you’re ready to share your own dream. 💛');
+      finish(); persist();
     }
     setTimeout(step, 900);
-  }
-  /* Editing the sample's words makes it the visitor's own dream: the tag goes away and it can be saved. */
-  function claimSample() {
-    if (!state.sample) return;
-    state.sample = false; state.sampleDone = false;
-    main.querySelectorAll('.vg-sample-tag').forEach(function (t) { t.remove(); });
-    var note = main.querySelector('.vg-limit-note'); if (note) note.textContent = LIMIT_NOTE;
-    var input = main.querySelector('#vg-input'); if (input && input.disabled) input.placeholder = LIMIT_NOTE;
-    var h = main.querySelector('[data-vision] h3'); if (h) h.textContent = 'Here is your dream, alive.';
-    renderBlueprint();
   }
   function startOver() {
     sampleToken++; samplePlaying = false; busy = false;
@@ -997,29 +830,14 @@
     });
   }
 
-  /* Review edits (live blueprint) */
-  var editTimer = null;
-  main.addEventListener('input', function (e) {
-    var key = e.target.getAttribute && e.target.getAttribute('data-field'); if (!key) return;
-    var value = e.target.value, warn = main.querySelector('[data-warn="' + key + '"]');
-    var c = checkContent(value, key);
-    if (warn) warn.innerHTML = !c.ok ? '<span class="vg-warn" role="alert">' + esc(c.message) + '</span>' : (c.soft ? '<span class="vg-warn">' + esc(c.message) + '</span>' : '');
-    if (!c.ok) return;
-    if (samplePlaying) return;
-    claimSample();
-    state.answers[key] = value.trim();
-    if (!state.answers[key]) delete state.answers[key];
-    persist(); renderBlueprint(); refreshApprove();
-    clearTimeout(editTimer);
-    editTimer = setTimeout(function () { if (state.answers[key]) addAffirmations(key, state.answers[key]); persist(); renderBlueprint(); if (state.approved) refreshVision(); }, 700);
-  });
-  main.addEventListener('change', function (e) {
+  root.addEventListener('change', function (e) {
     var i = e.target.getAttribute && e.target.getAttribute('data-aff'); if (i == null) return;
     var a = state.affirmations[Number(i)]; if (!a) return;
     a.keep = e.target.checked; a.edited = true;
     e.target.closest('li').classList.toggle('off', !a.keep);
-    persist(); renderBlueprint(); if (state.approved) refreshVision();
+    persist();
   });
+
 
   /* ---------------- Actions ---------------- */
   root.addEventListener('click', function (e) {
@@ -1029,6 +847,7 @@
     else if (act === 'sample') runSample();
     else if (act === 'browse') { state.step = 'browse'; persist(); render(); main.scrollTop = 0; }
     else if (act === 'approve') approve();
+    else if (act === 'save-open') openSave('save');
     else if (act === 'choose') chooseProduct(b.getAttribute('data-code'));
     else if (act === 'save-submit') submitSave(false);
     else if (act === 'save-signin') submitSave(true);
@@ -1103,23 +922,23 @@
     var checkout = saveIntent === 'checkout', p = state.product && products()[state.product];
     var head = checkout
       ? '<span class="vg-eyebrow">ONE STEP BEFORE CHECKOUT</span><h3>Save your dream and continue</h3><p>You chose <strong>' + esc(p ? p.name : '') + '</strong>. Create your free Sanctuary account so your dream, affirmations and order stay together. After purchase, you’ll upload your photos there.</p>'
-      : '<span class="vg-eyebrow">YOUR PRIVATE SANCTUARY</span><h3>Save this dream vision</h3><p>Create your free account and your dream, blueprint and affirmations will be waiting in your private Sanctuary whenever you want to return.</p>';
+      : '<span class="vg-eyebrow">YOUR PRIVATE SANCTUARY</span><h3>' + SAVE_LABEL + '</h3><p>Create your free account and your dream, blueprint and affirmations will be waiting in your private Sanctuary whenever you want to return.</p>';
     if (state.sample) {
-      savePane.innerHTML = '<div class="vg-save-card" role="dialog" aria-label="This is a sample vision"><span class="vg-eyebrow">SAMPLE VISION</span><h3>This dream is a sample</h3><p>It’s here to show you how your Vision Guide works, so it isn’t saved to a Sanctuary. Edit any words in the review boxes to make it your own, or start over and tell me your dream.</p>' +
+      savePane.innerHTML = '<div class="vg-save-card" role="dialog" aria-label="This is a sample vision"><span class="vg-eyebrow">SAMPLE VISION</span><h3>This dream is a sample</h3><p>It’s here to show you how your Vision Guide works, so it isn’t saved to a Sanctuary. Start over and tell me your dream.</p>' +
         btn('Start over with my dream', 'startover') + '<button class="vg-linkish" data-action="save-close" type="button">Not now</button></div>';
       return;
     }
     if (!hasDream() && !checkout) {
-      savePane.innerHTML = '<div class="vg-save-card" role="dialog" aria-label="Save this dream vision">' + head + '<p class="vg-status">Share your dream first, even just one answer, and then you can save it.</p>' + btn('Start my vision', 'start') + '<button class="vg-linkish" data-action="save-close" type="button">Not now</button></div>';
+      savePane.innerHTML = '<div class="vg-save-card" role="dialog" aria-label="Save this dream to my sanctuary">' + head + '<p class="vg-status">Share your dream first, and then you can save it.</p>' + '<button class="vg-linkish" data-action="save-close" type="button">Not now</button></div>';
       return;
     }
     if (sessionCache) {
-      savePane.innerHTML = '<div class="vg-save-card" role="dialog" aria-label="Save this dream vision">' + head + '<p class="vg-small">Signed in as ' + esc(sessionCache.user.email || '') + '</p>' +
+      savePane.innerHTML = '<div class="vg-save-card" role="dialog" aria-label="Save this dream to my sanctuary">' + head + '<p class="vg-small">Signed in as ' + esc(sessionCache.user.email || '') + '</p>' +
         btn(checkout ? 'Save &amp; continue' : 'Save to my Sanctuary', 'save-submit') + '<button class="vg-linkish" data-action="save-close" type="button">Not now</button><p class="vg-status" role="status" aria-live="polite"></p></div>';
       return;
     }
     var signin = saveMode === 'signin';
-    savePane.innerHTML = '<div class="vg-save-card" role="dialog" aria-label="Save this dream vision">' + head +
+    savePane.innerHTML = '<div class="vg-save-card" role="dialog" aria-label="Save this dream to my sanctuary">' + head +
       '<form data-save-form><label for="vg-email">Email</label><input id="vg-email" type="email" autocomplete="email" required>' +
       '<label for="vg-pass">' + (signin ? 'Password' : 'Create a password (8+ characters)') + '</label><input id="vg-pass" type="password" minlength="8" autocomplete="' + (signin ? 'current-password' : 'new-password') + '" required>' +
       '<div class="vg-actions">' + (signin ? btn('Sign in &amp; save', 'save-signin') : btn('Create my free Sanctuary', 'save-submit')) +
