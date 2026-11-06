@@ -93,7 +93,7 @@ When direct bot-to-bot communication is unavailable: Central maintains a handoff
 | Role | Dropbox organization for I AM REEL |
 | Status | Bounded inventory Nov 6, 2026 — **no** established I AM REEL canonical root in searched coverage; EV brand folder exists (preserve); violet clip candidates live under EV Website images (approval/provenance **unverified**); no Runway hits in searched coverage |
 | Rules | Never delete/overwrite without approval; index EV shared brand files in place (**do not** duplicate large media); propose **independent** private I AM REEL canonical root (not automatically nested under EV) — **proposal only** |
-| Privacy | Personal/tax/client folders and shared-link metadata are **out of public docs** — Central flags privately |
+| Privacy | Private unrelated Dropbox material and shared-link metadata stay **out of public docs** — Central flags privately when needed |
 | When to contact | Dropbox location / organization questions |
 
 ---

@@ -41,6 +41,8 @@ Independent private **I AM REEL** canonical root (recommended **not** automatica
 
 Suggested public naming (when publishing non-PII marketing assets later): `YYYYMMDD_product_desc_APPROVED.ext` / `_DEMO.ext` / `_expNN.ext`.
 
+Proposed **private** production job naming (proposal only; non-identifying IDs; **no** customer names): `product_jobid_scene_vNN_status.ext`.
+
 ---
 
 ## 3. Code & documentation (public)
@@ -101,13 +103,11 @@ Empty until founder defines and approves.
 
 Bounded Local Files inventory (52 selected entries): Automate root and engine source/assembly tests present; violet still candidates and a Downloads still (recent Nov 5) noted as **candidates**; one assembly-test user approval does **not** prove general product approval; hash-confirmed logo duplicates and private-photo duplicates noted in restricted CSV — **do not delete**; source docs/code paths have dependencies — **no moves** without approval. Coverage bounded — do **not** claim “no assets anywhere.”
 
-Security: restricted inventory flagged a credential-**like** filename (key **not** opened/shared). Details omitted here; Central flags privately.
-
 ---
 
 ## 9. Dropbox (category-level only)
 
-No I AM REEL-titled project root in searched coverage. EV brand folder holds shared brand media + three live violet-named clip candidates (approval unverified). No Runway hits in searched coverage. No content hashes → duplicates unconfirmed across clouds. Personal/tax/client areas: **omit from public docs**.
+No I AM REEL-titled project root in searched coverage. EV brand folder holds shared brand media + three live violet-named clip candidates (approval unverified). No Runway hits in searched coverage. No content hashes → duplicates unconfirmed across clouds. Private unrelated material is excluded from this public index.
 
 ---
 

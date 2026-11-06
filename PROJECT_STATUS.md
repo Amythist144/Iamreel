@@ -183,16 +183,16 @@ Times in **America/Chicago**.
 
 | Day | Date | Focus |
 |-----|------|--------|
-| Thu | Nov 6 | Freeze honest status in master docs; open docs-only PR; no disruptive changes; no new generations |
-| Fri | Nov 7 | Portrait-first: founder confirms pilot SKU copy + **price**; document manual intake/payment/delivery SOP (I AM REEL + Roses); continue **approved Violet master** search (Windows/Dropbox) without creating new assets |
-| Sat | Nov 8 | Dry-run portrait path once (photo → order record → produce → deliver) if payment alternative approved; log real time observed (do not invent SLA) |
-| Sun | Nov 9 | Founder decision window: third product definition **or** explicitly sell two; Violet go/no-go for meeting demo |
-| Mon | Nov 10 | If Violet still without approved master: meeting demo = portrait + honest Violet status; do **not** fake readiness |
-| Tue | Nov 11 | End-to-end retest of whatever is claimed sellable; fix only blockers |
-| Wed | Nov 12 | Freeze claims to tested reality; pack demos |
-| Thu | **Nov 13** | **Demo/selling gate:** sell only products with approved description/price + verified intake→payment→production→delivery test; disclose manual steps |
+| Fri | Nov 6 | Freeze honest status in master docs; open docs-only PR; no disruptive changes; no new generations |
+| Sat | Nov 7 | Portrait-first: founder confirms pilot SKU copy + **price**; document manual intake/payment/delivery SOP (I AM REEL + Roses); continue **approved Violet master** search (Windows/Dropbox) without creating new assets |
+| Sun | Nov 8 | Dry-run portrait path once (photo → order record → produce → deliver) if payment alternative approved; log real time observed (do not invent SLA) |
+| Mon | Nov 9 | Founder decision window: third product definition **or** explicitly sell two; Violet go/no-go for meeting demo |
+| Tue | Nov 10 | If Violet still without approved master: meeting demo = portrait + honest Violet status; do **not** fake readiness |
+| Wed | Nov 11 | End-to-end retest of whatever is claimed sellable; fix only blockers |
+| Thu | Nov 12 | Freeze claims to tested reality; pack demos |
+| Fri | **Nov 13** | **Demo/selling gate:** sell only products with approved description/price + verified intake→payment→production→delivery test; disclose manual steps |
 
-**Gate rule:** Prefer genuinely sellable (even semi-manual) over unfinished automation theater. Violet remains **critical risk** until an approved master and loop pipeline exist.
+**Gate rule:** Prefer genuinely sellable (even semi-manual) over unfinished automation. Violet remains **critical risk** until an approved master and loop pipeline exist.
 
 ---
 
