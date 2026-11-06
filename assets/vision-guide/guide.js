@@ -499,7 +499,7 @@
   root.id = 'vg-guide';
   if (inlineHost) { root.className = 'vg-inline'; inlineHost.appendChild(root); } else document.body.appendChild(root);
   if (!document.querySelector('link[data-vg-css]')) {
-    var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = new URL('guide.css?v=20261104c', base).href; css.setAttribute('data-vg-css', '');
+    var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = new URL('guide.css?v=20261105a', base).href; css.setAttribute('data-vg-css', '');
     document.head.appendChild(css);
   }
   var icon = asset('assets/vision-guide/vision-icon.png');
@@ -912,7 +912,7 @@
       var clearAff = isUpdate ? client.from('affirmations').delete().eq('vision_id', vision.id).then(function () {}, function () {}) : Promise.resolve();
       var clearMsg = isUpdate ? client.from('vision_messages').delete().eq('vision_id', vision.id).then(function () {}, function () {}) : Promise.resolve();
       if (kept.length) tasks.push(clearAff.then(function () { return client.from('affirmations').insert(kept.map(function (s, i) { return { user_id: session.user.id, vision_id: vision.id, statement: s, sort_order: i }; })); }).then(function (r) { if (r && r.error) console.warn('[Vision Guide] affirmations not saved:', r.error.message); }));
-      var msgs = state.messages.filter(function (m) { return m.role !== 'note'; }).map(function (m) { return { vision_id: vision.id, role: m.role === 'guide' ? 'assistant' : 'user', content: m.text }; });
+      var msgs = state.messages.filter(function (m) { return m.role !== 'note'; }).map(function (m) { return { user_id: session.user.id, vision_id: vision.id, role: m.role === 'guide' ? 'assistant' : 'user', content: m.text }; });
       if (msgs.length) tasks.push(clearMsg.then(function () { return client.from('vision_messages').insert(msgs); }).then(function (r) { if (r && r.error) console.warn('[Vision Guide] messages not saved:', r.error.message); }));
       return Promise.all(tasks).then(function () { saveLocal({ cloud: { pending: false, visionId: vision.id, syncedAt: new Date().toISOString() } }); return vision; });
     });
