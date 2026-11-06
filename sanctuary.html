@@ -37,8 +37,20 @@ html body main .iam-panel:not(#iam-x) .rp-warn{color:#7a2e0b}
 .rp.is-locked .rp-form{filter:blur(3px) saturate(.8);opacity:.55;pointer-events:none;user-select:none;max-height:640px;overflow:hidden}
 .rp-formats-choice{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}.rp-fmt-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px;border:2px solid rgba(247,181,0,.35);border-radius:14px;cursor:pointer;text-align:center}.rp-fmt-card:has(input:checked){border-color:#f7b500;background:rgba(247,181,0,.12)}.rp-fmt-card input{position:absolute;top:10px;left:10px;width:18px;height:18px;accent-color:#f7b500}.rp-fmt-shape{display:block;border:2px solid currentColor;border-radius:4px;opacity:.7}.rp-fmt-wide{width:64px;height:36px}.rp-fmt-tall{width:24px;height:42px}.rp-fmt-card small{opacity:.8}.rp-kaleido{margin-top:8px}
 @media(max-width:760px){.rp-grid{grid-template-columns:1fr}.rp-step{padding:14px}.rp.is-locked .rp-locked{position:relative;left:auto;top:auto;transform:none;width:auto;margin:16px 0 0}.rp.is-locked .rp-form{max-height:360px}.rp-summary{position:static}}
+
+#bring-dream{margin-bottom:22px}
+#bring-dream .bd-copy{margin:0 0 14px;line-height:1.6;max-width:46rem}
+#bring-dream .bd-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 16px}
+#bring-dream .bd-products{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:0;padding:0;list-style:none}
+#bring-dream .bd-products a{display:flex;flex-direction:column;gap:4px;min-height:100%;padding:12px 12px 14px;border:1px solid rgba(6,31,58,.12);border-radius:14px;background:#fff;color:#061f3a;text-decoration:none;box-shadow:0 1px 0 rgba(6,31,58,.04)}
+#bring-dream .bd-products a:hover,#bring-dream .bd-products a:focus-visible{border-color:rgba(247,181,0,.7);outline:none;box-shadow:0 0 0 2px rgba(247,181,0,.25)}
+#bring-dream .bd-products strong{font:600 .95rem "Cormorant Garamond",serif;line-height:1.25}
+#bring-dream .bd-products small{opacity:.75;font-size:.82rem}
+#bring-dream .bd-note{margin:12px 0 0}
+@media(max-width:900px){#bring-dream .bd-products{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){#bring-dream .bd-products{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.rp-meter i{transition:none}}
-</style><link rel="stylesheet" href="buttons.css?v=20261031">
+</style><link rel="stylesheet" href="buttons.css?v=20261106a">
 <link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"><link rel="icon" type="image/png" sizes="192x192" href="favicon.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
 <body class="customer-page sanctuary-page"><a class="skip" href="#main">Skip to content</a>
@@ -55,7 +67,21 @@ html body main .iam-panel:not(#iam-x) .rp-warn{color:#7a2e0b}
 <div class="sanctuary-actions" style="margin-top:14px"><button id="saved-dream-continue" class="button gold iam-continue-pill" type="button" aria-expanded="false" aria-controls="saved-dream-guide">✦ Continue this dream</button></div>
 </section>
 <div id="saved-dream-guide" hidden style="margin:0 0 22px"><div data-vision-guide-inline data-vg-mode="sanctuary"></div></div>
-<section id="reel-planner" class="iam-panel rp" aria-labelledby="rp-title">
+<section id="bring-dream" class="iam-panel" aria-labelledby="bd-title">
+<p class="eyebrow">WHEN YOU’RE READY</p>
+<h2 id="bd-title">Bring your dream to life</h2>
+<p class="bd-copy">Your dream and affirmations are already yours here in My Sanctuary—no purchase needed. Whenever you feel ready, choose any personalized experience from the Vision Collection. Each one is created from the dream you saved.</p>
+<div class="bd-actions"><a class="button gold" href="collection.html#vision-store">Explore the Vision Collection</a><a class="text-link" href="#saved-dream">Back to my dream</a></div>
+<ul class="bd-products" aria-label="Personalized experiences">
+<li><a href="collection.html#p-portrait"><strong>Dream Portrait</strong><small>$14.99</small></a></li>
+<li><a href="collection.html#p-trio"><strong>Dream Trio</strong><small>$29</small></a></li>
+<li><a href="collection.html#p-board"><strong>Vision Board (6 images)</strong><small>$39</small></a></li>
+<li><a href="collection.html#p-med"><strong>Personalized Meditation Video</strong><small>$49</small></a></li>
+<li><a href="collection.html#p-reel"><strong>Cinematic Dream Reel</strong><small>$199</small></a></li>
+</ul>
+<p class="iam-note bd-note">Browsing and choosing here never unlocks a purchase by itself. Your free dream stays with you.</p>
+</section>
+<section id="reel-planner" class="iam-panel rp" hidden aria-labelledby="rp-title">
 <div class="rp-head"><p class="eyebrow">CINEMATIC DREAM REEL · REEL PLANNER</p><h2 id="rp-title">Plan your Dream Reel</h2>
 <p>Your reel holds up to 6 cinematic clips and runs up to about 70 seconds, with a 5-second kaleidoscope to open and close. Tell us about the life you’re stepping into, and we’ll film your dream with you at the heart of it.</p><p class="iam-note rp-kaleido">✦ Each I AM REEL experience begins and ends with a mesmerizing kaleidoscope visual to quiet the mind, enhance receptivity, and open your imagination to the future you desire.</p></div>
 <div id="rp-locked" class="rp-locked" role="note"><span class="rp-lock-icon" aria-hidden="true">🔒</span><h3>Unlocks when you choose your Cinematic Dream Reel</h3><p>Once your reel is yours, you’ll describe your dream life right here: where you live, where you travel, who you’re with and how you love to look.</p><a class="button gold" href="collection.html#p-reel">See the Cinematic Dream Reel</a></div>
@@ -115,7 +141,7 @@ document.addEventListener('DOMContentLoaded',init);
    Shows the copy saved on this device and, once signed in, syncs it to Supabase
    (visions + affirmations), updating the same vision row when it already exists.
    "Continue this dream" mounts the Vision Guide inline here with the full chat restored. */
-(()=>{const KEY='iamreel_saved_vision_v1',U='https://jtlqvxcmbgqtcpdhldbm.supabase.co',GV='20261105a';
+(()=>{const KEY='iamreel_saved_vision_v1',U='https://jtlqvxcmbgqtcpdhldbm.supabase.co',GV='20261106a';
 const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const load=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}};
@@ -170,7 +196,8 @@ sb.auth.getSession().then(r=>onSession(r.data&&r.data.session));sb.auth.onAuthSt
 </script>
 <script src="assets/vision-guide/content-check.js?v=20261031a"></script><script>
 /* Reel Planner: "Your dream life" (up to 2,000 chars), one format (Widescreen 16:9 or Mobile 9:16, required), How you look (outfits, body, colors), a Youthing opt-out and People & pets.
-   Unlocks with localStorage iamreel_reel_purchased = '1' or ?reel=1 (TODO(checkout): set the flag after a paid reel order).
+   Shown only with localStorage iamreel_reel_purchased = '1' or ?reel=1 (TODO(checkout): set the flag after a paid reel order).
+   Free Sanctuary visitors see #bring-dream instead — never the locked/blurred planner upsell.
    Saves to localStorage (iamreel_reel_plan_v1, v:3) and, when signed in, into the visions row's blueprint JSON (blueprint.reel_plan).
    Older plans migrate safely: v1 scenes/world fold into the dream text, v1 look/colors move into How you look; v2 keeps everything. */
 (()=>{const PKEY='iamreel_reel_plan_v1',VKEY='iamreel_saved_vision_v1',U='https://jtlqvxcmbgqtcpdhldbm.supabase.co',LIM={dream:2000,people:255,outfits:255,body:255,colors:255},FMT=['wide','tall'];
@@ -178,7 +205,12 @@ const $=id=>document.getElementById(id),root=$('reel-planner');if(!root)return;
 const form=$('rp-form'),statusEl=$('rp-status'),noY=$('rp-noyouth'),radios=[...form.querySelectorAll('[data-rp-format]')],fmtWarn=form.querySelector('.rp-format-warn');
 let unlocked=false;try{unlocked=localStorage.getItem('iamreel_reel_purchased')==='1'}catch(e){}
 if(/[?&]reel=1\b/.test(location.search))unlocked=true;
-root.classList.toggle('is-locked',!unlocked);form.toggleAttribute('inert',!unlocked);form.setAttribute('aria-hidden',unlocked?'false':'true');
+const bring=$('bring-dream');
+/* Free Sanctuary: hide the Reel Planner entirely (no blur/lock upsell). Show it only with reel entitlement or ?reel=1. */
+root.hidden=!unlocked;root.classList.remove('is-locked');
+if(bring)bring.hidden=!!unlocked;
+form.toggleAttribute('inert',!unlocked);form.setAttribute('aria-hidden',unlocked?'false':'true');
+if(!unlocked){const lock=$('rp-locked');if(lock)lock.hidden=true;}
 const blank=()=>({v:3,dream:'',format:'',outfits:'',body:'',colors:'',noYouthing:false,people:'',prefilled:false,updatedAt:null});
 const loadJ=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
 function migrate(o){o=(o&&typeof o==='object')?o:{};const p=blank();
